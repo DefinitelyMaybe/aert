@@ -1,3 +1,5 @@
-import { Scene, PerspectiveCamera } from 'https://unpkg.com/three'
+import { Scene, PerspectiveCamera, WebGLRenderer } from './mod.ts'
 
-let x = new Scene()
+const scene = new Scene()
+const camera = new PerspectiveCamera(90, 1, 0.1, 100)
+const renderer = new WebGLRenderer({})
