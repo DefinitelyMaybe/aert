@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 // @deno-types="../libs/three.js/src/polyfills.d.ts"
 export * from '../libs/three.js/src/polyfills.js';
 // @deno-types="../libs/three.js/src/renderers/WebGLMultisampleRenderTarget.d.ts"
