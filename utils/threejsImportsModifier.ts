@@ -34,4 +34,17 @@ function updateFile(file:string) {
 //read through src
 loopDir("libs/three.js/src")
 
+
+// missed imports/exports:
+/*
+import {
+  ...,
+  ...
+} from '...'
+
+export * from '...'
+
+all html references i.e. inserting: /// <reference lib="dom" /> when appropriate
+*/
+
 // some imports are single quoted i.e. '', others are double quoted ""
