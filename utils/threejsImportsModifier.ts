@@ -19,11 +19,11 @@ function updateFile(file:string) {
   // update to include .d.ts in url
   let data = Deno.readFileSync(file)
   let text = decoder.decode(data)
-  const matches = text.matchAll(/import .+'/g)
+  const matches = text.matchAll(/import .+"/g)
   if (matches) {
     for (const match of matches) {
-      const newURL = match[0].slice(0, match[0].length-1)+".d.ts'"
-      text = text.replace(match[0], newURL)
+      const newImport = `${match[0].slice(0, match[0].length-1)}.d.ts"`
+      text = text.replace(match[0], newImport)
     }
   }
   // write the new text to the same file
@@ -33,3 +33,5 @@ function updateFile(file:string) {
 
 //read through src
 loopDir("libs/three.js/src")
+
+// some imports are single quoted i.e. '', others are double quoted ""
