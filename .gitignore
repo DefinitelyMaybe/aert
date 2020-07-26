@@ -1,4 +1,4 @@
 libs/
 node_modules/
 .vscode
-build
+build/**/*.js
