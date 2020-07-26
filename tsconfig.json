@@ -3,12 +3,12 @@
 		"target": "ESNext",
     "moduleResolution": "node",
     "lib": ["DOM", "ESNext"],
-    "outDir": "build"
+    "outDir": "build",
+    "watch": true
   },
 	"include": [
     "node_modules/src/**/*.ts",
     "node_modules/examples/**/*.ts",
-    "utils/lib.deno.d.ts",
     "src/main.ts"
   ],
 }
