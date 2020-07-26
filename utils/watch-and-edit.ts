@@ -14,9 +14,7 @@ async function main() {
 
       const match = text.match(/"three"/g)
       if (match) {
-        text = text.replaceAll(/import .+?"three"/g, (m) => {
-          return `${m.slice(0, m.length-6)}./three.module.js"`
-        })
+        text = text.replaceAll(/"three"/g, `"./three.module.js"`)
         text = text.replaceAll(/"three\/examples\/jsm.+?"/g, (m) => {
           return `"./${m.slice(16, m.length-1)}.js"`
         })
