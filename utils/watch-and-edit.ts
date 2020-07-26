@@ -14,7 +14,7 @@ async function main() {
 
       const match = text.match(/"three"/g)
       if (match) {
-        text = text.replace(/import .+"three"/g, (m) => {
+        text = text.replace(/import .+?"three"/g, (m) => {
           return `${m.slice(0, m.length-6)}./three.module.js"`
         })
         data = encoder.encode(text)
