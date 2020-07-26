@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+    "moduleResolution": "node",
+  },
+	"include": [
+    "node_modules/src/**/*.ts",
+    "node_modules/examples/**/*.ts",
+  ],
+}
