@@ -1,4 +1,3 @@
-
 import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshToonMaterial, Mesh, DirectionalLight, Object3D } from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
