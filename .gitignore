@@ -2,3 +2,5 @@ libs/
 node_modules/
 .vscode
 build/**/*.js
+build/**/*.d.ts
+.DS_Store
