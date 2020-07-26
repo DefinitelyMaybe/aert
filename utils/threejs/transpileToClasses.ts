@@ -1,25 +1,37 @@
-// create output dir
-// Copy paste all .d.ts files
-// regex all .js files
+import { ensureDirSync } from "https://deno.land/std/fs/mod.ts"
 
 const decoder = new TextDecoder()
 const encoder = new TextEncoder()
 
-function loopDir(path:string) {
+const OUTPUT_FOLDER = "./OUTPUT"
+
+// create output dir
+ensureDirSync(OUTPUT_FOLDER)
+
+async function loopDir(path:string) {
   for (const dirEntry of Deno.readDirSync(path)) {
     if (dirEntry.isDirectory) {
       loopDir(`${path}/${dirEntry.name}`)
     } else {
       // look for .d.ts files
-      const match = dirEntry.name.match(/.d.ts/g)
-      if (match) {
-        updateFile(`${path}/${dirEntry.name}`)
+      const threeJSTypes = dirEntry.name.match(/.d.ts/g)
+      const threeJSScripts = dirEntry.name.match(/.js/g)
+      
+      if (threeJSTypes) {
+        // Copy paste all .d.ts files
+        const data = await Deno.readFile(`${path}/${dirEntry.name}`);
+        await Deno.writeFile(`${OUTPUT_FOLDER}/${path}/${dirEntry.name}`, data)
+      }
+      
+      if (threeJSScripts) {
+        // regex all .js files
+        transpileScript(`${path}/${dirEntry.name}`)
       }
     }
   }
 }
 
-function updateFile(file:string) {
+function transpileScript(file:string) {
   // update to include .d.ts in url
   let data = Deno.readFileSync(file)
   let text = decoder.decode(data)
@@ -37,18 +49,3 @@ function updateFile(file:string) {
 
 //read through src
 loopDir("libs/three.js/src")
-
-
-// missed imports/exports:
-/*
-import {
-  ...,
-  ...
-} from '...'
-
-export * from '...'
-
-all html references i.e. inserting: /// <reference lib="dom" /> when appropriate
-*/
-
-// some imports are single quoted i.e. '', others are double quoted ""
