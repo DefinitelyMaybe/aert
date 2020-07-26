@@ -3,4 +3,5 @@ node_modules/
 .vscode
 build/**/*.js
 build/**/*.d.ts
+build/jsm
 .DS_Store
