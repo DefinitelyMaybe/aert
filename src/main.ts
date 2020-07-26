@@ -1,15 +1,23 @@
 
-import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshToonMaterial, Mesh, DirectionalLight } from "three"
+import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshToonMaterial, Mesh, DirectionalLight, Object3D } from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
-const scene = new Scene()
-const camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 100)
 
 const renderer = new WebGLRenderer()
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+const scene = new Scene()
+const camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 100)
+
+const controls = new OrbitControls(camera, renderer.domElement)
+
 const light = new DirectionalLight(0xffffff, 1.0)
+const lightTarget = new Object3D()
+scene.add(lightTarget)
+lightTarget.position.set(-1, -1, -1)
+
+light.target = lightTarget
 scene.add(light)
 
 const geometry = new BoxGeometry();
