@@ -4,11 +4,12 @@
     "moduleResolution": "node",
     "lib": ["DOM", "ESNext"],
     "outDir": "build",
-    "watch": true
+    "watch": true,
+    "removeComments": true
   },
 	"include": [
     "node_modules/src/**/*.ts",
     "node_modules/examples/**/*.ts",
-    "src/main.ts"
+    "src/**/*.ts"
   ],
 }
