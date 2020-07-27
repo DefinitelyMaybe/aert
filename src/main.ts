@@ -1,4 +1,4 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshToonMaterial, Mesh, DirectionalLight, Object3D, GridHelper, Vector3 } from "three"
+import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshToonMaterial, Mesh, DirectionalLight, Object3D, GridHelper, Vector3, PlaneBufferGeometry, DoubleSide } from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
 
@@ -24,10 +24,16 @@ scene.add(light)
 const gridHelper = new GridHelper(100, 100)
 scene.add(gridHelper)
 
-const geometry = new BoxGeometry();
-const material = new MeshToonMaterial( { color: 0x00ff00 } );
-const cube = new Mesh( geometry, material );
+const plane = new PlaneBufferGeometry(100, 100, 1, 1)
+plane.rotateX(-Math.PI/2)
+let material = new MeshToonMaterial({color:0xffffff})
+const floor = new Mesh(plane, material)
+scene.add(floor)
 
+const geometry = new BoxGeometry();
+material = new MeshToonMaterial( { color: 0x00ff00 } );
+const cube = new Mesh( geometry, material );
+cube.position.setY(1)
 scene.add( cube );
 
 camera.position.z = 5;
@@ -35,8 +41,8 @@ camera.position.z = 5;
 function animate() {
   requestAnimationFrame( animate );
 
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+  // cube.rotation.x += 0.01;
+  // cube.rotation.y += 0.01;
 
   renderer.render( scene, camera );
 };
