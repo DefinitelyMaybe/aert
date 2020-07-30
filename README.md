@@ -7,6 +7,10 @@ Building slowly.
 * inventory of objects
 * place objects into world
 
+Food for thought:
+
+* RxJS -> signals graphing i.e. interrupt based programming for ui
+
 # Current Development process
 
 * `npx run tsc`
