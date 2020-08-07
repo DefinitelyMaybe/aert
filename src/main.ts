@@ -1,5 +1,6 @@
 import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshToonMaterial, Mesh, DirectionalLight, Object3D, GridHelper, Vector3, PlaneBufferGeometry, DoubleSide } from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { CannonPhysics } from "three/examples/jsm/physics/CannonPhysics";
 
 
 const renderer = new WebGLRenderer()
@@ -7,19 +8,17 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 const scene = new Scene()
-const camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 100)
-camera.position.set(10, 10, 10)
-camera.lookAt(new Vector3(0, 0, 0))
-
-const controls = new OrbitControls(camera, renderer.domElement)
 
 const light = new DirectionalLight(0xffffff, 1.0)
 const lightTarget = new Object3D()
-scene.add(lightTarget)
 lightTarget.position.set(-1, -1, -1)
-
 light.target = lightTarget
+scene.add(lightTarget)
 scene.add(light)
+
+const camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 100)
+camera.position.set(10, 10, 10)
+camera.lookAt(new Vector3(0, 0, 0))
 
 const gridHelper = new GridHelper(100, 100)
 scene.add(gridHelper)
@@ -36,7 +35,10 @@ const cube = new Mesh( geometry, material );
 cube.position.setY(1)
 scene.add( cube );
 
-camera.position.z = 5;
+const controls = new OrbitControls(camera, renderer.domElement)
+controls.target = cube.position
+
+camera.position.x = 5;
 
 function animate() {
   requestAnimationFrame( animate );
@@ -48,3 +50,11 @@ function animate() {
 };
 
 animate();
+
+// UI
+
+const testButton = document.getElementById("test")
+testButton.onclick = (e) => {
+  console.log(e)
+  cube.position.set(0,0,0)
+}
