@@ -1,4 +1,4 @@
-class ObjectController {
+class FollowController {
   constructor() {
     // aiming for:
     // const controls = new FollowControls(camera, renderer.domElement)
@@ -11,4 +11,4 @@ class ObjectController {
   }
 }
 
-export { ObjectController }
+export { FollowController }
