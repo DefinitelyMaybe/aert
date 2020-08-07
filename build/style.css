@@ -6,3 +6,9 @@ html {
 body {
   margin: 0;
 }
+
+button {
+  position: absolute;
+  min-width: 100px;
+  min-height: 30px;
+}
