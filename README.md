@@ -11,11 +11,6 @@ Food for thought:
 
 * RxJS -> signals graphing i.e. interrupt based programming for ui
 
-# Current Development process
-
-* `npx run tsc`
-* `deno run -A ./utils/watch-and-edit.ts`
-
 # The build Folder
 
 The build folder contains some files that are manually placed there.
