@@ -10,6 +10,7 @@ Building slowly.
 Food for thought:
 
 * RxJS -> signals graphing i.e. interrupt based programming for ui
+* In-World editor interface with context switching
 
 # The build Folder
 
