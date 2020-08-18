@@ -3,9 +3,13 @@
 Building slowly.
 
 * camera follow object
+  * on hold while three.js moves to es6 classes
+  * maybe extend firstpersoncontrols instead of orbitalcontrols
 * user input moves object
+  * wasd keys
 * inventory of objects
 * place objects into world
+  * basic shape to random location
 
 Food for thought:
 
