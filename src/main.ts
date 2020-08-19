@@ -1,4 +1,4 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshToonMaterial, Mesh, DirectionalLight, Object3D, GridHelper, Vector3, PlaneBufferGeometry, DoubleSide, Raycaster, Vector2, Line3, Line } from "three"
+import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshToonMaterial, Mesh, DirectionalLight, Object3D, GridHelper, Vector3, PlaneBufferGeometry, DoubleSide, Raycaster, Vector2, Line, BufferGeometry, LineBasicMaterial } from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { CannonPhysics } from "three/examples/jsm/physics/CannonPhysics";
 
@@ -13,12 +13,14 @@ const light = new DirectionalLight(0xffffff, 1.0)
 const lightTarget = new Object3D()
 lightTarget.position.set(-1, -1, -1)
 light.target = lightTarget
+lightTarget.name = 'lightTarget'
 scene.add(lightTarget)
 scene.add(light)
 
 const camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000)
 camera.position.set(10, 10, 10)
 camera.lookAt(new Vector3(0, 0, 0))
+scene.add(camera)
 
 // const gridHelper = new GridHelper(100, 100)
 // scene.add(gridHelper)
@@ -27,18 +29,18 @@ const plane = new PlaneBufferGeometry(100, 100, 1, 1)
 plane.rotateX(-Math.PI/2)
 let material = new MeshToonMaterial({color:0x888888})
 const floor = new Mesh(plane, material)
+floor.name = 'floor'
 scene.add(floor)
 
 const geometry = new BoxGeometry();
 material = new MeshToonMaterial( { color: 0x00ff00 } );
 const cube = new Mesh( geometry, material );
 cube.position.setY(1)
+cube.name = 'cube'
 scene.add( cube );
 
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.target = cube.position
-
-// camera.position.x = 5;
 
 function animate() {
   requestAnimationFrame( animate );
@@ -70,6 +72,7 @@ test2Button.onclick = (e) => {
   const Xsign = Math.random() < 0.5 ? -1 : 1
   const Zsign = Math.random() < 0.5 ? -1 : 1
   cube.position.set(Xsign * Math.random() * scalar, 1, Zsign * Math.random() * scalar)
+  cube.name = 'randomRedCube'
   scene.add( cube );
 }
 
@@ -83,25 +86,33 @@ canvas.onclick = (e) => {
   console.log("casting ray")
   // throw out a ray and find a random object
   const rayCaster = new Raycaster()
-  rayCaster.setFromCamera(new Vector2(e.screenX, e.screenY), camera)
+  rayCaster.setFromCamera(new Vector2(( e.clientX / window.innerWidth ) * 2 - 1, - ( e.clientY / window.innerHeight ) * 2 + 1), camera)
   const intersection = rayCaster.intersectObject(scene, true)
 
   // draw the line that was raycasted
-  const origin = rayCaster.ray.origin
-  let direction = rayCaster.ray.direction.multiplyScalar(100)
-  const dest = origin.add(direction)
+  const direction = rayCaster.ray.direction.multiplyScalar(100)
+  const p0 = rayCaster.ray.origin
+  const p1 = new Vector3(p0.x, p0.y, p0.z).add(direction)
+  const p2 = new Vector3(p1.x, p1.y, p1.z).add(direction)
 
-  const geo = new Line3(origin, dest)
-  const line = new Line(geo)
-  const mat = new MeshToonMaterial({color:0x0000ff})
-  const mesh = new Mesh(geo, mat)
-  scene.add(mesh)
+  const points = []
+  points.push(p0)
+  points.push(p1)
+  points.push(p2)
+  const geo = new BufferGeometry()
+  geo.setFromPoints(points)
 
+  const mat = new LineBasicMaterial({color:0xff00ff})
+  const line = new Line(geo, mat)
+  scene.add(line)
 
+  //check intersection
   if (intersection.length > 0) {
+
     const obj = intersection[0].object
 
     controls.target = obj.position
-    console.log("controls changed")
+    console.log(`intersected with ${intersection.length} objects`)
+    console.log(`controls changed to ${obj.name}`)
   }
 }
