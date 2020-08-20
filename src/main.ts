@@ -62,14 +62,14 @@ animate();
 
 const testButton = document.getElementById("test")
 testButton.onclick = (e) => {
-  // console.log(e)
-  const scalar = 10
-  cube.position.set(Math.random()* scalar,Math.random()* scalar,Math.random()* scalar)
+  const scalar = 50
+  const Xsign = Math.random() < 0.5 ? -1 : 1
+  const Zsign = Math.random() < 0.5 ? -1 : 1
+  cube.position.set(Xsign*Math.random()* scalar, 1, Zsign*Math.random()* scalar)
 }
 
 const test2Button = document.getElementById("test2")
 test2Button.onclick = (e) => {
-  // console.log(e)
   // respawn a red square somewhere within the current floor
   material = new MeshToonMaterial( { color: 0xff0000 } );
   const cube = new Mesh( geometry, material );
