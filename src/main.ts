@@ -42,6 +42,11 @@ scene.add( cube );
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.target = cube.position
 
+const geo = new BufferGeometry()
+const mat = new LineBasicMaterial({color:0xff00ff})
+const prevRay = new Line(geo, mat)
+scene.add(prevRay)
+
 function animate() {
   requestAnimationFrame( animate );
 
@@ -100,11 +105,7 @@ canvas.onclick = (e) => {
   points.push(p1)
   points.push(p2)
   const geo = new BufferGeometry()
-  geo.setFromPoints(points)
-
-  const mat = new LineBasicMaterial({color:0xff00ff})
-  const line = new Line(geo, mat)
-  scene.add(line)
+  prevRay.geometry.setFromPoints(points)
 
   //check intersection
   if (intersection.length > 0) {
