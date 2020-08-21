@@ -6,8 +6,9 @@
   "scripts": {
     "fmt": "deno fmt src && deno fmt utils",
     "lint": "deno lint --unstable src",
-    "compile": "npx tsc",
-    "helper-build-renaming": "deno run -A ./utils/watch-and-rename.ts",
-    "helper-build-place": "deno run -A ./utils/place-build.ts"
+    "compile-ts": "npx tsc",
+    "compile-svelte": "",
+    "build-renaming": "deno run -A ./utils/watch-and-rename.ts",
+    "build-place-threejs": "deno run -A ./utils/place-build.ts"
   }
 }
