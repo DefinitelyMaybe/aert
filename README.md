@@ -2,11 +2,12 @@
 
 Building slowly.
 
+* Interface / UI
+  * Svelte integration? how to include it within workflow
 * camera follow object
-  * on hold while three.js moves to es6 classes
+  * on hold while three.js moves to es6 classes then its `class Foo extends Firstpersoncontrols`
   * maybe extend firstpersoncontrols instead of orbitalcontrols
-* user input moves object
-  * wasd keys
+  * user input moves object with WASD keys
 * inventory of objects
 * place objects into world
   * basic shape to random location
