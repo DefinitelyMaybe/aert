@@ -50,15 +50,15 @@ scene.add(prevRay)
 function animate() {
   requestAnimationFrame( animate );
 
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+  // cube.rotation.x += 0.01;
+  // cube.rotation.y += 0.01;
 
   renderer.render( scene, camera );
 };
 
 animate();
 
-// UI
+// UI & Events
 
 const testButton = document.getElementById("test")
 testButton.onclick = (e) => {
@@ -86,34 +86,48 @@ test3Button.onclick = (e) => {
   console.log(scene.children)
 }
 
-const canvas = document.querySelector('canvas')
-canvas.onclick = (e) => {
-  console.log("casting ray")
-  // throw out a ray and find a random object
-  const rayCaster = new Raycaster()
-  rayCaster.setFromCamera(new Vector2(( e.clientX / window.innerWidth ) * 2 - 1, - ( e.clientY / window.innerHeight ) * 2 + 1), camera)
-  const intersection = rayCaster.intersectObject(scene, true)
+const canvasElement = document.querySelector('canvas')
+const changeOrbitElement = document.querySelector('input#changeOrbit') as HTMLInputElement
+const castRayElement = document.querySelector('input#castRay') as HTMLInputElement
 
-  // draw the line that was raycasted
-  const direction = rayCaster.ray.direction.multiplyScalar(100)
-  const p0 = rayCaster.ray.origin
-  const p1 = new Vector3(p0.x, p0.y, p0.z).add(direction)
-  const p2 = new Vector3(p1.x, p1.y, p1.z).add(direction)
-
-  const points = []
-  points.push(p0)
-  points.push(p1)
-  points.push(p2)
-  const geo = new BufferGeometry()
-  prevRay.geometry.setFromPoints(points)
-
-  //check intersection
-  if (intersection.length > 0) {
-
-    const obj = intersection[0].object
-
-    controls.target = obj.position
-    console.log(`intersected with ${intersection.length} objects`)
-    console.log(`controls changed to ${obj.name}`)
+canvasElement.onclick = (e) => {
+  if (castRayElement.checked) {
+    console.log("casting ray")
+    // throw out a ray and find a random object
+    const rayCaster = new Raycaster()
+    rayCaster.setFromCamera(new Vector2(( e.clientX / window.innerWidth ) * 2 - 1, - ( e.clientY / window.innerHeight ) * 2 + 1), camera)
+    const intersection = rayCaster.intersectObject(scene, true)
+  
+    // draw the line that was raycasted
+    const direction = rayCaster.ray.direction.multiplyScalar(50)
+    const p0 = rayCaster.ray.origin
+    const p1 = new Vector3(p0.x, p0.y, p0.z).add(direction)
+    const p2 = new Vector3(p1.x, p1.y, p1.z).add(direction)
+  
+    const points = []
+    points.push(p0)
+    points.push(p1)
+    points.push(p2)
+    const geo = new BufferGeometry()
+    prevRay.geometry.setFromPoints(points)
+  
+    //check intersection
+    if (intersection.length > 0) {
+  
+      const obj = intersection[0].object
+      console.log(`intersected with ${intersection.length} objects`)
+  
+      if (changeOrbitElement.checked) {
+        console.log(`controls changed to ${obj.name}`)
+        controls.target = obj.position
+      }
+    } 
   }
+}
+
+window.onresize = () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize( window.innerWidth, window.innerHeight );
 }
