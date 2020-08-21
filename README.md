@@ -4,6 +4,7 @@ Building slowly.
 
 * Interface / UI
   * Svelte integration? how to include it within workflow
+  * [making a better menu/ui](https://www.w3schools.com/howto/howto_js_dropdown.asp)
 * camera follow object
   * on hold while three.js moves to es6 classes then its `class Foo extends Firstpersoncontrols`
   * maybe extend firstpersoncontrols instead of orbitalcontrols
