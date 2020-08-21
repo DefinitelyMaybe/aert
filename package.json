@@ -4,7 +4,10 @@
     "typescript": "^3.9.7"
   },
   "scripts": {
+    "fmt": "deno fmt src && deno fmt utils",
+    "lint": "deno lint --unstable src",
     "compile": "npx tsc",
-    "denoHelper": "deno run -A ./utils/watch-and-edit.ts"
+    "helper-build-renaming": "deno run -A ./utils/watch-and-rename.ts",
+    "helper-build-place": "deno run -A ./utils/place-build.ts"
   }
 }
