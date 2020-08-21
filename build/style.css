@@ -11,6 +11,10 @@ main {
   position: absolute;
 }
 
+label {
+  background: white;
+}
+
 button {
   min-width: 100px;
   min-height: 30px;
