@@ -1,133 +1,180 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshToonMaterial, Mesh, DirectionalLight, Object3D, GridHelper, Vector3, PlaneBufferGeometry, DoubleSide, Raycaster, Vector2, Line, BufferGeometry, LineBasicMaterial } from "three"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import {
+  Scene,
+  PerspectiveCamera,
+  WebGLRenderer,
+  BoxGeometry,
+  MeshStandardMaterial,
+  Mesh,
+  DirectionalLight,
+  Vector3,
+  PlaneBufferGeometry,
+  Raycaster,
+  Vector2,
+  Line,
+  BufferGeometry,
+  LineBasicMaterial,
+  Color,
+  HemisphereLight,
+  CameraHelper,
+} from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { CannonPhysics } from "three/examples/jsm/physics/CannonPhysics";
 
+const physics = new CannonPhysics();
 
-const renderer = new WebGLRenderer()
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+const renderer = new WebGLRenderer();
+renderer.shadowMap.enabled = true;
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-const scene = new Scene()
+const scene = new Scene();
+scene.background = new Color(0xaaaaaa);
 
-const light = new DirectionalLight(0xffffff, 1.0)
-const lightTarget = new Object3D()
-lightTarget.position.set(-1, -1, -1)
-light.target = lightTarget
-lightTarget.name = 'lightTarget'
-scene.add(lightTarget)
-scene.add(light)
+const directionalLight = new DirectionalLight();
+directionalLight.position.set(5, 5, 5);
+directionalLight.castShadow = true;
+scene.add(directionalLight);
 
-const camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000)
-camera.position.set(10, 10, 10)
-camera.lookAt(new Vector3(0, 0, 0))
-scene.add(camera)
+console.log(directionalLight.shadow);
 
-// const gridHelper = new GridHelper(100, 100)
-// scene.add(gridHelper)
+const hemisphereLight = new HemisphereLight(0xaaaaaa, 0xaaaaaa, 0.7);
+scene.add(hemisphereLight);
 
-const plane = new PlaneBufferGeometry(100, 100, 1, 1)
-plane.rotateX(-Math.PI/2)
-let material = new MeshToonMaterial({color:0x888888})
-const floor = new Mesh(plane, material)
-floor.name = 'floor'
-scene.add(floor)
+const camera = new PerspectiveCamera(
+  90,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000,
+);
+camera.position.set(10, 10, 10);
+camera.lookAt(new Vector3(0, 0, 0));
+scene.add(camera);
+
+const helper = new CameraHelper(directionalLight.shadow.camera);
+scene.add(helper);
+
+const plane = new PlaneBufferGeometry(100, 100, 1, 1);
+plane.rotateX(-Math.PI / 2);
+let material = new MeshStandardMaterial({ color: 0xaaaaaa });
+const floor = new Mesh(plane, material);
+floor.name = "floor";
+floor.receiveShadow = true;
+scene.add(floor);
 
 const geometry = new BoxGeometry();
-material = new MeshToonMaterial( { color: 0x00ff00 } );
-const cube = new Mesh( geometry, material );
-cube.position.setY(1)
-cube.name = 'cube'
-scene.add( cube );
+material = new MeshStandardMaterial({ color: 0x00ff00 });
+const cube = new Mesh(geometry, material);
+cube.position.setY(1);
+cube.name = "cube";
+cube.castShadow = true;
+cube.receiveShadow = true;
+scene.add(cube);
 
-const controls = new OrbitControls(camera, renderer.domElement)
-controls.target = cube.position
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target = cube.position;
 
-const geo = new BufferGeometry()
-const mat = new LineBasicMaterial({color:0xff00ff})
-const prevRay = new Line(geo, mat)
-scene.add(prevRay)
+const geo = new BufferGeometry();
+const mat = new LineBasicMaterial({ color: 0xff00ff });
+const prevRay = new Line(geo, mat);
+scene.add(prevRay);
 
 function animate() {
-  requestAnimationFrame( animate );
+  requestAnimationFrame(animate);
 
   // cube.rotation.x += 0.01;
   // cube.rotation.y += 0.01;
 
-  renderer.render( scene, camera );
-};
+  renderer.render(scene, camera);
+}
 
 animate();
 
 // UI & Events
 
-const testButton = document.getElementById("test")
+const testButton = document.getElementById("test");
 testButton.onclick = (e) => {
-  const scalar = 50
-  const Xsign = Math.random() < 0.5 ? -1 : 1
-  const Zsign = Math.random() < 0.5 ? -1 : 1
-  cube.position.set(Xsign*Math.random()* scalar, 1, Zsign*Math.random()* scalar)
-}
+  const scalar = 50;
+  const Xsign = Math.random() < 0.5 ? -1 : 1;
+  const Zsign = Math.random() < 0.5 ? -1 : 1;
+  cube.position.set(
+    Xsign * Math.random() * scalar,
+    1,
+    Zsign * Math.random() * scalar,
+  );
+};
 
-const test2Button = document.getElementById("test2")
+const test2Button = document.getElementById("test2");
 test2Button.onclick = (e) => {
   // respawn a red square somewhere within the current floor
-  material = new MeshToonMaterial( { color: 0xff0000 } );
-  const cube = new Mesh( geometry, material );
-  const scalar = 50
-  const Xsign = Math.random() < 0.5 ? -1 : 1
-  const Zsign = Math.random() < 0.5 ? -1 : 1
-  cube.position.set(Xsign * Math.random() * scalar, 1, Zsign * Math.random() * scalar)
-  cube.name = 'randomRedCube'
-  scene.add( cube );
-}
+  material = new MeshStandardMaterial({ color: 0xff0000 });
+  const cube = new Mesh(geometry, material);
+  const scalar = 50;
+  const Xsign = Math.random() < 0.5 ? -1 : 1;
+  const Zsign = Math.random() < 0.5 ? -1 : 1;
+  cube.position.set(
+    Xsign * Math.random() * scalar,
+    1,
+    Zsign * Math.random() * scalar,
+  );
+  cube.name = "randomRedCube";
+  scene.add(cube);
+};
 
-const test3Button = document.getElementById("test3")
+const test3Button = document.getElementById("test3");
 test3Button.onclick = (e) => {
-  console.log(scene.children)
-}
+  console.log(scene.children);
+};
 
-const canvasElement = document.querySelector('canvas')
-const changeOrbitElement = document.querySelector('input#changeOrbit') as HTMLInputElement
-const castRayElement = document.querySelector('input#castRay') as HTMLInputElement
+const canvasElement = document.querySelector("canvas");
+const changeOrbitElement = document.querySelector(
+  "input#changeOrbit",
+) as HTMLInputElement;
+const castRayElement = document.querySelector(
+  "input#castRay",
+) as HTMLInputElement;
 
 canvasElement.onclick = (e) => {
   if (castRayElement.checked) {
-    console.log("casting ray")
+    console.log("casting ray");
     // throw out a ray and find a random object
-    const rayCaster = new Raycaster()
-    rayCaster.setFromCamera(new Vector2(( e.clientX / window.innerWidth ) * 2 - 1, - ( e.clientY / window.innerHeight ) * 2 + 1), camera)
-    const intersection = rayCaster.intersectObject(scene, true)
-  
+    const rayCaster = new Raycaster();
+    rayCaster.setFromCamera(
+      new Vector2(
+        (e.clientX / window.innerWidth) * 2 - 1,
+        -(e.clientY / window.innerHeight) * 2 + 1,
+      ),
+      camera,
+    );
+    const intersection = rayCaster.intersectObject(scene, true);
+
     // draw the line that was raycasted
-    const direction = rayCaster.ray.direction.multiplyScalar(50)
-    const p0 = rayCaster.ray.origin
-    const p1 = new Vector3(p0.x, p0.y, p0.z).add(direction)
-    const p2 = new Vector3(p1.x, p1.y, p1.z).add(direction)
-  
-    const points = []
-    points.push(p0)
-    points.push(p1)
-    points.push(p2)
-    const geo = new BufferGeometry()
-    prevRay.geometry.setFromPoints(points)
-  
+    const direction = rayCaster.ray.direction.multiplyScalar(50);
+    const p0 = rayCaster.ray.origin;
+    const p1 = new Vector3(p0.x, p0.y, p0.z).add(direction);
+    const p2 = new Vector3(p1.x, p1.y, p1.z).add(direction);
+
+    const points = [];
+    points.push(p0);
+    points.push(p1);
+    points.push(p2);
+    prevRay.geometry.setFromPoints(points);
+
     //check intersection
     if (intersection.length > 0) {
-  
-      const obj = intersection[0].object
-      console.log(`intersected with ${intersection.length} objects`)
-  
+      const obj = intersection[0].object;
+      console.log(`intersected with ${intersection.length} objects`);
+
       if (changeOrbitElement.checked) {
-        console.log(`controls changed to ${obj.name}`)
-        controls.target = obj.position
+        console.log(`controls changed to ${obj.name}`);
+        controls.target = obj.position;
       }
-    } 
+    }
   }
-}
+};
 
 window.onresize = () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
 
-  renderer.setSize( window.innerWidth, window.innerHeight );
-}
+  renderer.setSize(window.innerWidth, window.innerHeight);
+};
