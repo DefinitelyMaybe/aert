@@ -8,7 +8,8 @@
     "lint": "deno lint --unstable src",
     "compile-ts": "npx tsc",
     "compile-svelte": "",
-    "build-renaming": "deno run -A ./utils/watch-and-rename.ts",
-    "build-place-threejs": "deno run -A ./utils/place-build.ts"
+    "watch-rename-urls": "deno run -A ./utils/watch-and-rename.ts",
+    "build-copy-threejs": "deno run -A ./utils/build-copy-three.ts",
+    "build-bundle-from-main": ""
   }
 }
