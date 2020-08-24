@@ -12,19 +12,22 @@ Building slowly.
 * inventory of objects
 * place objects into world
   * basic shape to random location
+* How to customize three.js
+  * [introduce a deps.ts file](https://deno.land/manual/examples/manage_dependencies)
 
 Food for thought:
 
 * RxJS -> signals graphing i.e. interrupt based programming for ui
 * In-World editor interface with context switching
 
-# The build Folder
+# Building
 
-The build folder contains some files that are manually placed there.
+Firstly, the libs folder is expected to contain the following:
 
-* `./three.module.js` from `three/build`
-* `./jsm/**/*.js` from `three/examples/jsm`
+* three.js via `git clone https://github.com/mrdoob/three.js.git`
 
-The typescript compiler also compiles files from `src/` into the `build/` folder
+Building the output folder:
 
-The Deno script automatically edits the urls within the build folder to point to the manually placed scripts.
+* Svelte compilation
+* bundling the entry point of the app
+  * a deps.ts file should be used instead of referencing the libs folder from each script.
