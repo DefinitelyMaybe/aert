@@ -16,9 +16,9 @@ import {
   Color,
   HemisphereLight,
   CameraHelper,
-} from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { CannonPhysics } from "three/examples/jsm/physics/CannonPhysics";
+  CannonPhysics,
+  OrbitControls
+} from "./deps.ts";
 
 const physics = new CannonPhysics();
 
