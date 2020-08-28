@@ -14,6 +14,7 @@ Building slowly.
   * basic shape to random location
 * How to customize three.js
   * [introduce a deps.ts file](https://deno.land/manual/examples/manage_dependencies)
+  * Extending scripts?
 * In-World editor interface with context switching
 
 # Building
