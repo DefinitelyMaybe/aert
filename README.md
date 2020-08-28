@@ -14,19 +14,17 @@ Building slowly.
   * basic shape to random location
 * How to customize three.js
   * [introduce a deps.ts file](https://deno.land/manual/examples/manage_dependencies)
-
-Food for thought:
-
-* RxJS -> signals graphing i.e. interrupt based programming for ui
 * In-World editor interface with context switching
 
 # Building
 
-Firstly, the libs folder is expected to contain the following:
+The libs folder is expected to contain the following:
 
-* three.js via `git clone https://github.com/mrdoob/three.js.git`
+* three.js
+  1. `git clone --depth=1 https://github.com/mrdoob/three.js.git`
+  2. `deno run -A ./utils/libs-threejs-modForDeno.ts`
 
-Building the output folder:
+To generate the build folder:
 
 * Svelte compilation
 * bundling the entry point of the app
