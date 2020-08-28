@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 import {
   Scene,
   PerspectiveCamera,
@@ -16,11 +17,11 @@ import {
   Color,
   HemisphereLight,
   CameraHelper,
-  CannonPhysics,
-  OrbitControls
+  OrbitControls,
+  AmmoPhysics
 } from "./deps.ts";
 
-const physics = new CannonPhysics();
+const physics = AmmoPhysics();
 
 const renderer = new WebGLRenderer();
 renderer.shadowMap.enabled = true;
@@ -104,7 +105,7 @@ testButton.onclick = (e) => {
 };
 
 const test2Button = document.getElementById("test2");
-test2Button.onclick = (e) => {
+test2Button!.onclick = (e) => {
   // respawn a red square somewhere within the current floor
   material = new MeshStandardMaterial({ color: 0xff0000 });
   const cube = new Mesh(geometry, material);
@@ -121,7 +122,7 @@ test2Button.onclick = (e) => {
 };
 
 const test3Button = document.getElementById("test3");
-test3Button.onclick = (e) => {
+test3Button!.onclick = (e) => {
   console.log(scene.children);
 };
 
@@ -133,7 +134,7 @@ const castRayElement = document.querySelector(
   "input#castRay",
 ) as HTMLInputElement;
 
-canvasElement.onclick = (e) => {
+canvasElement!.onclick = (e) => {
   if (castRayElement.checked) {
     console.log("casting ray");
     // throw out a ray and find a random object
