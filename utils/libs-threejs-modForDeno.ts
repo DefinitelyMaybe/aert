@@ -3,6 +3,11 @@ Overview:
 
 - Change examples/jsm import URLS
 - Add references to .d.ts files within respective .js files
+  - Update .d.ts import references to include file type
+
+extras:
+
+- Remove all of the .html files within the  examples folder
 
 */
 
@@ -14,23 +19,30 @@ Overview:
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
 
-function loopDir(path: string) {
+const filesToDelete: string[] = [];
+const examplesPath = "libs/three.js/examples/";
+
+function loopDirAndMatch(path: string, pattern: RegExp, callBack: Function) {
   for (const dirEntry of Deno.readDirSync(path)) {
     if (dirEntry.isDirectory) {
-      loopDir(`${path}/${dirEntry.name}`);
+      loopDirAndMatch(`${path}${dirEntry.name}/`, pattern, callBack);
     } else {
       // look for .d.ts files
-      const match = dirEntry.name.match(/.d.ts/g);
+      const match = dirEntry.name.match(pattern);
       if (match) {
-        updateFile(`${path}/${dirEntry.name}`);
+        callBack(`${path}/${dirEntry.name}`);
       }
     }
   }
 }
 
-function updateFile(file: string) {
+function addToDeleteList(path: string) {
+  filesToDelete.push(path);
+}
+
+function updateScript(path: string) {
   // update to include .d.ts in url
-  let data = Deno.readFileSync(file);
+  let data = Deno.readFileSync(path);
   let text = decoder.decode(data);
   const matches = text.matchAll(/import .+"/g);
   if (matches) {
@@ -39,13 +51,52 @@ function updateFile(file: string) {
       text = text.replace(match[0], newImport);
     }
   }
-  // write the new text to the same file
+  // write the new text to the same path
   data = encoder.encode(text);
-  Deno.writeFileSync(file, data);
+  Deno.writeFileSync(path, data);
 }
 
-//read through src
-loopDir("libs/three.js/examples/jsm");
+function existsSync(path: string): boolean {
+  try {
+    Deno.lstatSync(path);
+    return true;
+  } catch (err) {
+    if (err instanceof Deno.errors.NotFound) {
+      return false;
+    }
+    throw err;
+  }
+}
+
+if (import.meta.main) {
+  // Delete extra .html files
+  loopDirAndMatch(examplesPath, /.html/g, addToDeleteList);
+
+  if (filesToDelete.length != 0) {
+    console.log(`Some .html files were deleted from ${examplesPath}`);
+    console.log(filesToDelete);
+    filesToDelete.forEach((path) => {
+      Deno.removeSync(path);
+    });
+  }
+
+  // Delete the folders we're not using
+  const UnusedFolders = [
+    "./libs/three.js/.github",
+    "./libs/three.js/build",
+    "./libs/three.js/docs",
+    "./libs/three.js/editor",
+    "./libs/three.js/files",
+    "./libs/three.js/test",
+    "./libs/three.js/utils",
+  ];
+
+  UnusedFolders.forEach((path) => {
+    if (existsSync(path)) {
+      Deno.removeSync(path);
+    }
+  });
+}
 
 /*
 patterns
