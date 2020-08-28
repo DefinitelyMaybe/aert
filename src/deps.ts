@@ -18,4 +18,4 @@ export {
   CameraHelper,
 } from "../libs/three.js/src/three.js";
 export { OrbitControls } from "../libs/three.js/examples/jsm/controls/OrbitControls.js";
-export { CannonPhysics } from "../libs/three.js/examples/jsm/physics/CannonPhysics.js";
+export { AmmoPhysics } from "../libs/three.js/examples/jsm/physics/AmmoPhysics.js";
