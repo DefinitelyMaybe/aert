@@ -55,7 +55,7 @@ function updateTypescripts(path: string) {
   // console.log(xtext)
 
   // match the import
-  text = text.replaceAll(/import .+?;"/g, m => {
+  text = text.replaceAll(/import .+?;"/gms, m => {
     console.log(m)
     return m
   });
