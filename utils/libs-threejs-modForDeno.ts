@@ -13,7 +13,7 @@ function loopDirAndMatch(path: string, pattern: RegExp, callBack: Function) {
       // look for .d.ts files
       const match = dirEntry.name.match(pattern);
       if (match) {
-        callBack(`${path}/${dirEntry.name}`);
+        callBack(`${path}${dirEntry.name}`);
       }
     }
   }
@@ -46,19 +46,23 @@ function updateTypescripts(path: string) {
   // update .d.ts script imports with deno appropriate urls
   let data = Deno.readFileSync(path);
   let text = decoder.decode(data);
+  // const x = encoder.encode(" ")
+  // let xtext = decoder.decode(x)
+  // xtext = xtext.replaceAll(/ /g, m => {
+  //   console.log(m)
+  //   return "a"
+  // })
+  // console.log(xtext)
 
   // match the import
-  const matches = text.matchAll(/import .+;"/g);
-  if (matches) {
-    for (const match of matches) {
-      console.log(match[0]);
-      // const newImport = `${match[0].slice(0, match[0].length - 1)}.d.ts"`;
-      // text = text.replace(match[0], newImport);
-    }
-  }
+  text = text.replaceAll(/import .+?;"/g, m => {
+    console.log(m)
+    return m
+  });
+  
   // write the new text to the same path
-  data = encoder.encode(text);
-  Deno.writeFileSync(path, data);
+  // data = encoder.encode(text);
+  // Deno.writeFileSync(path, data);
 }
 
 function existsSync(path: string): boolean {
@@ -74,6 +78,7 @@ function existsSync(path: string): boolean {
 }
 
 if (import.meta.main) {
+
   // Delete the folders/files we're not using
   const UnusedFilesAndFolders = [
     "./libs/three.js/.github",
