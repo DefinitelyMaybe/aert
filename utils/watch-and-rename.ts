@@ -1,5 +1,3 @@
-/// <reference path="./lib.deno.d.ts" />
-
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
 
