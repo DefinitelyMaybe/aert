@@ -1,3 +1,12 @@
+// Possible improvement would be to post this up as a cli
+// user provides directory to place result
+// cli runs git clone then runs script on clone
+
+// To release to public:
+// make a github repo. tag a release. make readme. detail deno install
+// readme states `deno install 'url/to/release' threejsForDeno`
+// then it'd be `threejsForDeno ./path/to/somewhere`
+
 const filesToDelete: string[] = [];
 const examplesPath = "libs/three.js/examples/";
 const srcPath = "libs/three.js/src/";
