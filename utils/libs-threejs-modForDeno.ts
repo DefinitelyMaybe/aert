@@ -20,30 +20,37 @@ function addToDeleteList(path: string) {
   filesToDelete.push(path);
 }
 
-function updatescripts(path: string) {
+function updateScripts(path: string) {
   // update .js script imports with deno appropriate urls
   let data = Deno.readTextFileSync(path);
 
-  // // match the import
+  // match the import
   data = data.replaceAll(/import .+?;/gms, (m) => {
-    m = `${m.slice(0, m.length - 2)}.d.ts${m.slice(m.length - 2)}`;
-    console.log(m);
+    m = m.replace(/build\/three.module.js/g, "src/Three.js");
     return m;
   });
 
   // write the new text to the same path
-  // Deno.writeFileSync(path, data);
+  Deno.writeTextFileSync(path, data);
 }
 
 function updateTypescripts(path: string) {
   // update .d.ts script imports with deno appropriate urls
   let data = Deno.readTextFileSync(path);
 
-  // console.log(data.slice(0, 100))
-
-  // match the import
+  // match imports
   data = data.replaceAll(/import .+?;/gms, (m) => {
-    m = `${m.slice(0, m.length - 2)}.d.ts${m.slice(m.length - 2)}`;
+    if (!m.includes(".d.ts")) {
+      m = `${m.slice(0, m.length - 2)}.d.ts${m.slice(m.length - 2)}`;
+    }
+    return m;
+  });
+
+  // match exports
+  data = data.replaceAll(/export \* from .+?;/gms, (m) => {
+    if (!m.includes(".d.ts")) {
+      m = `${m.slice(0, m.length - 2)}.d.ts${m.slice(m.length - 2)}`;
+    }
     return m;
   });
 
@@ -113,11 +120,26 @@ if (import.meta.main) {
   loopDirAndMatch(srcPath, /.d.ts/g, updateTypescripts);
 
   // Update .js urls in the examples folder
-  loopDirAndMatch(examplesPath, /.js/g, updatescripts);
-  // i.e.
-  // find import { ... } from "../../../build/three.module.js"
-  // replace with import { ... } from "../../../src/Three.js"
+  loopDirAndMatch(examplesPath, /.js/g, updateScripts);
 
-  // Add types reference to top of src/Three.js
-  // If needed, add '/// <reference lib="dom" />' to the top of src/Three.js
+  // Add types reference to top of src/Three.js [/// <reference types="..." />]
+  // If needed, add '/// <reference lib="dom" />' to the top of src/Three.js as well
+  let THREEJS = Deno.readTextFileSync("./libs/three.js/src/Three.js");
+  if (!THREEJS.includes('<reference types="./Three.d.ts"')) {
+    THREEJS = THREEJS.replace(
+      /^/,
+      `/// <reference types="./Three.d.ts" />\n/// <reference lib="dom" />\n`,
+    );
+  }
+  Deno.writeTextFileSync("./libs/three.js/src/Three.js", THREEJS);
+
+  // update exported types url within src/Three.d.ts
+  let THREEDTS = Deno.readTextFileSync("./libs/three.js/src/Three.d.ts");
+  THREEDTS = THREEDTS.replaceAll(/export \* from .+?;/gms, (m) => {
+    if (!m.includes(".d.ts")) {
+      m = `${m.slice(0, m.length - 2)}.d.ts${m.slice(m.length - 2)}`;
+    }
+    return m;
+  });
+  Deno.writeTextFileSync("./libs/three.js/src/Three.d.ts", THREEDTS);
 }
