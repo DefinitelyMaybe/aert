@@ -18,7 +18,7 @@ import {
   HemisphereLight,
   CameraHelper,
   OrbitControls,
-  AmmoPhysics
+  AmmoPhysics,
 } from "./deps.ts";
 
 const physics = AmmoPhysics();
@@ -93,7 +93,7 @@ animate();
 // UI & Events
 
 const testButton = document.getElementById("test");
-testButton.onclick = (e) => {
+testButton!.onclick = (e) => {
   const scalar = 50;
   const Xsign = Math.random() < 0.5 ? -1 : 1;
   const Zsign = Math.random() < 0.5 ? -1 : 1;
