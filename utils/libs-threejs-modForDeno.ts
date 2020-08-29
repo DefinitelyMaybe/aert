@@ -1,6 +1,3 @@
-const decoder = new TextDecoder();
-const encoder = new TextEncoder();
-
 const filesToDelete: string[] = [];
 const examplesPath = "libs/three.js/examples/";
 const srcPath = "libs/three.js/src/";
@@ -24,45 +21,34 @@ function addToDeleteList(path: string) {
 }
 
 function updatescripts(path: string) {
-  // update .d.ts script imports with deno appropriate urls
-  let data = Deno.readFileSync(path);
-  let text = decoder.decode(data);
+  // update .js script imports with deno appropriate urls
+  let data = Deno.readTextFileSync(path);
 
-  // match the import
-  const matches = text.matchAll(/import .+;"/g);
-  if (matches) {
-    for (const match of matches) {
-      console.log(match[0]);
-      // const newImport = `${match[0].slice(0, match[0].length - 1)}.d.ts"`;
-      // text = text.replace(match[0], newImport);
-    }
-  }
+  // // match the import
+  data = data.replaceAll(/import .+?;/gms, (m) => {
+    m = `${m.slice(0, m.length - 2)}.d.ts${m.slice(m.length - 2)}`;
+    console.log(m);
+    return m;
+  });
+
   // write the new text to the same path
-  data = encoder.encode(text);
-  Deno.writeFileSync(path, data);
+  // Deno.writeFileSync(path, data);
 }
 
 function updateTypescripts(path: string) {
   // update .d.ts script imports with deno appropriate urls
-  let data = Deno.readFileSync(path);
-  let text = decoder.decode(data);
-  // const x = encoder.encode(" ")
-  // let xtext = decoder.decode(x)
-  // xtext = xtext.replaceAll(/ /g, m => {
-  //   console.log(m)
-  //   return "a"
-  // })
-  // console.log(xtext)
+  let data = Deno.readTextFileSync(path);
+
+  // console.log(data.slice(0, 100))
 
   // match the import
-  text = text.replaceAll(/import .+?;"/gms, m => {
-    console.log(m)
-    return m
+  data = data.replaceAll(/import .+?;/gms, (m) => {
+    m = `${m.slice(0, m.length - 2)}.d.ts${m.slice(m.length - 2)}`;
+    return m;
   });
-  
+
   // write the new text to the same path
-  // data = encoder.encode(text);
-  // Deno.writeFileSync(path, data);
+  Deno.writeTextFileSync(path, data);
 }
 
 function existsSync(path: string): boolean {
@@ -78,7 +64,6 @@ function existsSync(path: string): boolean {
 }
 
 if (import.meta.main) {
-
   // Delete the folders/files we're not using
   const UnusedFilesAndFolders = [
     "./libs/three.js/.github",
@@ -128,11 +113,11 @@ if (import.meta.main) {
   loopDirAndMatch(srcPath, /.d.ts/g, updateTypescripts);
 
   // Update .js urls in the examples folder
-  // loopDirAndMatch(examplesPath, /.js/g, updatescripts);
+  loopDirAndMatch(examplesPath, /.js/g, updatescripts);
   // i.e.
   // find import { ... } from "../../../build/three.module.js"
   // replace with import { ... } from "../../../src/Three.js"
-  
+
   // Add types reference to top of src/Three.js
   // If needed, add '/// <reference lib="dom" />' to the top of src/Three.js
 }
