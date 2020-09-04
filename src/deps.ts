@@ -16,6 +16,6 @@ export {
   Color,
   HemisphereLight,
   CameraHelper,
-} from "../libs/three.js/src/three.js";
-export { OrbitControls } from "../libs/three.js/examples/jsm/controls/OrbitControls.js";
-export { AmmoPhysics } from "../libs/three.js/examples/jsm/physics/AmmoPhysics.js";
+} from "https://deno.land/x/threejs_4_deno@v120/src/Three.js";
+export { OrbitControls } from "https://deno.land/x/threejs_4_deno@v120/examples/jsm/controls/OrbitControls.js";
+export { AmmoPhysics } from "https://deno.land/x/threejs_4_deno@v120/examples/jsm/physics/AmmoPhysics.js";
