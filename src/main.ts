@@ -1,4 +1,3 @@
-/// <reference lib="dom" />
 import {
   Scene,
   PerspectiveCamera,
@@ -18,10 +17,7 @@ import {
   HemisphereLight,
   CameraHelper,
   OrbitControls,
-  AmmoPhysics,
 } from "./deps.ts";
-
-const physics = AmmoPhysics();
 
 const renderer = new WebGLRenderer();
 renderer.shadowMap.enabled = true;
