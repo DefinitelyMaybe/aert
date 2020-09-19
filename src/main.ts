@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 import {
   Scene,
   PerspectiveCamera,
@@ -31,8 +32,6 @@ const directionalLight = new DirectionalLight();
 directionalLight.position.set(5, 5, 5);
 directionalLight.castShadow = true;
 scene.add(directionalLight);
-
-console.log(directionalLight.shadow);
 
 const hemisphereLight = new HemisphereLight(0xaaaaaa, 0xaaaaaa, 0.7);
 scene.add(hemisphereLight);
