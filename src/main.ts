@@ -16,9 +16,8 @@ import {
   LineBasicMaterial,
   Color,
   HemisphereLight,
-  CameraHelper,
-  OrbitControls,
 } from "./deps.ts";
+import { ObjectControls } from "./ObjectControls.ts";
 
 const renderer = new WebGLRenderer();
 renderer.shadowMap.enabled = true;
@@ -46,9 +45,6 @@ camera.position.set(10, 10, 10);
 camera.lookAt(new Vector3(0, 0, 0));
 scene.add(camera);
 
-const helper = new CameraHelper(directionalLight.shadow.camera);
-scene.add(helper);
-
 const plane = new PlaneBufferGeometry(100, 100, 1, 1);
 plane.rotateX(-Math.PI / 2);
 let material = new MeshStandardMaterial({ color: 0xaaaaaa });
@@ -66,7 +62,7 @@ cube.castShadow = true;
 cube.receiveShadow = true;
 scene.add(cube);
 
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new ObjectControls(camera, renderer.domElement);
 controls.target = cube.position;
 
 const geo = new BufferGeometry();
