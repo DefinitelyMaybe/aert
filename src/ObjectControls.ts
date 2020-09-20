@@ -1,213 +1,147 @@
+/// <reference lib="dom" />
+import {
+  Euler,
+} from "./deps.ts";
 import type {
   Object3D,
-} from "./deps.ts";
+} from "./deps.ts"
 
 class ObjectControls {
-  
-  object;
-  domElement;
-  target:any;
-  lock:any;
+  object: Object3D;
+  domElement: HTMLElement;
+
+  isLocked: boolean;
+
+  euler: Euler;
+
+	minPolarAngle = 0; // radians
+  maxPolarAngle = Math.PI; // radians
+  PI_2 = Math.PI / 2
+
+  acceleration: number;
+
+  forward: number;
+  backward: number;
+  left: number;
+  right: number;
+  jump: number;
 
   constructor(
     object: Object3D,
     domElement: HTMLElement,
   ) {
-
     this.object = object;
     this.domElement = domElement;
 
-    this.domElement.addEventListener("mousedown", (event) => {
-      console.log("click event");
-      this.domElement.requestPointerLock()
-    })
+    this.isLocked = false;
 
-    this.domElement.addEventListener("pointerlockchange", (event) => {
-      console.log("pointerchange");
-      if (document.pointerLockElement === this.domElement) {
-        console.log("Locked");
-      } else {
-        console.log("unlocked");
+    this.euler = new Euler(0, 0, 0, 'YXZ')
+
+    this.acceleration = 10.0;
+
+    this.forward = 0;
+    this.backward = 0;
+    this.left = 0;
+    this.right = 0;
+    this.jump = 0;
+
+    this.domElement.addEventListener("mousedown", () => {
+      if (!this.isLocked) {
+        this.domElement.requestPointerLock();
       }
-    })
+    });
 
-    // this.movementSpeed = 1.0;
-    // this.movementSpeedMultiplier = 1.0;
+    document.addEventListener("pointerlockchange", () => {
+      if (document.pointerLockElement === this.domElement) {
+        this.isLocked = true
+      } else {
+        this.isLocked = false
+      }
+    });
 
-    // this.domElement.addEventListener("contextmenu", this.contextmenu, false);
+    this.domElement.addEventListener("mousemove", (event:MouseEvent) => {
+      if (this.isLocked === false) {
+        return
+      };
 
-    // this.domElement.addEventListener("mousemove", this.mousemove, false);
-    // this.domElement.addEventListener("mousedown", this.mousedown, false);
-    // this.domElement.addEventListener("mouseup", this.mouseup, false);
+      const movementX = event.movementX || 0;
+      const movementY = event.movementY || 0;
 
-    // window.addEventListener("keydown", this.keydown, false);
-    // window.addEventListener("keyup", this.keyup, false);
+      this.euler.setFromQuaternion(object.quaternion);
+
+      // could adjust this later to make it more or less sensitive
+      this.euler.y -= movementX * 0.002;
+      this.euler.x -= movementY * 0.002;
+
+      this.euler.x = Math.max(
+        this.PI_2 - this.maxPolarAngle,
+        Math.min(this.PI_2 - this.minPolarAngle, this.euler.x),
+      );
+
+      object.quaternion.setFromEuler(this.euler);
+
+      // this.domElement.dispatchEvent(new Event("change"));
+    });
+    // this.domElement.addEventListener("mousedown", this.mousedown);
+    // this.domElement.addEventListener("mouseup", this.mouseup);
+
+    document.addEventListener("keydown", (event) => {
+      if (this.isLocked) {
+        switch (event.key) {
+          case 'a':
+            this.left = 1
+            break;
+          case 'd':
+            this.right = 1
+            break;
+          case 'w':
+            this.forward = 1
+            break
+          case 's':
+            this.backward = 1
+            break
+          case ' ':
+            this.jump = 1
+            break
+          default:
+            console.log(`Didn't handle keydown for: ${event.key}`);
+            break;
+        }
+      }
+    });
+    document.addEventListener("keyup", (event) => {
+      if (this.isLocked) {
+        switch (event.key) {
+          case 'a':
+            this.left = 0
+            break;
+          case 'd':
+            this.right = 0
+            break;
+          case 'w':
+            this.forward = 0
+            break
+          case 's':
+            this.backward = 0
+            break
+          case ' ':
+            this.jump = 0
+            break
+          default:
+            // console.log(`Didn't handle keyup for: ${event.key}`);
+            break;
+        }
+      }
+    });
   }
 
-  keydown(event: KeyboardEvent) {
-    // if (event.altKey) {
-    //   return;
-    // }
+  update(delta:number) {
+    const speed = delta * this.acceleration
+    // do some movement
 
-    // //event.preventDefault();
-
-    // switch (event.code) {
-    //   case "shift":
-    //     this.movementSpeedMultiplier = .1;
-    //     break;
-    //   case "w":
-    //     this.moveState.forward = 1;
-    //     break;
-    //   case "s":
-    //     this.moveState.back = 1;
-    //     break;
-
-    //   case "a":
-    //     this.moveState.left = 1;
-    //     break;
-    //   case "d":
-    //     this.moveState.right = 1;
-    //     break;
-    //   case "r":
-    //     this.moveState.up = 1;
-    //     break;
-    //   case "f":
-    //     this.moveState.down = 1;
-    //     break;
-    //   case "up":
-    //     this.moveState.pitchUp = 1;
-    //     break;
-    //   case "down":
-    //     this.moveState.pitchDown = 1;
-    //     break;
-    //   case "left":
-    //     this.moveState.yawLeft = 1;
-    //     break;
-    //   case "right":
-    //     this.moveState.yawRight = 1;
-    //     break;
-    //   case "q":
-    //     this.moveState.rollLeft = 1;
-    //     break;
-    //   case "e":
-    //     this.moveState.rollRight = 1;
-    //     break;
-    // }
-
-    // this.updateMovementVector();
-    // this.updateRotationVector();
-  }
-
-  keyup(event: KeyboardEvent) {
-    // switch (event.key) {
-    //   case "shift":
-    //     this.movementSpeedMultiplier = 1;
-    //     break;
-    //   case "w":
-    //     this.moveState.forward = 0;
-    //     break;
-    //   case "s":
-    //     this.moveState.back = 0;
-    //     break;
-    //   case "a":
-    //     this.moveState.left = 0;
-    //     break;
-    //   case "d":
-    //     this.moveState.right = 0;
-    //     break;
-    //   case "r":
-    //     this.moveState.up = 0;
-    //     break;
-    //   case "f":
-    //     this.moveState.down = 0;
-    //     break;
-    //   case "up":
-    //     this.moveState.pitchUp = 0;
-    //     break;
-    //   case "down":
-    //     this.moveState.pitchDown = 0;
-    //     break;
-    //   case "left":
-    //     this.moveState.yawLeft = 0;
-    //     break;
-    //   case "right":
-    //     this.moveState.yawRight = 0;
-    //     break;
-    //   case "q":
-    //     this.moveState.rollLeft = 0;
-    //     break;
-    //   case "e":
-    //     this.moveState.rollRight = 0;
-    //     break;
-    // }
-
-    // this.updateMovementVector();
-    // this.updateRotationVector();
-  }
-
-  mousedown(event: MouseEvent) {
-    // this.domElement.focus();
-
-    // event.preventDefault();
-    // event.stopPropagation();
-
-    // if (false /*this.dragToLook*/) {
-    //   // this.mouseStatus++;
-    // } else {
-    //   switch (event.button) {
-    //     case 0:
-    //       this.moveState.forward = 1;
-    //       break;
-    //     case 2:
-    //       this.moveState.back = 1;
-    //       break;
-    //   }
-
-    //   this.updateMovementVector();
-    // }
-  }
-
-  mousemove(event: MouseEvent) {
-    // if (!this.dragToLook || this.mouseStatus > 0) {
-    //   var container = this.getContainerDimensions();
-    //   var halfWidth = container.size[0] / 2;
-    //   var halfHeight = container.size[1] / 2;
-
-    //   this.moveState.yawLeft =
-    //     -((event.pageX - container.offset[0]) - halfWidth) / halfWidth;
-    //   this.moveState.pitchDown =
-    //     ((event.pageY - container.offset[1]) - halfHeight) / halfHeight;
-
-    //   this.updateRotationVector();
-    // }
-  }
-
-  mouseup(event: MouseEvent) {
-    // event.preventDefault();
-    // event.stopPropagation();
-
-    // if (false /*this.dragToLook*/) {
-    //   // this.mouseStatus--;
-
-    //   // this.moveState.yawLeft = this.moveState.pitchDown = 0;
-    // } else {
-    //   switch (event.button) {
-    //     case 0:
-    //       this.moveState.forward = 0;
-    //       break;
-    //     case 2:
-    //       this.moveState.back = 0;
-    //       break;
-    //   }
-
-    //   this.updateMovementVector();
-    // }
-
-    // this.updateRotationVector();
-  }
-
-  contextmenu(event: Event) {
-    event.preventDefault();
+    this.object.translateX( (-this.left + this.right) * speed )
+    this.object.translateY( ( this.jump) * speed )
+    this.object.translateZ( (-this.forward + this.backward) * speed )
   }
 }
 
