@@ -20,6 +20,12 @@ import {
 } from "./deps.ts";
 import { ObjectControls } from "./ObjectControls.ts";
 
+// Next Steps:
+
+// Look into shadows from the directional light
+
+// create cannon-es module for deno
+// start with this https://github.com/pmndrs/cannon-es/tree/master/src ...there's .ts there... omg.
 
 const clock = new Clock(true)
 
@@ -35,6 +41,9 @@ const directionalLight = new DirectionalLight();
 directionalLight.position.set(5, 5, 5);
 directionalLight.castShadow = true;
 scene.add(directionalLight);
+
+// const directionalLightHelper = new DirectionalLightHelper(directionalLight)
+// scene.add(directionalLightHelper)
 
 const hemisphereLight = new HemisphereLight(0xaaaaaa, 0xaaaaaa, 0.7);
 scene.add(hemisphereLight);
@@ -95,8 +104,9 @@ function onWindowResize() {
 
 window.addEventListener("resize", onWindowResize, false);
 
-const testButton = document.getElementById("test");
-testButton!.onclick = (e) => {
+//move green cube
+const testButton = document.getElementById("test")!;
+testButton.onclick = (e) => {
   const scalar = 50;
   const Xsign = Math.random() < 0.5 ? -1 : 1;
   const Zsign = Math.random() < 0.5 ? -1 : 1;
@@ -107,25 +117,31 @@ testButton!.onclick = (e) => {
   );
 };
 
-const test2Button = document.getElementById("test2");
-test2Button!.onclick = (e) => {
+// add red cubes
+const test2Button = document.getElementById("test2")!;
+test2Button.onclick = (e) => {
   // respawn a red square somewhere within the current floor
   material = new MeshStandardMaterial({ color: 0xff0000 });
-  const cube = new Mesh(geometry, material);
-  const scalar = 50;
-  const Xsign = Math.random() < 0.5 ? -1 : 1;
-  const Zsign = Math.random() < 0.5 ? -1 : 1;
-  cube.position.set(
-    Xsign * Math.random() * scalar,
-    1,
-    Zsign * Math.random() * scalar,
-  );
-  cube.name = "randomRedCube";
-  scene.add(cube);
+  for (let i = 0; i < 100; i++) {
+    const cube = new Mesh(geometry, material);
+    const scalar = 50;
+    const Xsign = Math.random() < 0.5 ? -1 : 1;
+    const Zsign = Math.random() < 0.5 ? -1 : 1;
+    cube.position.set(
+      Xsign * Math.random() * scalar,
+      1,
+      Zsign * Math.random() * scalar,
+    );
+    cube.name = "randomRedCube";
+    cube.castShadow = true;
+    cube.receiveShadow = true;
+    scene.add(cube);     
+  }
 };
 
-const test3Button = document.getElementById("test3");
-test3Button!.onclick = (e) => {
+// console log scene
+const test3Button = document.getElementById("test3")!;
+test3Button.onclick = (e) => {
   console.log(scene.children);
 };
 
@@ -182,3 +198,14 @@ window.onresize = () => {
 
   renderer.setSize(window.innerWidth, window.innerHeight);
 };
+
+const slider = document.getElementById("myRange")! as HTMLInputElement;
+slider.value = controls.acceleration.toString()
+
+slider.addEventListener('change', () => {
+  controls.acceleration = parseInt(slider.value)
+  sliderNumber.innerText = `acceleration - ${slider.value}`
+})
+
+const sliderNumber = document.getElementById("myRangeNumber") as HTMLParagraphElement;
+sliderNumber.innerText = `acceleration - ${controls.acceleration}`
