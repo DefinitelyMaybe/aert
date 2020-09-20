@@ -8,15 +8,18 @@
 </head>
 <body>
   <main>
-    <button id="test">test</button>
-    <button id="test2">test2</button>
-    <button id="test3">test3</button>
+    <button id="test">move green cube</button>
+    <button id="test2">add red cubes</button>
+    <button id="test3">print three.scene</button>
+    <br>
     <label for="changeOrbit">Change Orbit</label>
     <input type="checkbox" name="changeOrbit" id="changeOrbit">
+    <br>
     <label for="castRay">Cast Ray</label>
     <input type="checkbox" name="castRay" id="castRay">
-    <label for="myRange">acceleration</label>
-    <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+    <br>
+    <label for="myRange" id="myRangeNumber">acceleration - 00</label>
+    <input type="range" min="0" max="50" id="myRange">
   </main>
   <script type="module" src="main.js"></script>
 </body>
