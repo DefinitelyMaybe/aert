@@ -37,7 +37,7 @@ class ObjectControls {
 
     this.euler = new Euler(0, 0, 0, 'YXZ')
 
-    this.acceleration = 10.0;
+    this.acceleration = 30.0;
 
     this.forward = 0;
     this.backward = 0;
