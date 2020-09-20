@@ -16,8 +16,12 @@ import {
   LineBasicMaterial,
   Color,
   HemisphereLight,
+  Clock,
 } from "./deps.ts";
 import { ObjectControls } from "./ObjectControls.ts";
+
+
+const clock = new Clock(true)
 
 const renderer = new WebGLRenderer();
 renderer.shadowMap.enabled = true;
@@ -63,7 +67,6 @@ cube.receiveShadow = true;
 scene.add(cube);
 
 const controls = new ObjectControls(camera, renderer.domElement);
-controls.target = cube.position;
 
 const geo = new BufferGeometry();
 const mat = new LineBasicMaterial({ color: 0xff00ff });
@@ -73,8 +76,9 @@ scene.add(prevRay);
 function animate() {
   requestAnimationFrame(animate);
 
-  // cube.rotation.x += 0.01;
-  // cube.rotation.y += 0.01;
+  const delta = clock.getDelta()
+
+  controls.update(delta)
 
   renderer.render(scene, camera);
 }
@@ -166,7 +170,7 @@ canvasElement!.onclick = (e) => {
 
       if (changeOrbitElement.checked) {
         console.log(`controls changed to ${obj.name}`);
-        controls.target = obj.position;
+        // controls.target = obj.position;
       }
     }
   }
