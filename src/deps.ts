@@ -26,5 +26,5 @@ export {
 export { OrbitControls } from "https://deno.land/x/threejs_4_deno@v120.3/examples/jsm/controls/OrbitControls.js";
 export { PointerLockControls } from "https://deno.land/x/threejs_4_deno@v120.3/examples/jsm/controls/PointerLockControls.js";
 // @deno-types="https://deno.land/x/cannon_4_deno@v0.15.1.5/src/cannon-es.ts" />
-export { World, NaiveBroadphase, AABB, Box, Body, Plane, Sphere } from "https://deno.land/x/cannon_4_deno@v0.15.1.5/src/cannon-es.js"
+export { World, NaiveBroadphase, AABB, Box, Body, Plane, Sphere, Vec3 } from "https://deno.land/x/cannon_4_deno@v0.15.1.5/src/cannon-es.js"
 // @deno-types="https://unpkg.com/cannon-es/dist/cannon-es.d.ts" />
