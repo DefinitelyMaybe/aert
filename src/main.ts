@@ -17,6 +17,13 @@ import {
   Color,
   HemisphereLight,
   Clock,
+  World,
+  Sphere,
+  Box,
+  NaiveBroadphase,
+  Plane,
+  Body,
+  Vec3,
 } from "./deps.ts";
 import { ObjectControls } from "./ObjectControls.ts";
 
@@ -82,10 +89,32 @@ const mat = new LineBasicMaterial({ color: 0xff00ff });
 const prevRay = new Line(geo, mat);
 scene.add(prevRay);
 
+// Initialize Cannon.js
+const world = new World()
+world.gravity.set(0, 0, 0)
+world.broadphase = new NaiveBroadphase()
+// world.solver.iterations = 10
+
+// now the trick is:
+// create objects and keep there physics and rendering data in sync
+// i.e.
+// const shape = new Box(new Vec3(1,1,1))
+// const body = new Body({mass:1})
+// body.addShape(shape)
+// body.angularVelocity.set(0, 10, 0)
+// body.angularDamping = 0.5
+// world.addBody(body)
+
 function animate() {
   requestAnimationFrame(animate);
 
   const delta = clock.getDelta()
+
+  // world.step(delta?)
+  // update rendered positions
+  // i.e.
+  // mesh.position.copy(body.position)
+  // mesh.quaternion.copy(body.quaternion)
 
   controls.update(delta)
 
