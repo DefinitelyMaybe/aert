@@ -10,11 +10,11 @@ const VIEWS = "views/";
 const SRC = "src/";
 
 // try to empty the build folder
-try {
-  emptyDirSync(BUILD);
-} catch (error) {
+// try {
+//   emptyDirSync(BUILD);
+// } catch (error) {
 
-}
+// }
 
 // copy html and css
 const html = Deno.readTextFileSync(`${VIEWS}main.html`);
