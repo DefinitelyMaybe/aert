@@ -1,12 +1,20 @@
-import { existsSync, emptyDirSync, walkSync } from "https://deno.land/std/fs/mod.ts";
+import {
+  emptyDirSync,
+  walkSync,
+  ensureFileSync,
+} from "https://deno.land/std/fs/mod.ts";
 
 const BUILD = "build/";
+const BUILDJAVASCRIPT = "build/js/";
 const VIEWS = "views/";
 const SRC = "src/";
-const LIBS = "libs/"
 
-// remove everything from the build folder but make sure its there
-// emptyDirSync(BUILD);
+// try to empty the build folder
+try {
+  emptyDirSync(BUILD);
+} catch (error) {
+
+}
 
 // copy html and css
 const html = Deno.readTextFileSync(`${VIEWS}main.html`);
@@ -14,13 +22,6 @@ Deno.writeTextFileSync(`${BUILD}main.html`, html);
 
 const css = Deno.readTextFileSync(`${VIEWS}style.css`);
 Deno.writeTextFileSync(`${BUILD}style.css`, css);
-
-// copy all of libs into build
-// because libs shouldn't change much we can check if its already there
-if (!existsSync(`${BUILD}cannon.js`)) {
-  const cannon = Deno.readTextFileSync(`${LIBS}cannon.js`);
-  Deno.writeTextFileSync(`${BUILD}cannon.js`, cannon);
-}
 
 // compile src scripts with deno
 // @ts-ignore
@@ -34,19 +35,22 @@ const [errors, emitted] = await Deno.compile(
 
 if (errors == null) {
   for (const obj in emitted) {
-    const path = obj.split("/");
-    const filename = path[path.length - 1];
-    Deno.writeTextFileSync(`${BUILD}${filename}`, emitted[obj]);
+    const path = obj.split("src/");
+    const filepath = `${BUILDJAVASCRIPT}${path[path.length - 1]}`;
+    ensureFileSync(filepath);
+    Deno.writeTextFileSync(filepath, emitted[obj]);
   }
 } else {
   console.error(errors);
 }
 
 // change names across files
-for (const entry of walkSync(BUILD)) {
-  if (entry.name.endsWith("js")) {
-    let data = Deno.readTextFileSync(entry.path);
-    data = data.replace(/\.ts/g, ".js")
-    Deno.writeTextFileSync(entry.path, data) 
+for (const entry of walkSync(BUILDJAVASCRIPT)) {
+  if (entry.isFile) {
+    if (entry.name.endsWith("js")) {
+      let data = Deno.readTextFileSync(entry.path);
+      data = data.replace(/\.ts/g, ".js");
+      Deno.writeTextFileSync(entry.path, data);
+    } 
   }
 }
