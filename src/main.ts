@@ -31,9 +31,6 @@ import { ObjectControls } from "./ObjectControls.ts";
 
 // Look into shadows from the directional light
 
-// create cannon-es module for deno
-// start with this https://github.com/pmndrs/cannon-es/tree/master/src ...there's .ts there... omg.
-
 const clock = new Clock(true)
 
 const renderer = new WebGLRenderer();
