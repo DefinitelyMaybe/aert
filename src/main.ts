@@ -1,6 +1,7 @@
 /// <reference lib="dom" />
 import {
   Scene,
+  DirectionalLightHelper,
   PerspectiveCamera,
   WebGLRenderer,
   BoxGeometry,
@@ -24,14 +25,16 @@ import {
   Plane,
   Body,
   Vec3,
+  Quaternion,
 } from "./deps.ts";
-import { ObjectControls } from "./ObjectControls.ts";
+import { PlayerControls } from "./PlayerControls.ts";
 
-// Next Steps:
+const clock = new Clock(true);
 
-// Look into shadows from the directional light
-
-const clock = new Clock(true)
+// Initialize Cannon.js
+const world = new World();
+world.gravity.set(0, -10, 0);
+world.broadphase = new NaiveBroadphase();
 
 const renderer = new WebGLRenderer();
 renderer.shadowMap.enabled = true;
@@ -42,12 +45,18 @@ const scene = new Scene();
 scene.background = new Color(0xaaaaaa);
 
 const directionalLight = new DirectionalLight();
-directionalLight.position.set(5, 5, 5);
+const d = 100;
+directionalLight.position.set(d, d, d);
 directionalLight.castShadow = true;
+// directionalLight.shadow.mapSize = new Vector2(1024, 1024)
+directionalLight.shadow.camera.left = -d;
+directionalLight.shadow.camera.right = d;
+directionalLight.shadow.camera.top = d;
+directionalLight.shadow.camera.bottom = -d;
 scene.add(directionalLight);
 
-// const directionalLightHelper = new DirectionalLightHelper(directionalLight)
-// scene.add(directionalLightHelper)
+const directionalLightHelper = new DirectionalLightHelper(directionalLight);
+scene.add(directionalLightHelper);
 
 const hemisphereLight = new HemisphereLight(0xaaaaaa, 0xaaaaaa, 0.7);
 scene.add(hemisphereLight);
@@ -55,13 +64,13 @@ scene.add(hemisphereLight);
 const camera = new PerspectiveCamera(
   90,
   window.innerWidth / window.innerHeight,
-  0.1,
+  0.01,
   1000,
 );
 camera.position.set(10, 10, 10);
-camera.lookAt(new Vector3(0, 0, 0));
 scene.add(camera);
 
+// three.js plane
 const plane = new PlaneBufferGeometry(100, 100, 1, 1);
 plane.rotateX(-Math.PI / 2);
 let material = new MeshStandardMaterial({ color: 0xaaaaaa });
@@ -69,51 +78,55 @@ const floor = new Mesh(plane, material);
 floor.name = "floor";
 floor.receiveShadow = true;
 scene.add(floor);
+// cannon.js plane
+const groundPlane = new Plane();
+const groundBody = new Body({ mass: 0 });
+groundBody.addShape(groundPlane);
+groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
+world.addBody(groundBody);
 
-const geometry = new BoxGeometry();
+// three.js cube
+const geometry = new BoxGeometry(1, 1, 1);
 material = new MeshStandardMaterial({ color: 0x00ff00 });
-const cube = new Mesh(geometry, material);
-cube.position.setY(1);
-cube.name = "cube";
-cube.castShadow = true;
-cube.receiveShadow = true;
-scene.add(cube);
+const box = new Mesh(geometry, material);
+box.castShadow = true;
+box.receiveShadow = true;
+scene.add(box);
+// cannon.js cube
+const cube = new Box(new Vec3(1, 1, 1));
+const cubeBody = new Body({ mass: 1 });
+cubeBody.position.set(0, 10, 0);
+cubeBody.addShape(cube);
+world.addBody(cubeBody)
 
-const controls = new ObjectControls(camera, renderer.domElement);
+
+const controls = new PlayerControls(cubeBody, camera, renderer.domElement);
 
 const geo = new BufferGeometry();
 const mat = new LineBasicMaterial({ color: 0xff00ff });
 const prevRay = new Line(geo, mat);
 scene.add(prevRay);
 
-// Initialize Cannon.js
-const world = new World()
-world.gravity.set(0, 0, 0)
-world.broadphase = new NaiveBroadphase()
-// world.solver.iterations = 10
-
-// now the trick is:
-// create objects and keep there physics and rendering data in sync
-// i.e.
-// const shape = new Box(new Vec3(1,1,1))
-// const body = new Body({mass:1})
-// body.addShape(shape)
-// body.angularVelocity.set(0, 10, 0)
-// body.angularDamping = 0.5
-// world.addBody(body)
-
 function animate() {
   requestAnimationFrame(animate);
 
-  const delta = clock.getDelta()
+  const delta = clock.getDelta();
 
-  // world.step(delta?)
+  world.step(delta);
   // update rendered positions
-  // i.e.
-  // mesh.position.copy(body.position)
-  // mesh.quaternion.copy(body.quaternion)
+  box.position.copy(
+    new Vector3(cubeBody.position.x, cubeBody.position.y, cubeBody.position.z),
+  );
+  box.quaternion.copy(
+    new Quaternion(
+      cubeBody.quaternion.x,
+      cubeBody.quaternion.y,
+      cubeBody.quaternion.z,
+      cubeBody.quaternion.w,
+    ),
+  );
 
-  controls.update(delta)
+  controls.update(delta);
 
   renderer.render(scene, camera);
 }
@@ -131,92 +144,93 @@ function onWindowResize() {
 window.addEventListener("resize", onWindowResize, false);
 
 //move green cube
-const testButton = document.getElementById("test")!;
-testButton.onclick = (e) => {
-  const scalar = 50;
-  const Xsign = Math.random() < 0.5 ? -1 : 1;
-  const Zsign = Math.random() < 0.5 ? -1 : 1;
-  cube.position.set(
-    Xsign * Math.random() * scalar,
-    1,
-    Zsign * Math.random() * scalar,
-  );
-};
+// const testButton = document.getElementById("test")!;
+// testButton.onclick = (e) => {
+//   const scalar = 50;
+//   const Xsign = Math.random() < 0.5 ? -1 : 1;
+//   const Zsign = Math.random() < 0.5 ? -1 : 1;
+//   cubeBody.position.set(
+//     Xsign * Math.random() * scalar,
+//     30,
+//     Zsign * Math.random() * scalar,
+//   );
+// };
 
-// add red cubes
-const test2Button = document.getElementById("test2")!;
-test2Button.onclick = (e) => {
-  // respawn a red square somewhere within the current floor
-  material = new MeshStandardMaterial({ color: 0xff0000 });
-  for (let i = 0; i < 100; i++) {
-    const cube = new Mesh(geometry, material);
-    const scalar = 50;
-    const Xsign = Math.random() < 0.5 ? -1 : 1;
-    const Zsign = Math.random() < 0.5 ? -1 : 1;
-    cube.position.set(
-      Xsign * Math.random() * scalar,
-      1,
-      Zsign * Math.random() * scalar,
-    );
-    cube.name = "randomRedCube";
-    cube.castShadow = true;
-    cube.receiveShadow = true;
-    scene.add(cube);     
-  }
-};
+// // add red cubes
+// const test2Button = document.getElementById("test2")!;
+// test2Button.onclick = (e) => {
+//   // respawn a red square somewhere within the current floor
+//   material = new MeshStandardMaterial({ color: 0xff0000 });
+//   for (let i = 0; i < 100; i++) {
+//     const cube = new Mesh(geometry, material);
+//     const scalar = 50;
+//     const Xsign = Math.random() < 0.5 ? -1 : 1;
+//     const Zsign = Math.random() < 0.5 ? -1 : 1;
+//     cube.position.set(
+//       Xsign * Math.random() * scalar,
+//       1,
+//       Zsign * Math.random() * scalar,
+//     );
+//     cube.name = "randomRedCube";
+//     cube.castShadow = true;
+//     cube.receiveShadow = true;
+//     scene.add(cube);
+//   }
+// };
 
-// console log scene
-const test3Button = document.getElementById("test3")!;
-test3Button.onclick = (e) => {
-  console.log(scene.children);
-};
+// // console log scene
+// const test3Button = document.getElementById("test3")!;
+// test3Button.onclick = (e) => {
+//   console.log(box.position);
+//   console.log(camera.position);
+// };
 
-const canvasElement = document.querySelector("canvas");
-const changeOrbitElement = document.querySelector(
-  "input#changeOrbit",
-) as HTMLInputElement;
-const castRayElement = document.querySelector(
-  "input#castRay",
-) as HTMLInputElement;
+// const canvasElement = document.querySelector("canvas");
+// const changeOrbitElement = document.querySelector(
+//   "input#changeOrbit",
+// ) as HTMLInputElement;
+// const castRayElement = document.querySelector(
+//   "input#castRay",
+// ) as HTMLInputElement;
 
-canvasElement!.onclick = (e) => {
-  if (castRayElement.checked) {
-    console.log("casting ray");
-    // throw out a ray and find a random object
-    const rayCaster = new Raycaster();
-    rayCaster.setFromCamera(
-      new Vector2(
-        (e.clientX / window.innerWidth) * 2 - 1,
-        -(e.clientY / window.innerHeight) * 2 + 1,
-      ),
-      camera,
-    );
-    const intersection = rayCaster.intersectObject(scene, true);
+// canvasElement!.onclick = (e) => {
+//   if (castRayElement.checked) {
+//     console.log("casting ray");
+//     // throw out a ray and find a random object
+//     const rayCaster = new Raycaster();
+//     rayCaster.setFromCamera(
+//       new Vector2(
+//         (e.clientX / window.innerWidth) * 2 - 1,
+//         -(e.clientY / window.innerHeight) * 2 + 1,
+//       ),
+//       camera,
+//     );
+//     const intersection = rayCaster.intersectObject(scene, true);
 
-    // draw the line that was raycasted
-    const direction = rayCaster.ray.direction.multiplyScalar(50);
-    const p0 = rayCaster.ray.origin;
-    const p1 = new Vector3(p0.x, p0.y, p0.z).add(direction);
-    const p2 = new Vector3(p1.x, p1.y, p1.z).add(direction);
+//     // draw the line that was raycasted
+//     const direction = rayCaster.ray.direction.multiplyScalar(50);
+//     const p0 = rayCaster.ray.origin;
+//     const p1 = new Vector3(p0.x, p0.y, p0.z).add(direction);
+//     const p2 = new Vector3(p1.x, p1.y, p1.z).add(direction);
 
-    const points = [];
-    points.push(p0);
-    points.push(p1);
-    points.push(p2);
-    prevRay.geometry.setFromPoints(points);
+//     const points = [];
+//     points.push(p0);
+//     points.push(p1);
+//     points.push(p2);
+//     prevRay.geometry.setFromPoints(points);
 
-    //check intersection
-    if (intersection.length > 0) {
-      const obj = intersection[0].object;
-      console.log(`intersected with ${intersection.length} objects`);
+//     //check intersection
+//     if (intersection.length > 0) {
+//       const obj = intersection[0].object;
+//       console.log(`intersected with ${intersection.length} objects`);
 
-      if (changeOrbitElement.checked) {
-        console.log(`controls changed to ${obj.name}`);
-        // controls.target = obj.position;
-      }
-    }
-  }
-};
+//       if (changeOrbitElement.checked) {
+//         console.log(`controls changed to ${obj.name}`);
+//         // controls.target = obj.position;
+//       }
+//     }
+//   }
+// };
 
 window.onresize = () => {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -225,13 +239,39 @@ window.onresize = () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 };
 
-const slider = document.getElementById("myRange")! as HTMLInputElement;
-slider.value = controls.acceleration.toString()
+// const slider = document.getElementById("myRange")! as HTMLInputElement;
+// slider.value = controls.acceleration.toString();
 
-slider.addEventListener('change', () => {
-  controls.acceleration = parseInt(slider.value)
-  sliderNumber.innerText = `acceleration - ${slider.value}`
+// slider.addEventListener("change", () => {
+//   controls.acceleration = parseInt(slider.value);
+//   sliderNumber.innerText = `acceleration - ${slider.value}`;
+// });
+
+// const sliderNumber = document.getElementById(
+//   "myRangeNumber",
+// ) as HTMLParagraphElement;
+// sliderNumber.innerText = `acceleration - ${controls.acceleration}`;
+
+
+document.addEventListener("keydown", (e) => {
+  switch (e.key) {
+    case "w":
+      cubeBody.velocity.x = 10
+      break;
+    case "s":
+      cubeBody.velocity.x = -10
+      break;
+    case "a":
+      cubeBody.velocity.z = 10
+      break;
+    case "d":
+      cubeBody.velocity.z = -10
+      break;
+    case " ":
+      cubeBody.velocity.y = 10
+      break;
+    default:
+      console.log(`Didn't catch ${e.key}`);
+      break;
+  }
 })
-
-const sliderNumber = document.getElementById("myRangeNumber") as HTMLParagraphElement;
-sliderNumber.innerText = `acceleration - ${controls.acceleration}`
