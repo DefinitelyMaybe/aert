@@ -22,7 +22,17 @@ export {
   Euler,
   Clock,
   DirectionalLightHelper,
+  Camera,
 } from "https://deno.land/x/threejs_4_deno@v120.3/src/Three.js";
 export { OrbitControls } from "https://deno.land/x/threejs_4_deno@v120.3/examples/jsm/controls/OrbitControls.js";
 export { PointerLockControls } from "https://deno.land/x/threejs_4_deno@v120.3/examples/jsm/controls/PointerLockControls.js";
-export { World, NaiveBroadphase, AABB, Box, Body, Plane, Sphere, Vec3 } from "https://deno.land/x/cannon_4_deno@v0.15.1.5/src/cannon-es.ts"
+export {
+  World,
+  NaiveBroadphase,
+  AABB,
+  Box,
+  Body,
+  Plane,
+  Sphere,
+  Vec3,
+} from "https://deno.land/x/cannon_4_deno@v0.15.1.5/src/cannon-es.ts";
