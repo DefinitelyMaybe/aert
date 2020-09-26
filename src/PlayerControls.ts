@@ -4,7 +4,6 @@ import {
   Camera,
   Vector3,
   Body,
-  Vec3,
   Quaternion,
   Spherical,
 } from "./deps.ts";
@@ -27,10 +26,6 @@ class PlayerControls {
   cameraQuatInv: Quaternion;
   spherical: Spherical;
   sphericalDelta: Spherical;
-  axisAngle = new Vec3(0, 1, 0);
-
-  enableDamping: boolean;
-  dampingFactor: number;
 
   minDistance: number;
   maxDistance: number;
@@ -51,22 +46,11 @@ class PlayerControls {
     this.spherical = new Spherical();
     this.sphericalDelta = new Spherical();
 
-    this.enableDamping = false;
-    this.dampingFactor = 0.001;
-
     this.minDistance = 0;
-    this.maxDistance = 30;
-    this.distanceStepSize = 2;
-    this.currentDistance = 10;
+    this.maxDistance = 20;
+    this.distanceStepSize = 1;
+    this.currentDistance = 6;
     this.distanceTheshold = 5;
-
-    this.camera.lookAt(
-      new Vector3(
-        this.object.position.x,
-        this.object.position.y,
-        this.object.position.z,
-      ),
-    );
 
     this.isLocked = false;
     this.euler = new Euler(0, 0, 0, "YXZ");
@@ -74,94 +58,57 @@ class PlayerControls {
 
     // this.domElement.tabIndex = 0;
 
-    this.domElement.addEventListener("mousedown", () => {
-      if (!this.isLocked) {
-        this.domElement.requestPointerLock();
-      }
+    this.domElement.addEventListener("mousedown", async () => {
+      this.onMouseDown()
     });
 
-    document.addEventListener("pointerlockchange", () => {
-      if (document.pointerLockElement === this.domElement) {
-        this.isLocked = true;
-      } else {
-        this.isLocked = false;
-      }
+    document.addEventListener("pointerlockchange", async () => {
+      this.onPointerLockChange()
     });
 
-    this.domElement.addEventListener("mousemove", (event: MouseEvent) => {
-      if (this.isLocked === false) {
-        return;
-      }
-
-      const movementX = event.movementX || 0;
-      const movementY = event.movementY || 0;
-
-      // how would one turn the movement vector into a quaternion?
-      // using this.spherical co-ordinates?
-      // left/right
-      this.sphericalDelta.theta = this.twoPI * movementX /
-        this.domElement.clientHeight;
-      // up/down
-      this.sphericalDelta.phi = this.twoPI * movementY /
-        this.domElement.clientHeight;
-
-      // this.euler.setFromQuaternion(this.camera.quaternion);
-
-      // // could adjust this later to make it more or less sensitive
-      // this.euler.y -= movementX * 0.002;
-      // this.euler.x -= movementY * 0.002;
-
-      // this.euler.x = Math.max(
-      //   this.PI_2 - Math.PI,
-      //   Math.min(this.PI_2, this.euler.x),
-      // );
-
-      // this.camera.quaternion.setFromEuler(this.euler);
-
-      // then slerp the quaternion of the object that we're following to the quaternion of the camera
-
-      // update the position
-      this.update();
+    this.domElement.addEventListener("mousemove", async (e: MouseEvent) => {
+      this.onMouseMove(e);
     });
     // this.domElement.addEventListener("mousedown", this.mousedown);
     // this.domElement.addEventListener("mouseup", this.mouseup);
 
-    this.domElement.addEventListener("keydown", (event) => {
-      if (this.isLocked) {
-        // currently doesn't update according to player direction
-        switch (event.key) {
-          case "a":
-            this.object.velocity.x = -1;
-            break;
-          case "d":
-            this.object.velocity.x = -1;
-            break;
-          case "w":
-            this.object.velocity.z = 1;
-            break;
-          case "s":
-            this.object.velocity.z = -1;
-            break;
-          case " ":
-            this.object.velocity.y = 10;
-            break;
-          default:
-            // console.log(`Didn't handle keydown for: ${event.key}`);
-            break;
-        }
-      }
+    this.domElement.addEventListener("keydown", async (e) => {
+      this.onKeyDown(e)
     });
+
+    this.domElement.addEventListener("wheel", async (e) => {
+      this.onWheel(e)
+    });
+
+    this.isLocked = true;
+    this.onMouseMove(
+      new MouseEvent("mousemove", { movementX: 0, movementY: 0 }),
+    );
+    this.isLocked = false;
   }
 
-  update() {
-    const position = this.camera.position;
+  onMouseMove(event: MouseEvent) {
+    if (this.isLocked === false) {
+      return;
+    }
+
+    const movementX = event.movementX || 0;
+    const movementY = event.movementY || 0;
+
     const objPosition = new Vector3(
       this.object.position.x,
       this.object.position.y,
       this.object.position.z,
     );
 
-    this.offset.copy(position).sub(objPosition);
+    // left/right
+    this.sphericalDelta.theta = this.twoPI * movementX /
+      this.domElement.clientHeight;
+    // up/down
+    this.sphericalDelta.phi = this.twoPI * movementY /
+      this.domElement.clientHeight;
+
+    this.offset.copy(this.camera.position).sub(objPosition);
 
     // rotate offset to "y-axis-is-up" space
     this.offset.applyQuaternion(this.cameraQuat);
@@ -169,26 +116,15 @@ class PlayerControls {
     // angle from z-axis around y-axis
     this.spherical.setFromVector3(this.offset);
 
-    if (this.enableDamping) {
-      // this is where you could creating the boolean setting to invert the orbital controls
-      this.spherical.theta -= this.sphericalDelta.theta * this.dampingFactor;
-      this.spherical.phi -= this.sphericalDelta.phi * this.dampingFactor;
-    } else {
-      // this is where you could creating the boolean setting to invert the orbital controls
-      this.spherical.theta -= this.sphericalDelta.theta;
-      this.spherical.phi -= this.sphericalDelta.phi;
-    }
+    // this is where you could creating the boolean setting to invert the orbital controls
+    this.spherical.theta -= this.sphericalDelta.theta;
+    this.spherical.phi -= this.sphericalDelta.phi;
 
     // restrict phi to be between desired limits
     this.spherical.phi = Math.max(0, Math.min(Math.PI, this.spherical.phi));
 
     this.spherical.makeSafe();
 
-    // restrict radius to be between desired limits
-    this.spherical.radius = Math.max(
-      this.minDistance,
-      Math.min(this.maxDistance, this.spherical.radius),
-    );
     // set radius to player setting
     this.spherical.radius = this.currentDistance;
 
@@ -197,16 +133,73 @@ class PlayerControls {
     // rotate offset back to "camera-up-vector-is-up" space
     this.offset.applyQuaternion(this.cameraQuatInv);
 
-    position.copy(objPosition).add(this.offset);
+    // update the position
+    this.update();
+  }
+
+  onMouseDown() {
+    if (!this.isLocked) {
+      this.domElement.requestPointerLock();
+    }
+  }
+
+  onPointerLockChange() {
+    if (document.pointerLockElement === this.domElement) {
+      this.isLocked = true;
+    } else {
+      this.isLocked = false;
+    }
+  }
+
+  onKeyDown(event:KeyboardEvent) {
+    if (this.isLocked) {
+      // currently doesn't update according to player direction
+      switch (event.key) {
+        case "a":
+          this.object.velocity.x = -1;
+          break;
+        case "d":
+          this.object.velocity.x = -1;
+          break;
+        case "w":
+          this.object.velocity.z = 1;
+          break;
+        case "s":
+          this.object.velocity.z = -1;
+          break;
+        case " ":
+          this.object.velocity.y = 10;
+          break;
+        default:
+          // console.log(`Didn't handle keydown for: ${event.key}`);
+          break;
+      }
+    }
+  }
+
+  onWheel(event:WheelEvent) {
+    const wheelDelta = event.deltaY > 0
+        ? this.distanceStepSize
+        : -this.distanceStepSize;
+      // restrict radius to be between desired limits
+      if (
+        this.currentDistance >= this.minDistance - wheelDelta &&
+        this.currentDistance <= this.maxDistance - wheelDelta
+      ) {
+        this.currentDistance += wheelDelta;
+      }
+  }
+
+  update() {
+    // TODO-DefinitelyMaybe: Maintain previous rotation as player moves. only update the position
+    const objPosition = new Vector3(
+      this.object.position.x,
+      this.object.position.y,
+      this.object.position.z,
+    );
+    this.camera.position.copy(objPosition).add(this.offset);
 
     this.camera.lookAt(objPosition);
-
-    if (this.enableDamping === true) {
-      this.sphericalDelta.theta *= (1 - this.dampingFactor);
-      this.sphericalDelta.phi *= (1 - this.dampingFactor);
-    } else {
-      this.sphericalDelta.set(0, 0, 0);
-    }
   }
 }
 
