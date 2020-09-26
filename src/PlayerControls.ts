@@ -70,6 +70,7 @@ class PlayerControls {
 
       this.camera.quaternion.setFromEuler(this.euler);
       // then set the quaternion of the object that we're following
+      // this.offsetVector.applyEuler(this.euler)
       this.object.quaternion.setFromAxisAngle(this.axisAngle, this.euler.y)
 
       // this.domElement.dispatchEvent(new Event("change"));
@@ -79,10 +80,10 @@ class PlayerControls {
 
     document.addEventListener("keydown", (event) => {
       if (this.isLocked) {
-        console.log("down");
+        // currently doesn't update according to player direction
         switch (event.key) {
           case "a":
-            this.object.velocity.x = 1;
+            this.object.velocity.x = -1;
             break;
           case "d":
             this.object.velocity.x = -1;
@@ -118,8 +119,6 @@ class PlayerControls {
     // use spherical co-ordinates
     // set from Vector X
     // adjust phi and theta
-
-
 
     // const newPos = new Vector3(this.object.position.x + this.offsetVector.x, this.object.position.y + this.offsetVector.y, this.object.position.z + this.offsetVector.z)
     const cubePos = new Vector3(this.object.position.x, this.object.position.y, this.object.position.z)
