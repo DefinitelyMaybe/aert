@@ -97,8 +97,7 @@ const cube = new Box(new Vec3(1, 1, 1));
 const cubeBody = new Body({ mass: 1 });
 cubeBody.position.set(0, 10, 0);
 cubeBody.addShape(cube);
-world.addBody(cubeBody)
-
+world.addBody(cubeBody);
 
 const controls = new PlayerControls(cubeBody, camera, renderer.domElement);
 
@@ -126,20 +125,21 @@ function animate() {
     ),
   );
 
+  // camera position must be updated
+  controls.update();
   renderer.render(scene, camera);
 }
 
 animate();
 
 // UI & Events
-function onWindowResize() {
+
+window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-window.addEventListener("resize", onWindowResize, false);
+});
 
 //move green cube
 // const testButton = document.getElementById("test")!;
@@ -250,26 +250,25 @@ window.onresize = () => {
 // ) as HTMLParagraphElement;
 // sliderNumber.innerText = `acceleration - ${controls.acceleration}`;
 
-
 document.addEventListener("keydown", (e) => {
   switch (e.key) {
     case "w":
-      cubeBody.velocity.x = 10
+      cubeBody.velocity.x = 10;
       break;
     case "s":
-      cubeBody.velocity.x = -10
+      cubeBody.velocity.x = -10;
       break;
     case "a":
-      cubeBody.velocity.z = 10
+      cubeBody.velocity.z = 10;
       break;
     case "d":
-      cubeBody.velocity.z = -10
+      cubeBody.velocity.z = -10;
       break;
     case " ":
-      cubeBody.velocity.y = 10
+      cubeBody.velocity.y = 10;
       break;
     default:
       console.log(`Didn't catch ${e.key}`);
       break;
   }
-})
+});
