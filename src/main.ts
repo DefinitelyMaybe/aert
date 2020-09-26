@@ -55,8 +55,8 @@ directionalLight.shadow.camera.top = d;
 directionalLight.shadow.camera.bottom = -d;
 scene.add(directionalLight);
 
-const directionalLightHelper = new DirectionalLightHelper(directionalLight);
-scene.add(directionalLightHelper);
+// const directionalLightHelper = new DirectionalLightHelper(directionalLight);
+// scene.add(directionalLightHelper);
 
 const hemisphereLight = new HemisphereLight(0xaaaaaa, 0xaaaaaa, 0.7);
 scene.add(hemisphereLight);
