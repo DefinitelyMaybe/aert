@@ -126,8 +126,6 @@ function animate() {
     ),
   );
 
-  controls.update(delta);
-
   renderer.render(scene, camera);
 }
 
