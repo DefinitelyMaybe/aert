@@ -1,9 +1,10 @@
 /// <reference lib="dom" />
-import { Euler, Camera, Vector3, Body, Vec3, Quaternion } from "./deps.ts";
+import { Euler, Camera, Vector3, Body, Vec3, Quaternion, Spherical } from "./deps.ts";
 
 class PlayerControls {
   // values
   PI_2 = Math.PI / 2;
+  twoPI = Math.PI * 2;
 
   // variables
   isLocked: boolean;
@@ -13,24 +14,46 @@ class PlayerControls {
   object: Body
   camera: Camera
 
-  offsetVector: Vector3
-  offsetQuat: Quaternion
-  offsetQuatInv: Quaternion
+  offset: Vector3
+  cameraQuat: Quaternion
+  cameraQuatInv: Quaternion
+  spherical: Spherical
+  sphericalDelta: Spherical
   axisAngle = new Vec3(0, 1, 0);
+
+  enableDamping: boolean;
+  dampingFactor: number;
+
+  minDistance: number;
+  maxDistance:number;
+  distanceTheshold:number;
+  distanceStepSize:number;
 
   constructor(object:Body, camera:Camera, domElement:HTMLElement) {
     this.object = object
     this.camera = camera
 
-    this.offsetVector = new Vector3(-1,1,-1)
-    this.offsetQuat = new Quaternion(object.quaternion.x, object.quaternion.y, object.quaternion.z, object.quaternion.w)
-    this.offsetQuatInv = this.offsetQuat.inverse()
+    this.offset = new Vector3()
+    this.cameraQuat = new Quaternion().setFromUnitVectors(camera.up, new Vector3(0,1,0))
+    this.cameraQuatInv = this.cameraQuat.inverse()
+    this.spherical = new Spherical()
+    this.sphericalDelta = new Spherical()
+
+    this.enableDamping = false
+    this.dampingFactor = 0.001
+
+    this.minDistance = 0
+    this.maxDistance = 30;
+    this.distanceStepSize = 2;
+    this.distanceTheshold = 5;
 
     this.camera.lookAt(new Vector3(this.object.position.x, this.object.position.y, this.object.position.z))
 
     this.isLocked = false;
     this.euler = new Euler(0, 0, 0, "YXZ");
     this.domElement = domElement
+
+    // this.domElement.tabIndex = 0;
 
     this.domElement.addEventListener("mousedown", () => {
       if (!this.isLocked) {
@@ -55,7 +78,7 @@ class PlayerControls {
       const movementY = event.movementY || 0;
 
       // how would one turn the movement vector into a quaternion?
-      // using spherical co-ordinates?
+      // using this.spherical co-ordinates?
       // 
       this.euler.setFromQuaternion(this.camera.quaternion);
 
@@ -69,16 +92,16 @@ class PlayerControls {
       );
 
       this.camera.quaternion.setFromEuler(this.euler);
-      // then set the quaternion of the object that we're following
-      // this.offsetVector.applyEuler(this.euler)
-      this.object.quaternion.setFromAxisAngle(this.axisAngle, this.euler.y)
 
-      // this.domElement.dispatchEvent(new Event("change"));
+      // then slerp the quaternion of the object that we're following to the quaternion of the camera
+
+      // update the position
+      this.update()
     });
     // this.domElement.addEventListener("mousedown", this.mousedown);
     // this.domElement.addEventListener("mouseup", this.mouseup);
 
-    document.addEventListener("keydown", (event) => {
+    this.domElement.addEventListener("keydown", (event) => {
       if (this.isLocked) {
         // currently doesn't update according to player direction
         switch (event.key) {
@@ -95,7 +118,6 @@ class PlayerControls {
             this.object.velocity.z = -1;
             break;
           case " ":
-            console.log("jump");
             this.object.velocity.y = 10;
             break;
           default:
@@ -106,27 +128,58 @@ class PlayerControls {
     });
   }
 
-  update(delta: number) {
-    // set camera position to objects position + some vector
-    
-    // Vector X
-    // copy camera position
-    // subtract object position
+  update() {
+    const position = this.camera.position;
+    const objPosition = new Vector3(this.object.position.x, this.object.position.y, this.object.position.z)
 
-    // rotate to y-axis is up
-    // VectorX.applyQuaternion(this.offsetQuat)
+    this.offset.copy( position ).sub( objPosition );
 
-    // use spherical co-ordinates
-    // set from Vector X
-    // adjust phi and theta
+    // rotate offset to "y-axis-is-up" space
+    this.offset.applyQuaternion( this.cameraQuat );
 
-    // const newPos = new Vector3(this.object.position.x + this.offsetVector.x, this.object.position.y + this.offsetVector.y, this.object.position.z + this.offsetVector.z)
-    const cubePos = new Vector3(this.object.position.x, this.object.position.y, this.object.position.z)
-    // const newVec = new Vector3().copy(this.camera.position).sub(cubePos)
-    // newVec.applyEuler(this.euler)
-    this.camera.position.copy(cubePos).add(this.offsetVector)
-    
-    // possibly interpolate to position by using delta
+    // angle from z-axis around y-axis
+    this.spherical.setFromVector3( this.offset );
+
+    if ( this.enableDamping ) {
+
+      this.spherical.theta += this.sphericalDelta.theta * this.dampingFactor;
+      this.spherical.phi += this.sphericalDelta.phi * this.dampingFactor;
+
+    } else {
+
+      this.spherical.theta += this.sphericalDelta.theta;
+      this.spherical.phi += this.sphericalDelta.phi;
+
+    }
+
+    // restrict phi to be between desired limits
+    this.spherical.phi = Math.max( 0, Math.min( Math.PI, this.spherical.phi ) );
+
+    this.spherical.makeSafe();
+
+    // restrict radius to be between desired limits
+    this.spherical.radius = Math.max( this.minDistance, Math.min( this.maxDistance, this.spherical.radius ) );
+
+    this.offset.setFromSpherical( this.spherical );
+
+    // rotate offset back to "camera-up-vector-is-up" space
+    this.offset.applyQuaternion( this.cameraQuatInv );
+
+    position.copy( objPosition ).add( this.offset );
+
+    this.camera.lookAt( objPosition );
+
+    if ( this.enableDamping === true ) {
+
+      this.sphericalDelta.theta *= ( 1 - this.dampingFactor );
+      this.sphericalDelta.phi *= ( 1 - this.dampingFactor );
+
+    } else {
+
+      this.sphericalDelta.set( 0, 0, 0 );
+
+
+    }
   }
 }
 
