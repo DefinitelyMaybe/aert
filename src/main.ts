@@ -128,11 +128,11 @@ function animate() {
   // camera position must be updated
   // velocity may move object position
   controls.update();
-  
-  renderer.render(scene, camera);
-}
 
-animate();
+  renderer.render(scene, camera);
+
+  updateUI()
+}
 
 // UI & Events
 
@@ -143,6 +143,39 @@ window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+window.onresize = () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+};
+
+//table
+const velx = document.getElementById("velx")
+const vely = document.getElementById("vely")
+const velz = document.getElementById("velz")
+
+const angvelx = document.getElementById("angvelx")
+const angvely = document.getElementById("angvely")
+const angvelz = document.getElementById("angvelz")
+
+function updateUI() {
+  const x = `${Math.round(cubeBody.velocity.x * 1) / 1}`
+  const y = `${Math.round(cubeBody.velocity.y * 1) / 1}`
+  const z = `${Math.round(cubeBody.velocity.z * 1) / 1}`
+
+  velx!.innerText = x
+  vely!.innerText = y
+  velz!.innerText = z
+
+  const angx = `${Math.round(cubeBody.angularVelocity.x * 1) / 1}`
+  const angy = `${Math.round(cubeBody.angularVelocity.y * 1) / 1}`
+  const angz = `${Math.round(cubeBody.angularVelocity.z * 1) / 1}`
+
+  angvelx!.innerText = angx
+  angvely!.innerText = angy
+  angvelz!.innerText = angz
+}
 //move green cube
 // const testButton = document.getElementById("test")!;
 // testButton.onclick = (e) => {
@@ -232,13 +265,6 @@ window.addEventListener("resize", () => {
 //   }
 // };
 
-window.onresize = () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(window.innerWidth, window.innerHeight);
-};
-
 // const slider = document.getElementById("myRange")! as HTMLInputElement;
 // slider.value = controls.acceleration.toString();
 
@@ -252,25 +278,6 @@ window.onresize = () => {
 // ) as HTMLParagraphElement;
 // sliderNumber.innerText = `acceleration - ${controls.acceleration}`;
 
-document.addEventListener("keydown", (e) => {
-  switch (e.key) {
-    case "w":
-      cubeBody.velocity.x = 10;
-      break;
-    case "s":
-      cubeBody.velocity.x = -10;
-      break;
-    case "a":
-      cubeBody.velocity.z = 10;
-      break;
-    case "d":
-      cubeBody.velocity.z = -10;
-      break;
-    case " ":
-      cubeBody.velocity.y = 10;
-      break;
-    default:
-      console.log(`Didn't catch ${e.key}`);
-      break;
-  }
-});
+
+// finially start renderering
+animate();
