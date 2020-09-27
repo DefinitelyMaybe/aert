@@ -126,7 +126,9 @@ function animate() {
   );
 
   // camera position must be updated
+  // velocity may move object position
   controls.update();
+  
   renderer.render(scene, camera);
 }
 
