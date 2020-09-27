@@ -56,8 +56,6 @@ class PlayerControls {
     this.euler = new Euler(0, 0, 0, "YXZ");
     this.domElement = domElement;
 
-    // this.domElement.tabIndex = 0;
-
     this.domElement.addEventListener("mousedown", async () => {
       this.onMouseDown()
     });
@@ -72,7 +70,7 @@ class PlayerControls {
     // this.domElement.addEventListener("mousedown", this.mousedown);
     // this.domElement.addEventListener("mouseup", this.mouseup);
 
-    this.domElement.addEventListener("keydown", async (e) => {
+    document.addEventListener("keydown", async (e) => {
       this.onKeyDown(e)
     });
 
@@ -80,6 +78,7 @@ class PlayerControls {
       this.onWheel(e)
     });
 
+    // intialize the camera properly
     this.isLocked = true;
     this.onMouseMove(
       new MouseEvent("mousemove", { movementX: 0, movementY: 0 }),
@@ -133,6 +132,9 @@ class PlayerControls {
     // rotate offset back to "camera-up-vector-is-up" space
     this.offset.applyQuaternion(this.cameraQuatInv);
 
+    // TODO-DefinitelyMaybe: update the object towards
+    // this.object.quaternion.slerp()
+
     // update the position
     this.update();
   }
@@ -153,19 +155,20 @@ class PlayerControls {
 
   onKeyDown(event:KeyboardEvent) {
     if (this.isLocked) {
-      // currently doesn't update according to player direction
+      // TODO-DefinitelyMaybe: once the camera and object rotations are in sync,
+      // make sure that the velocity
       switch (event.key) {
         case "a":
-          this.object.velocity.x = -1;
+          this.object.velocity.x = -10;
           break;
         case "d":
-          this.object.velocity.x = -1;
+          this.object.velocity.x = 10;
           break;
         case "w":
-          this.object.velocity.z = 1;
+          this.object.velocity.z = 10;
           break;
         case "s":
-          this.object.velocity.z = -1;
+          this.object.velocity.z = -10;
           break;
         case " ":
           this.object.velocity.y = 10;
@@ -181,17 +184,17 @@ class PlayerControls {
     const wheelDelta = event.deltaY > 0
         ? this.distanceStepSize
         : -this.distanceStepSize;
-      // restrict radius to be between desired limits
-      if (
-        this.currentDistance >= this.minDistance - wheelDelta &&
-        this.currentDistance <= this.maxDistance - wheelDelta
-      ) {
-        this.currentDistance += wheelDelta;
-      }
+    // restrict radius to be between desired limits
+    if (
+      this.currentDistance >= this.minDistance - wheelDelta &&
+      this.currentDistance <= this.maxDistance - wheelDelta
+    ) {
+      this.currentDistance += wheelDelta;
+    }
+    this.onMouseMove(new MouseEvent("mousemove", {movementX:0,movementY:0}))
   }
 
   update() {
-    // TODO-DefinitelyMaybe: Maintain previous rotation as player moves. only update the position
     const objPosition = new Vector3(
       this.object.position.x,
       this.object.position.y,
