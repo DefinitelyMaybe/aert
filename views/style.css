@@ -19,3 +19,12 @@ button {
   min-width: 100px;
   min-height: 30px;
 }
+
+table {
+  border-collapse: collapse;
+}
+table, th, td {
+  border-style: solid;
+  border-color: black;
+  border-width: 1px;
+}
