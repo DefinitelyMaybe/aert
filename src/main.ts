@@ -48,7 +48,7 @@ const directionalLight = new DirectionalLight();
 const d = 100;
 directionalLight.position.set(d, d, d);
 directionalLight.castShadow = true;
-// directionalLight.shadow.mapSize = new Vector2(1024, 1024)
+directionalLight.shadow.mapSize = new Vector2(2048, 2048)
 directionalLight.shadow.camera.left = -d;
 directionalLight.shadow.camera.right = d;
 directionalLight.shadow.camera.top = d;
@@ -97,6 +97,7 @@ const cube = new Box(new Vec3(1, 1, 1));
 const cubeBody = new Body({ mass: 1 });
 cubeBody.position.set(0, 10, 0);
 cubeBody.addShape(cube);
+cubeBody.angularDamping = 1.0
 world.addBody(cubeBody);
 
 const controls = new PlayerControls(cubeBody, camera, renderer.domElement);
@@ -106,6 +107,7 @@ const mat = new LineBasicMaterial({ color: 0xff00ff });
 const prevRay = new Line(geo, mat);
 scene.add(prevRay);
 
+// functions
 function animate() {
   requestAnimationFrame(animate);
 
@@ -132,6 +134,37 @@ function animate() {
   renderer.render(scene, camera);
 
   updateUI();
+}
+
+function spawnRedCubes() {
+  // respawn a red square somewhere within the current floor
+  material = new MeshStandardMaterial({ color: 0xff0000 });
+  for (let i = 0; i < 100; i++) {
+    const cube = new Mesh(geometry, material);
+    const scalar = 50;
+    const Xsign = Math.random() < 0.5 ? -1 : 1;
+    const Zsign = Math.random() < 0.5 ? -1 : 1;
+    cube.position.set(
+      Xsign * Math.random() * scalar,
+      1,
+      Zsign * Math.random() * scalar,
+    );
+    cube.name = "randomRedCube";
+    cube.castShadow = true;
+    cube.receiveShadow = true;
+    scene.add(cube);
+  }
+}
+
+function moveGreenCube() {
+  const scalar = 50;
+  const Xsign = Math.random() < 0.5 ? -1 : 1;
+  const Zsign = Math.random() < 0.5 ? -1 : 1;
+  cubeBody.position.set(
+    Xsign * Math.random() * scalar,
+    30,
+    Zsign * Math.random() * scalar,
+  );
 }
 
 // UI & Events
@@ -176,47 +209,29 @@ function updateUI() {
   angvely!.innerText = angy;
   angvelz!.innerText = angz;
 }
-//move green cube
-// const testButton = document.getElementById("test")!;
-// testButton.onclick = (e) => {
-//   const scalar = 50;
-//   const Xsign = Math.random() < 0.5 ? -1 : 1;
-//   const Zsign = Math.random() < 0.5 ? -1 : 1;
-//   cubeBody.position.set(
-//     Xsign * Math.random() * scalar,
-//     30,
-//     Zsign * Math.random() * scalar,
-//   );
-// };
+//test button 1
+const testButton = document.getElementById("test1")!;
+testButton.innerText = "spawn red cubes"
+testButton.onclick = (e) => {
+  spawnRedCubes()
+};
 
 // // add red cubes
-// const test2Button = document.getElementById("test2")!;
-// test2Button.onclick = (e) => {
-//   // respawn a red square somewhere within the current floor
-//   material = new MeshStandardMaterial({ color: 0xff0000 });
-//   for (let i = 0; i < 100; i++) {
-//     const cube = new Mesh(geometry, material);
-//     const scalar = 50;
-//     const Xsign = Math.random() < 0.5 ? -1 : 1;
-//     const Zsign = Math.random() < 0.5 ? -1 : 1;
-//     cube.position.set(
-//       Xsign * Math.random() * scalar,
-//       1,
-//       Zsign * Math.random() * scalar,
-//     );
-//     cube.name = "randomRedCube";
-//     cube.castShadow = true;
-//     cube.receiveShadow = true;
-//     scene.add(cube);
-//   }
-// };
+const test2Button = document.getElementById("test2")!;
+test2Button.innerText = "log position"
+test2Button.onclick = () => {
+  const x = `${Math.round(cubeBody.position.x * 1) / 1}`;
+  const y = `${Math.round(cubeBody.position.y * 1) / 1}`;
+  const z = `${Math.round(cubeBody.position.z * 1) / 1}`;
+  console.log(`${x}, ${y}, ${z}`);
+};
 
-// // console log scene
-// const test3Button = document.getElementById("test3")!;
-// test3Button.onclick = (e) => {
-//   console.log(box.position);
-//   console.log(camera.position);
-// };
+
+const test3Button = document.getElementById("test3")!;
+test3Button.innerText = "move green cube"
+test3Button.onclick = (e) => {
+  moveGreenCube()
+};
 
 // const canvasElement = document.querySelector("canvas");
 // const changeOrbitElement = document.querySelector(
@@ -280,3 +295,4 @@ function updateUI() {
 
 // finially start renderering
 animate();
+spawnRedCubes()
