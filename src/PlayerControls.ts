@@ -9,20 +9,29 @@ import {
   Spherical,
 } from "./deps.ts";
 
-type PlayerVec3 = Vector3 & Vec3
+type PlayerVec3 = Vector3 & Vec3;
 
 class PlayerControls {
   // values
   PI_2 = Math.PI / 2;
   twoPI = Math.PI * 2;
 
-  // variables
-  isLocked: boolean;
-  euler: Euler;
-
+  // external references
   domElement: HTMLElement;
   object: Body;
   camera: Camera;
+
+  // variables
+  isLocked: boolean;
+  isGrounded: boolean;
+  move: {
+    left: number;
+    right: number;
+    up: number;
+    down: number;
+    forward: number;
+    backward: number;
+  };
 
   offset: Vector3;
   cameraQuat: Quaternion;
@@ -39,6 +48,7 @@ class PlayerControls {
   constructor(object: Body, camera: Camera, domElement: HTMLElement) {
     this.object = object;
     this.camera = camera;
+    this.domElement = domElement;
 
     this.offset = new Vector3();
     this.cameraQuat = new Quaternion().setFromUnitVectors(
@@ -56,17 +66,24 @@ class PlayerControls {
     this.distanceTheshold = 5;
 
     this.isLocked = false;
-    this.euler = new Euler(0, 0, 0, "YXZ");
-    this.domElement = domElement;
+    this.isGrounded = false;
+    this.move = {
+      left: 0,
+      right: 0,
+      up: 0,
+      down: 0,
+      forward: 0,
+      backward: 0,
+    };
 
     this.domElement.addEventListener("mousedown", async () => {
       this.onMouseDown();
     });
 
     this.domElement.addEventListener("contextmenu", async (e) => {
-      e.preventDefault()
-      this.onMouseDown()
-    })
+      e.preventDefault();
+      this.onMouseDown();
+    });
 
     document.addEventListener("pointerlockchange", async () => {
       this.onPointerLockChange();
@@ -80,6 +97,10 @@ class PlayerControls {
 
     document.addEventListener("keydown", async (e) => {
       this.onKeyDown(e);
+    });
+
+    document.addEventListener("keyup", async (e) => {
+      this.onKeyUp(e);
     });
 
     this.domElement.addEventListener("wheel", async (e) => {
@@ -102,7 +123,7 @@ class PlayerControls {
     const movementX = event.movementX || 0;
     const movementY = event.movementY || 0;
 
-    const objPosition = new Vector3().copy(this.object.position as PlayerVec3)
+    const objPosition = new Vector3().copy(this.object.position as PlayerVec3);
 
     // left/right
     this.sphericalDelta.theta = this.twoPI * movementX /
@@ -157,19 +178,52 @@ class PlayerControls {
   onKeyDown(event: KeyboardEvent) {
     switch (event.key) {
       case "a":
-        this.object.velocity.x = 10;
+        this.move.left = 1;
+        // this.object.velocity.x = 10;
         break;
       case "d":
-        this.object.velocity.x = -10;
+        this.move.right = 1;
+        // this.object.velocity.x = -10;
         break;
       case "w":
-        this.object.velocity.z = 10;
+        this.move.forward = 1;
+        // this.object.velocity.z = 10;
         break;
       case "s":
-        this.object.velocity.z = -10;
+        this.move.backward = 1;
+        // this.object.velocity.z = -10;
         break;
       case " ":
-        this.object.velocity.y = 10;
+        this.move.up = 1;
+        // this.object.velocity.y = 10;
+        break;
+      default:
+        // console.log(`Didn't handle keydown for: ${event.key}`);
+        break;
+    }
+  }
+
+  onKeyUp(event: KeyboardEvent) {
+    switch (event.key) {
+      case "a":
+        this.move.left = 0;
+        // this.object.velocity.x = 10;
+        break;
+      case "d":
+        this.move.right = 0;
+        // this.object.velocity.x = -10;
+        break;
+      case "w":
+        this.move.forward = 0;
+        // this.object.velocity.z = 10;
+        break;
+      case "s":
+        this.move.backward = 0;
+        // this.object.velocity.z = -10;
+        break;
+      case " ":
+        this.move.up = 0;
+        // this.object.velocity.y = 10;
         break;
       default:
         // console.log(`Didn't handle keydown for: ${event.key}`);
@@ -193,21 +247,32 @@ class PlayerControls {
     );
   }
 
+  getPlayerDirection() {
+    return new Vector3(
+      this.move.left - this.move.right,
+      0,
+      this.move.forward - this.move.backward,
+    ).normalize();
+  }
+
   update() {
+    // update obj velocity
+    // this.object.velocity
+
+    // update camera position
     const objPosition = new Vector3().copy(this.object.position as PlayerVec3);
     this.camera.position.copy(objPosition).add(this.offset);
 
     this.camera.lookAt(objPosition);
 
-    const camQuat = new Quaternion().copy(this.camera.quaternion)
-    const camEuler = new Euler().setFromQuaternion(camQuat)
-  
-    camEuler.reorder('YXZ')
-    camEuler.x = 0
-    camQuat.setFromEuler(camEuler)
+    // update obj rotation
+    const camEuler = new Euler().setFromQuaternion(this.camera.quaternion);
 
-    this.object.quaternion.set(camQuat.x, camQuat.y, camQuat.z, camQuat.w)
-    
+    camEuler.reorder("YXZ");
+    camEuler.x = 0;
+    const camQuat = new Quaternion().setFromEuler(camEuler);
+
+    this.object.quaternion.set(camQuat.x, camQuat.y, camQuat.z, camQuat.w);
   }
 }
 
