@@ -42,12 +42,12 @@ if (errors == null) {
   for (const obj in emitted) {
     if (obj.includes("file:///")) {
       const splitPath = obj.split("src/");
-      const path = splitPath[splitPath.length-1]
+      const path = splitPath[splitPath.length - 1];
       const buildPath = `${BUILDJAVASCRIPT}${path}`;
       console.log(buildPath);
       ensureFileSync(buildPath);
       const data = emitted[obj].replace(/\.ts/g, ".js");
-      Deno.writeTextFileSync(buildPath, data); 
+      Deno.writeTextFileSync(buildPath, data);
     } else {
       // console.log(`Not written to build: ${obj}`);
     }

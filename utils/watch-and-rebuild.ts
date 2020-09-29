@@ -9,7 +9,6 @@ const VIEWS = "views/";
 // firstly, run a complete build of the entire folder
 Deno.run({ cmd: ["deno", "run", "-A", "--unstable", "utils/build.ts"] });
 
-
 // then only compile the files that get modified
 const watcher = Deno.watchFs(["./src", "./views"]);
 for await (const event of watcher) {
@@ -29,7 +28,7 @@ for await (const event of watcher) {
           // For the moment we shall say that it was typescript that needs to be recompiled
           // @ts-ignore
           const js = await Deno.transpileOnly(
-            { "compiled" : Deno.readTextFileSync(path)},
+            { "compiled": Deno.readTextFileSync(path) },
             {
               lib: ["esnext"],
             },
@@ -37,9 +36,9 @@ for await (const event of watcher) {
 
           if (js["compiled"].source) {
             // update the path
-            path = path.replaceAll(/\\/g, "/")
-            path = path.replace(/src\//g, "")
-            path = path.replace(/\.ts/g, ".js")
+            path = path.replaceAll(/\\/g, "/");
+            path = path.replace(/src\//g, "");
+            path = path.replace(/\.ts/g, ".js");
             const filepath = `${BUILDJAVASCRIPT}${path}`;
             console.log(`writing: ${filepath}`);
             // make sure we can write to the path

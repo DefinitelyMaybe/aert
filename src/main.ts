@@ -131,7 +131,7 @@ function animate() {
 
   renderer.render(scene, camera);
 
-  updateUI()
+  updateUI();
 }
 
 // UI & Events
@@ -151,30 +151,30 @@ window.onresize = () => {
 };
 
 //table
-const velx = document.getElementById("velx")
-const vely = document.getElementById("vely")
-const velz = document.getElementById("velz")
+const velx = document.getElementById("velx");
+const vely = document.getElementById("vely");
+const velz = document.getElementById("velz");
 
-const angvelx = document.getElementById("angvelx")
-const angvely = document.getElementById("angvely")
-const angvelz = document.getElementById("angvelz")
+const angvelx = document.getElementById("angvelx");
+const angvely = document.getElementById("angvely");
+const angvelz = document.getElementById("angvelz");
 
 function updateUI() {
-  const x = `${Math.round(cubeBody.velocity.x * 1) / 1}`
-  const y = `${Math.round(cubeBody.velocity.y * 1) / 1}`
-  const z = `${Math.round(cubeBody.velocity.z * 1) / 1}`
+  const x = `${Math.round(cubeBody.velocity.x * 1) / 1}`;
+  const y = `${Math.round(cubeBody.velocity.y * 1) / 1}`;
+  const z = `${Math.round(cubeBody.velocity.z * 1) / 1}`;
 
-  velx!.innerText = x
-  vely!.innerText = y
-  velz!.innerText = z
+  velx!.innerText = x;
+  vely!.innerText = y;
+  velz!.innerText = z;
 
-  const angx = `${Math.round(cubeBody.angularVelocity.x * 1) / 1}`
-  const angy = `${Math.round(cubeBody.angularVelocity.y * 1) / 1}`
-  const angz = `${Math.round(cubeBody.angularVelocity.z * 1) / 1}`
+  const angx = `${Math.round(cubeBody.angularVelocity.x * 1) / 1}`;
+  const angy = `${Math.round(cubeBody.angularVelocity.y * 1) / 1}`;
+  const angz = `${Math.round(cubeBody.angularVelocity.z * 1) / 1}`;
 
-  angvelx!.innerText = angx
-  angvely!.innerText = angy
-  angvelz!.innerText = angz
+  angvelx!.innerText = angx;
+  angvely!.innerText = angy;
+  angvelz!.innerText = angz;
 }
 //move green cube
 // const testButton = document.getElementById("test")!;
@@ -277,7 +277,6 @@ function updateUI() {
 //   "myRangeNumber",
 // ) as HTMLParagraphElement;
 // sliderNumber.innerText = `acceleration - ${controls.acceleration}`;
-
 
 // finially start renderering
 animate();

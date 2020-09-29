@@ -57,11 +57,11 @@ class PlayerControls {
     this.domElement = domElement;
 
     this.domElement.addEventListener("mousedown", async () => {
-      this.onMouseDown()
+      this.onMouseDown();
     });
 
     document.addEventListener("pointerlockchange", async () => {
-      this.onPointerLockChange()
+      this.onPointerLockChange();
     });
 
     this.domElement.addEventListener("mousemove", async (e: MouseEvent) => {
@@ -71,11 +71,11 @@ class PlayerControls {
     // this.domElement.addEventListener("mouseup", this.mouseup);
 
     document.addEventListener("keydown", async (e) => {
-      this.onKeyDown(e)
+      this.onKeyDown(e);
     });
 
     this.domElement.addEventListener("wheel", async (e) => {
-      this.onWheel(e)
+      this.onWheel(e);
     });
 
     // intialize the camera properly
@@ -153,7 +153,7 @@ class PlayerControls {
     }
   }
 
-  onKeyDown(event:KeyboardEvent) {
+  onKeyDown(event: KeyboardEvent) {
     if (this.isLocked) {
       // TODO-DefinitelyMaybe: once the camera and object rotations are in sync,
       // make sure that the velocity
@@ -180,10 +180,10 @@ class PlayerControls {
     }
   }
 
-  onWheel(event:WheelEvent) {
+  onWheel(event: WheelEvent) {
     const wheelDelta = event.deltaY > 0
-        ? this.distanceStepSize
-        : -this.distanceStepSize;
+      ? this.distanceStepSize
+      : -this.distanceStepSize;
     // restrict radius to be between desired limits
     if (
       this.currentDistance >= this.minDistance - wheelDelta &&
@@ -191,7 +191,9 @@ class PlayerControls {
     ) {
       this.currentDistance += wheelDelta;
     }
-    this.onMouseMove(new MouseEvent("mousemove", {movementX:0,movementY:0}))
+    this.onMouseMove(
+      new MouseEvent("mousemove", { movementX: 0, movementY: 0 }),
+    );
   }
 
   update() {
