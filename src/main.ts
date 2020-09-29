@@ -48,7 +48,7 @@ const directionalLight = new DirectionalLight();
 const d = 100;
 directionalLight.position.set(d, d, d);
 directionalLight.castShadow = true;
-directionalLight.shadow.mapSize = new Vector2(2048, 2048)
+directionalLight.shadow.mapSize = new Vector2(2048, 2048);
 directionalLight.shadow.camera.left = -d;
 directionalLight.shadow.camera.right = d;
 directionalLight.shadow.camera.top = d;
@@ -82,6 +82,7 @@ scene.add(floor);
 const groundPlane = new Plane();
 const groundBody = new Body({ mass: 0 });
 groundBody.addShape(groundPlane);
+groundBody.position.y -= 0.5;
 groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
 world.addBody(groundBody);
 
@@ -97,7 +98,7 @@ const cube = new Box(new Vec3(1, 1, 1));
 const cubeBody = new Body({ mass: 1 });
 cubeBody.position.set(0, 10, 0);
 cubeBody.addShape(cube);
-cubeBody.angularDamping = 1.0
+cubeBody.angularDamping = 1.0;
 world.addBody(cubeBody);
 
 const controls = new PlayerControls(cubeBody, camera, renderer.domElement);
@@ -113,7 +114,9 @@ function animate() {
 
   const delta = clock.getDelta();
 
+  // simulate physics
   world.step(delta);
+
   // update rendered positions
   box.position.copy(
     new Vector3(cubeBody.position.x, cubeBody.position.y, cubeBody.position.z),
@@ -167,6 +170,45 @@ function moveGreenCube() {
   );
 }
 
+function castRay(e: MouseEvent) {
+  if (castRayElement.checked) {
+    console.log("casting ray");
+    // throw out a ray and find a random object
+    const rayCaster = new Raycaster();
+    rayCaster.setFromCamera(
+      new Vector2(
+        (e.clientX / window.innerWidth) * 2 - 1,
+        -(e.clientY / window.innerHeight) * 2 + 1,
+      ),
+      camera,
+    );
+    const intersection = rayCaster.intersectObject(scene, true);
+
+    // draw the line that was raycasted
+    const direction = rayCaster.ray.direction.multiplyScalar(50);
+    const p0 = rayCaster.ray.origin;
+    const p1 = new Vector3(p0.x, p0.y, p0.z).add(direction);
+    const p2 = new Vector3(p1.x, p1.y, p1.z).add(direction);
+
+    const points = [];
+    points.push(p0);
+    points.push(p1);
+    points.push(p2);
+    prevRay.geometry.setFromPoints(points);
+
+    //check intersection
+    if (intersection.length > 0) {
+      const obj = intersection[0].object;
+      console.log(`intersected with ${intersection.length} objects`);
+
+      if (changeOrbitElement.checked) {
+        console.log(`controls changed to ${obj.name}`);
+        // controls.target = obj.position;
+      }
+    }
+  }
+}
+
 // UI & Events
 
 window.addEventListener("resize", () => {
@@ -211,14 +253,14 @@ function updateUI() {
 }
 //test button 1
 const testButton = document.getElementById("test1")!;
-testButton.innerText = "spawn red cubes"
+testButton.innerText = "spawn red cubes";
 testButton.onclick = (e) => {
-  spawnRedCubes()
+  spawnRedCubes();
 };
 
 // // add red cubes
 const test2Button = document.getElementById("test2")!;
-test2Button.innerText = "log position"
+test2Button.innerText = "log position";
 test2Button.onclick = () => {
   const x = `${Math.round(cubeBody.position.x * 1) / 1}`;
   const y = `${Math.round(cubeBody.position.y * 1) / 1}`;
@@ -226,73 +268,37 @@ test2Button.onclick = () => {
   console.log(`${x}, ${y}, ${z}`);
 };
 
-
 const test3Button = document.getElementById("test3")!;
-test3Button.innerText = "move green cube"
+test3Button.innerText = "move green cube";
 test3Button.onclick = (e) => {
-  moveGreenCube()
+  moveGreenCube();
 };
 
-// const canvasElement = document.querySelector("canvas");
-// const changeOrbitElement = document.querySelector(
-//   "input#changeOrbit",
-// ) as HTMLInputElement;
-// const castRayElement = document.querySelector(
-//   "input#castRay",
-// ) as HTMLInputElement;
+const canvasElement = document.querySelector("canvas");
+const changeOrbitElement = document.querySelector(
+  "input#changeOrbit",
+) as HTMLInputElement;
+const castRayElement = document.querySelector(
+  "input#castRay",
+) as HTMLInputElement;
 
-// canvasElement!.onclick = (e) => {
-//   if (castRayElement.checked) {
-//     console.log("casting ray");
-//     // throw out a ray and find a random object
-//     const rayCaster = new Raycaster();
-//     rayCaster.setFromCamera(
-//       new Vector2(
-//         (e.clientX / window.innerWidth) * 2 - 1,
-//         -(e.clientY / window.innerHeight) * 2 + 1,
-//       ),
-//       camera,
-//     );
-//     const intersection = rayCaster.intersectObject(scene, true);
+canvasElement!.onclick = (e: MouseEvent) => {
+  castRay(e);
+};
 
-//     // draw the line that was raycasted
-//     const direction = rayCaster.ray.direction.multiplyScalar(50);
-//     const p0 = rayCaster.ray.origin;
-//     const p1 = new Vector3(p0.x, p0.y, p0.z).add(direction);
-//     const p2 = new Vector3(p1.x, p1.y, p1.z).add(direction);
+const slider = document.getElementById("myRange")! as HTMLInputElement;
+slider.value = controls.currentDistance.toString();
 
-//     const points = [];
-//     points.push(p0);
-//     points.push(p1);
-//     points.push(p2);
-//     prevRay.geometry.setFromPoints(points);
+slider.addEventListener("change", () => {
+  controls.currentDistance = parseInt(slider.value);
+  sliderNumber.innerText = `distance - ${slider.value}`;
+});
 
-//     //check intersection
-//     if (intersection.length > 0) {
-//       const obj = intersection[0].object;
-//       console.log(`intersected with ${intersection.length} objects`);
-
-//       if (changeOrbitElement.checked) {
-//         console.log(`controls changed to ${obj.name}`);
-//         // controls.target = obj.position;
-//       }
-//     }
-//   }
-// };
-
-// const slider = document.getElementById("myRange")! as HTMLInputElement;
-// slider.value = controls.acceleration.toString();
-
-// slider.addEventListener("change", () => {
-//   controls.acceleration = parseInt(slider.value);
-//   sliderNumber.innerText = `acceleration - ${slider.value}`;
-// });
-
-// const sliderNumber = document.getElementById(
-//   "myRangeNumber",
-// ) as HTMLParagraphElement;
-// sliderNumber.innerText = `acceleration - ${controls.acceleration}`;
+const sliderNumber = document.getElementById(
+  "myRangeNumber",
+) as HTMLParagraphElement;
+sliderNumber.innerText = `distance - ${controls.currentDistance}`;
 
 // finially start renderering
 animate();
-spawnRedCubes()
+spawnRedCubes();
