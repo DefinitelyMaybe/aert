@@ -3,10 +3,13 @@ import {
   Euler,
   Camera,
   Vector3,
+  Vec3,
   Body,
   Quaternion,
   Spherical,
 } from "./deps.ts";
+
+type PlayerVec3 = Vector3 & Vec3
 
 class PlayerControls {
   // values
@@ -60,6 +63,11 @@ class PlayerControls {
       this.onMouseDown();
     });
 
+    this.domElement.addEventListener("contextmenu", async (e) => {
+      e.preventDefault()
+      this.onMouseDown()
+    })
+
     document.addEventListener("pointerlockchange", async () => {
       this.onPointerLockChange();
     });
@@ -94,11 +102,7 @@ class PlayerControls {
     const movementX = event.movementX || 0;
     const movementY = event.movementY || 0;
 
-    const objPosition = new Vector3(
-      this.object.position.x,
-      this.object.position.y,
-      this.object.position.z,
-    );
+    const objPosition = new Vector3().copy(this.object.position as PlayerVec3)
 
     // left/right
     this.sphericalDelta.theta = this.twoPI * movementX /
@@ -132,9 +136,6 @@ class PlayerControls {
     // rotate offset back to "camera-up-vector-is-up" space
     this.offset.applyQuaternion(this.cameraQuatInv);
 
-    // TODO-DefinitelyMaybe: update the object towards
-    // this.object.quaternion.slerp()
-
     // update the position
     this.update();
   }
@@ -154,29 +155,25 @@ class PlayerControls {
   }
 
   onKeyDown(event: KeyboardEvent) {
-    if (this.isLocked) {
-      // TODO-DefinitelyMaybe: once the camera and object rotations are in sync,
-      // make sure that the velocity
-      switch (event.key) {
-        case "a":
-          this.object.velocity.x = -10;
-          break;
-        case "d":
-          this.object.velocity.x = 10;
-          break;
-        case "w":
-          this.object.velocity.z = 10;
-          break;
-        case "s":
-          this.object.velocity.z = -10;
-          break;
-        case " ":
-          this.object.velocity.y = 10;
-          break;
-        default:
-          // console.log(`Didn't handle keydown for: ${event.key}`);
-          break;
-      }
+    switch (event.key) {
+      case "a":
+        this.object.velocity.x = 10;
+        break;
+      case "d":
+        this.object.velocity.x = -10;
+        break;
+      case "w":
+        this.object.velocity.z = 10;
+        break;
+      case "s":
+        this.object.velocity.z = -10;
+        break;
+      case " ":
+        this.object.velocity.y = 10;
+        break;
+      default:
+        // console.log(`Didn't handle keydown for: ${event.key}`);
+        break;
     }
   }
 
@@ -197,14 +194,20 @@ class PlayerControls {
   }
 
   update() {
-    const objPosition = new Vector3(
-      this.object.position.x,
-      this.object.position.y,
-      this.object.position.z,
-    );
+    const objPosition = new Vector3().copy(this.object.position as PlayerVec3);
     this.camera.position.copy(objPosition).add(this.offset);
 
     this.camera.lookAt(objPosition);
+
+    const camQuat = new Quaternion().copy(this.camera.quaternion)
+    const camEuler = new Euler().setFromQuaternion(camQuat)
+  
+    camEuler.reorder('YXZ')
+    camEuler.x = 0
+    camQuat.setFromEuler(camEuler)
+
+    this.object.quaternion.set(camQuat.x, camQuat.y, camQuat.z, camQuat.w)
+    
   }
 }
 
