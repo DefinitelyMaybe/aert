@@ -37,4 +37,5 @@ export {
   Sphere,
   Vec3,
   Quaternion as Quat,
+  Material,
 } from "https://deno.land/x/cannon_4_deno@v0.15.1.5/src/cannon-es.ts";
