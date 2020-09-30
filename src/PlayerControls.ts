@@ -266,6 +266,8 @@ class PlayerControls {
     this.object.velocity.set(velVec.x, this.object.velocity.y, velVec.z);
     if (this.move.up && this.isGrounded) {
       this.object.velocity.y = 10;
+    } else if (this.isGrounded) {
+      this.object.velocity.y = 0;
     }
 
     // update camera position
