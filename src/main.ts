@@ -19,7 +19,6 @@ import {
   HemisphereLight,
   Clock,
   World,
-  Sphere,
   Box,
   NaiveBroadphase,
   Plane,
@@ -84,6 +83,7 @@ const groundBody = new Body({ mass: 0 });
 groundBody.addShape(groundPlane);
 groundBody.position.y -= 0.5;
 groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
+// groundBody.material = new Material({friction:0.0, })
 world.addBody(groundBody);
 
 // three.js cube
