@@ -8,15 +8,17 @@ import {
   Quaternion,
   Quat,
   Spherical,
+  Raycaster,
 } from "./deps.ts";
 
 type PlayerVec3 = Vector3 & Vec3;
-type PlayerQuat = Quat & Quaternion
+type PlayerQuat = Quat & Quaternion;
 
 class PlayerControls {
   // values
   PI_2 = Math.PI / 2;
   twoPI = Math.PI * 2;
+  downAxis = new Vector3(0, -1, 0);
 
   // external references
   domElement: HTMLElement;
@@ -78,7 +80,7 @@ class PlayerControls {
       forward: 0,
       backward: 0,
     };
-    this.acceleration = 10
+    this.acceleration = 10;
 
     this.domElement.addEventListener("mousedown", async () => {
       this.onMouseDown();
@@ -194,7 +196,9 @@ class PlayerControls {
         this.move.backward = 1;
         break;
       case " ":
-        this.move.up = 1;
+        if (this.isGrounded) {
+          this.move.up = 1;
+        }
         break;
       default:
         // console.log(`Didn't handle keydown for: ${event.key}`);
@@ -248,22 +252,39 @@ class PlayerControls {
 
   getPlayerDirection() {
     return new Vector3(
-      - this.move.left + this.move.right,
+      -this.move.left + this.move.right,
       0,
-      - this.move.forward + this.move.backward,
+      -this.move.forward + this.move.backward,
     ).normalize();
   }
 
   update() {
     // update obj velocity
-    const velVec = this.getPlayerDirection().applyQuaternion(this.object.quaternion as PlayerQuat).multiplyScalar(this.acceleration)
-    this.object.velocity.set(velVec.x, this.object.velocity.y, velVec.z)
+    const velVec = this.getPlayerDirection().applyQuaternion(
+      this.object.quaternion as PlayerQuat,
+    ).multiplyScalar(this.acceleration);
+    this.object.velocity.set(velVec.x, this.object.velocity.y, velVec.z);
+    if (this.move.up && this.isGrounded) {
+      this.object.velocity.y = 10;
+    }
 
     // update camera position
     const objPosition = new Vector3().copy(this.object.position as PlayerVec3);
     this.camera.position.copy(objPosition).add(this.offset);
 
     this.camera.lookAt(objPosition);
+
+    // cast a small ray to update whether the player is grounded or not
+    try {
+      const ray = new Raycaster(objPosition, this.downAxis, 0, 0.6)
+        .intersectObject(this.camera.parent!, true);
+      if (ray.length > 0) {
+        this.isGrounded = true;
+      } else {
+        this.isGrounded = false;
+      }
+    } catch (error) {
+    }
 
     // update obj rotation
     const camEuler = new Euler().setFromQuaternion(this.camera.quaternion);
