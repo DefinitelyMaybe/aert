@@ -6,10 +6,12 @@ import {
   Vec3,
   Body,
   Quaternion,
+  Quat,
   Spherical,
 } from "./deps.ts";
 
 type PlayerVec3 = Vector3 & Vec3;
+type PlayerQuat = Quat & Quaternion
 
 class PlayerControls {
   // values
@@ -32,6 +34,7 @@ class PlayerControls {
     forward: number;
     backward: number;
   };
+  acceleration: number;
 
   offset: Vector3;
   cameraQuat: Quaternion;
@@ -75,6 +78,7 @@ class PlayerControls {
       forward: 0,
       backward: 0,
     };
+    this.acceleration = 10
 
     this.domElement.addEventListener("mousedown", async () => {
       this.onMouseDown();
@@ -179,23 +183,18 @@ class PlayerControls {
     switch (event.key) {
       case "a":
         this.move.left = 1;
-        // this.object.velocity.x = 10;
         break;
       case "d":
         this.move.right = 1;
-        // this.object.velocity.x = -10;
         break;
       case "w":
         this.move.forward = 1;
-        // this.object.velocity.z = 10;
         break;
       case "s":
         this.move.backward = 1;
-        // this.object.velocity.z = -10;
         break;
       case " ":
         this.move.up = 1;
-        // this.object.velocity.y = 10;
         break;
       default:
         // console.log(`Didn't handle keydown for: ${event.key}`);
@@ -249,15 +248,16 @@ class PlayerControls {
 
   getPlayerDirection() {
     return new Vector3(
-      this.move.left - this.move.right,
+      - this.move.left + this.move.right,
       0,
-      this.move.forward - this.move.backward,
+      - this.move.forward + this.move.backward,
     ).normalize();
   }
 
   update() {
     // update obj velocity
-    // this.object.velocity
+    const velVec = this.getPlayerDirection().applyQuaternion(this.object.quaternion as PlayerQuat).multiplyScalar(this.acceleration)
+    this.object.velocity.set(velVec.x, this.object.velocity.y, velVec.z)
 
     // update camera position
     const objPosition = new Vector3().copy(this.object.position as PlayerVec3);
