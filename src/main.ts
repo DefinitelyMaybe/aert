@@ -1,30 +1,30 @@
 /// <reference lib="dom" />
 import {
-  Scene,
-  DirectionalLightHelper,
-  PerspectiveCamera,
-  WebGLRenderer,
-  BoxGeometry,
-  MeshStandardMaterial,
-  Mesh,
-  DirectionalLight,
-  Vector3,
-  PlaneBufferGeometry,
-  Raycaster,
-  Vector2,
-  Line,
-  BufferGeometry,
-  LineBasicMaterial,
-  Color,
-  HemisphereLight,
-  Clock,
-  World,
-  Box,
-  NaiveBroadphase,
-  Plane,
   Body,
-  Vec3,
+  Box,
+  BoxGeometry,
+  BufferGeometry,
+  Clock,
+  Color,
+  DirectionalLight,
+  DirectionalLightHelper,
+  HemisphereLight,
+  Line,
+  LineBasicMaterial,
+  Mesh,
+  MeshStandardMaterial,
+  NaiveBroadphase,
+  PerspectiveCamera,
+  Plane,
+  PlaneBufferGeometry,
   Quaternion,
+  Raycaster,
+  Scene,
+  Vec3,
+  Vector2,
+  Vector3,
+  WebGLRenderer,
+  World,
 } from "./deps.ts";
 import { PlayerControls } from "./PlayerControls.ts";
 
@@ -115,6 +115,10 @@ function animate() {
   const delta = clock.getDelta();
 
   // simulate physics
+  window.addEventListener("focus", (e) => {
+    // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
+    console.log(e);
+  });
   world.step(delta);
 
   // update rendered positions
@@ -224,6 +228,25 @@ window.onresize = () => {
 
   renderer.setSize(window.innerWidth, window.innerHeight);
 };
+
+//share API
+const shareBtn = document.getElementById("test4")!;
+shareBtn.innerText = "share";
+shareBtn.addEventListener("click", () => {
+  // @ts-ignore
+  console.log(navigator.canShare());
+  navigator.share(
+    { title: "test", text: "test", url: "localhost:5500/build/main.html" },
+  )
+    .then(
+      () => {
+        console.log("success");
+      },
+    )
+    .catch((e) => {
+      console.log(e);
+    });
+});
 
 //table
 const velx = document.getElementById("velx");
