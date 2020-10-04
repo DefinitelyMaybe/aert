@@ -1,14 +1,14 @@
 /// <reference lib="dom" />
 import {
-  Euler,
-  Camera,
-  Vector3,
-  Vec3,
   Body,
-  Quaternion,
+  Camera,
+  Euler,
   Quat,
-  Spherical,
+  Quaternion,
   Raycaster,
+  Spherical,
+  Vec3,
+  Vector3,
 } from "./deps.ts";
 
 type PlayerVec3 = Vector3 & Vec3;
@@ -278,7 +278,7 @@ class PlayerControls {
 
     // cast a small ray to update whether the player is grounded or not
     try {
-      const ray = new Raycaster(objPosition, this.downAxis, 0, 0.6)
+      const ray = new Raycaster(objPosition, this.downAxis, 0, 0.7)
         .intersectObject(this.camera.parent!, true);
       if (ray.length > 0) {
         this.isGrounded = true;
