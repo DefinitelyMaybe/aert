@@ -100,7 +100,7 @@ const cube = new Box(new Vec3(1, 1, 1));
 const cubeBody = new Body({ mass: 1 });
 cubeBody.position.set(0, 10, 0);
 cubeBody.addShape(cube);
-cubeBody.angularDamping = 1.0;
+// cubeBody.angularDamping = 1.0;
 world.addBody(cubeBody);
 
 const controls = new PlayerControls(cubeBody, camera, renderer.domElement);
