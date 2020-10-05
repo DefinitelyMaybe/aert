@@ -9,6 +9,7 @@ import {
   DirectionalLight,
   DirectionalLightHelper,
   HemisphereLight,
+  Object3D,
   Line,
   LineBasicMaterial,
   Mesh,
@@ -29,6 +30,7 @@ import {
 import { PlayerControls } from "./PlayerControls.ts";
 
 const clock = new Clock(true);
+let simulate = true;
 
 // Initialize Cannon.js
 const world = new World();
@@ -108,39 +110,47 @@ const mat = new LineBasicMaterial({ color: 0xff00ff });
 const prevRay = new Line(geo, mat);
 scene.add(prevRay);
 
+const redCubesArray: Object3D[] = []
+
 // functions
 function animate() {
   requestAnimationFrame(animate);
 
-  const delta = clock.getDelta();
+  if (simulate) {
+    const delta = clock.getDelta();
 
-  // simulate physics
-  window.addEventListener("focus", (e) => {
-    // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
-    console.log(e);
-  });
-  world.step(delta);
+    // simulate physics  
+    world.step(delta);
 
-  // update rendered positions
-  box.position.copy(
-    new Vector3(cubeBody.position.x, cubeBody.position.y, cubeBody.position.z),
-  );
-  box.quaternion.copy(
-    new Quaternion(
-      cubeBody.quaternion.x,
-      cubeBody.quaternion.y,
-      cubeBody.quaternion.z,
-      cubeBody.quaternion.w,
-    ),
-  );
+    // update rendered positions
+    box.position.copy(
+      new Vector3(cubeBody.position.x, cubeBody.position.y, cubeBody.position.z),
+    );
+    box.quaternion.copy(
+      new Quaternion(
+        cubeBody.quaternion.x,
+        cubeBody.quaternion.y,
+        cubeBody.quaternion.z,
+        cubeBody.quaternion.w,
+      ),
+    );
 
-  // camera position must be updated
-  // velocity may move object position
-  controls.update();
+    redCubesArray.forEach(cube => {
+      const cPos = cube.userData.physics.body.position
+      cube.position.copy(new Vector3(cPos.x, cPos.y, cPos.z))
+      const cQuat = cube.userData.physics.body.quaternion
+      cube.quaternion.copy(new Quaternion(cQuat.x, cQuat.y, cQuat.z, cQuat.w))
+    });
 
-  renderer.render(scene, camera);
+    // camera position must be updated
+    // velocity may move object position
+    controls.update();
 
-  updateUI();
+    renderer.render(scene, camera);
+
+    updateUI();
+  }
+  
 }
 
 function spawnRedCubes() {
@@ -151,15 +161,27 @@ function spawnRedCubes() {
     const scalar = 50;
     const Xsign = Math.random() < 0.5 ? -1 : 1;
     const Zsign = Math.random() < 0.5 ? -1 : 1;
+    const posX = Xsign * Math.random() * scalar
+    const posY = 1
+    const posZ = Zsign * Math.random() * scalar
     cube.position.set(
-      Xsign * Math.random() * scalar,
-      1,
-      Zsign * Math.random() * scalar,
+      posX,
+      posY,
+      posZ,
     );
     cube.name = "randomRedCube";
     cube.castShadow = true;
     cube.receiveShadow = true;
     scene.add(cube);
+    // cannon.js
+    const redCube = new Box(new Vec3(1, 1, 1));
+    const redCubeBody = new Body({ mass: 1 });
+    redCubeBody.position.set(posX, posY, posZ);
+    redCubeBody.addShape(redCube);
+    world.addBody(redCubeBody);
+    cube.userData.physics = redCube
+
+    redCubesArray.push(cube)
   }
 }
 
@@ -214,6 +236,18 @@ function castRay(e: MouseEvent) {
 }
 
 // UI & Events
+
+window.addEventListener("visibilitychange", () => {
+  // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
+  if (document.visibilityState === 'hidden') {
+    simulate = false
+    clock.stop()
+  } else {
+    // get ready to simulate again
+    clock.start()
+    simulate = true
+  }
+});
 
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
