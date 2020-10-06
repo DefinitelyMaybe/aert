@@ -97,7 +97,7 @@ box.receiveShadow = true;
 scene.add(box);
 // cannon.js cube
 const cube = new Box(new Vec3(1, 1, 1));
-const cubeBody = new Body({ mass: 1 });
+const cubeBody = new Body({ mass: 10 });
 cubeBody.position.set(0, 10, 0);
 cubeBody.addShape(cube);
 // cubeBody.angularDamping = 1.0;
@@ -183,7 +183,7 @@ function spawnRedCubes() {
     scene.add(cube);
     // cannon.js
     const redCube = new Box(new Vec3(1, 1, 1));
-    const redCubeBody = new Body({ mass: 1 });
+    const redCubeBody = new Body({ mass: 10 });
     redCubeBody.position.set(posX, posY, posZ);
     redCubeBody.addShape(redCube);
     world.addBody(redCubeBody);
