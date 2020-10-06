@@ -174,7 +174,7 @@ class PlayerControls {
   }
 
   onPointerLockChange() {
-    console.log("change");
+    // console.log("change");
     if (document.pointerLockElement === this.domElement) {
       this.isLocked = true;
     } else {
@@ -200,6 +200,9 @@ class PlayerControls {
         if (this.isGrounded) {
           this.move.up = 1;
         }
+        break;
+      case "e":
+        this.spawnCube()
         break;
       default:
         // console.log(`Didn't handle keydown for: ${event.key}`);
@@ -297,6 +300,10 @@ class PlayerControls {
     const camQuat = new Quaternion().setFromEuler(camEuler);
 
     this.object.quaternion.set(camQuat.x, camQuat.y, camQuat.z, camQuat.w);
+  }
+
+  spawnCube() {
+    console.log("hello world");
   }
 }
 
