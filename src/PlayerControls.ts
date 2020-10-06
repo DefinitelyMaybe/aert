@@ -174,6 +174,7 @@ class PlayerControls {
   }
 
   onPointerLockChange() {
+    console.log("change");
     if (document.pointerLockElement === this.domElement) {
       this.isLocked = true;
     } else {
@@ -278,7 +279,7 @@ class PlayerControls {
 
     // cast a small ray to update whether the player is grounded or not
     try {
-      const ray = new Raycaster(objPosition, this.downAxis, 0, 0.7)
+      const ray = new Raycaster(objPosition, this.downAxis, 0, 1.1)
         .intersectObject(this.camera.parent!, true);
       if (ray.length > 0) {
         this.isGrounded = true;
