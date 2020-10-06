@@ -9,12 +9,12 @@ import {
   DirectionalLight,
   DirectionalLightHelper,
   HemisphereLight,
-  Object3D,
   Line,
   LineBasicMaterial,
   Mesh,
   MeshStandardMaterial,
   NaiveBroadphase,
+  Object3D,
   PerspectiveCamera,
   Plane,
   PlaneBufferGeometry,
@@ -110,7 +110,7 @@ const mat = new LineBasicMaterial({ color: 0xff00ff });
 const prevRay = new Line(geo, mat);
 scene.add(prevRay);
 
-const redCubesArray: Object3D[] = []
+const redCubesArray: Object3D[] = [];
 
 // functions
 function animate() {
@@ -119,12 +119,21 @@ function animate() {
   if (simulate) {
     const delta = clock.getDelta();
 
-    // simulate physics  
+    const valueTracker = document.querySelector(
+      "#valueTracker",
+    ) as HTMLParagraphElement;
+    valueTracker.innerText = `dt: ${Math.round(delta * 100) / 100}`;
+
+    // simulate physics
     world.step(delta);
 
     // update rendered positions
     box.position.copy(
-      new Vector3(cubeBody.position.x, cubeBody.position.y, cubeBody.position.z),
+      new Vector3(
+        cubeBody.position.x,
+        cubeBody.position.y,
+        cubeBody.position.z,
+      ),
     );
     box.quaternion.copy(
       new Quaternion(
@@ -135,11 +144,11 @@ function animate() {
       ),
     );
 
-    redCubesArray.forEach(cube => {
-      const cPos = cube.userData.physics.body.position
-      cube.position.copy(new Vector3(cPos.x, cPos.y, cPos.z))
-      const cQuat = cube.userData.physics.body.quaternion
-      cube.quaternion.copy(new Quaternion(cQuat.x, cQuat.y, cQuat.z, cQuat.w))
+    redCubesArray.forEach((cube) => {
+      const cPos = cube.userData.physics.body.position;
+      cube.position.copy(new Vector3(cPos.x, cPos.y, cPos.z));
+      const cQuat = cube.userData.physics.body.quaternion;
+      cube.quaternion.copy(new Quaternion(cQuat.x, cQuat.y, cQuat.z, cQuat.w));
     });
 
     // camera position must be updated
@@ -150,7 +159,6 @@ function animate() {
 
     updateUI();
   }
-  
 }
 
 function spawnRedCubes() {
@@ -161,9 +169,9 @@ function spawnRedCubes() {
     const scalar = 50;
     const Xsign = Math.random() < 0.5 ? -1 : 1;
     const Zsign = Math.random() < 0.5 ? -1 : 1;
-    const posX = Xsign * Math.random() * scalar
-    const posY = 1
-    const posZ = Zsign * Math.random() * scalar
+    const posX = Xsign * Math.random() * scalar;
+    const posY = 1;
+    const posZ = Zsign * Math.random() * scalar;
     cube.position.set(
       posX,
       posY,
@@ -179,9 +187,9 @@ function spawnRedCubes() {
     redCubeBody.position.set(posX, posY, posZ);
     redCubeBody.addShape(redCube);
     world.addBody(redCubeBody);
-    cube.userData.physics = redCube
+    cube.userData.physics = redCube;
 
-    redCubesArray.push(cube)
+    redCubesArray.push(cube);
   }
 }
 
@@ -239,13 +247,13 @@ function castRay(e: MouseEvent) {
 
 window.addEventListener("visibilitychange", () => {
   // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
-  if (document.visibilityState === 'hidden') {
-    simulate = false
-    clock.stop()
+  if (document.visibilityState === "hidden") {
+    simulate = false;
+    clock.stop();
   } else {
     // get ready to simulate again
-    clock.start()
-    simulate = true
+    clock.start();
+    simulate = true;
   }
 });
 
@@ -308,6 +316,7 @@ function updateUI() {
   angvely!.innerText = angy;
   angvelz!.innerText = angz;
 }
+
 //test button 1
 const testButton = document.getElementById("test1")!;
 testButton.innerText = "spawn red cubes";
