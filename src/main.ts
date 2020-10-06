@@ -83,13 +83,13 @@ scene.add(floor);
 const groundPlane = new Plane();
 const groundBody = new Body({ mass: 0 });
 groundBody.addShape(groundPlane);
-groundBody.position.y -= 0.5;
+// groundBody.position.y -= 1;
 groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
 // groundBody.material = new Material({friction:0.0, })
 world.addBody(groundBody);
 
 // three.js cube
-const geometry = new BoxGeometry(1, 1, 1);
+const geometry = new BoxGeometry(2, 2, 2);
 material = new MeshStandardMaterial({ color: 0x00ff00 });
 const box = new Mesh(geometry, material);
 box.castShadow = true;
