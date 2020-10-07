@@ -7,9 +7,9 @@ Making a random prototype slowly.
 * physics
   * render debugging shapes
 * inventory of objects
-* place objects into world
-* How to customize three.js
-* In-World editor interface with context switching
+* interactions
+  * place objects into world
+  * [add html to objects](https://threejs.org/examples/#css3d_periodictable)
 
 # Developing
 
