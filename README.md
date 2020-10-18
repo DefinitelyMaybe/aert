@@ -1,12 +1,7 @@
 # aert
 
-Making a random prototype slowly.
+Fail fast and always aim for fun.
 
-* camera
-  * not going through ground
-* physics
-  * render debugging shapes
-* inventory of objects
 * interactions
   * place objects into world
   * [add html to objects](https://threejs.org/examples/#css3d_periodictable)
