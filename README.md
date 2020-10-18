@@ -5,6 +5,7 @@ Fail fast and always aim for fun.
 * interactions
   * place objects into world
   * [add html to objects](https://threejs.org/examples/#css3d_periodictable)
+* [jumping](https://www.youtube.com/watch?v=hG9SzQxaCm8&ab_channel=GDC)
 
 # Developing
 
