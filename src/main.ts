@@ -119,10 +119,7 @@ function animate() {
   if (simulate) {
     const delta = clock.getDelta();
 
-    const valueTracker = document.querySelector(
-      "#valueTracker",
-    ) as HTMLParagraphElement;
-    valueTracker.innerText = `dt: ${Math.round(delta * 100) / 100}`;
+    updateValueTrackers(delta)
 
     // simulate physics
     world.step(delta);
@@ -241,6 +238,17 @@ function castRay(e: MouseEvent) {
       }
     }
   }
+}
+
+function updateValueTrackers(delta:number) {
+  const valueTracker = document.querySelector(
+    "#valueTracker",
+  ) as HTMLParagraphElement;
+  valueTracker.innerText = `dt: ${Math.round(delta * 100) / 100}`;
+  const valueTracker2 = document.querySelector(
+    "#valueTracker2",
+  ) as HTMLParagraphElement;
+  valueTracker2.innerText = `#objects: ${scene.children.length}`;
 }
 
 // UI & Events
