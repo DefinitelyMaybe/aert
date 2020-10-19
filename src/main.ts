@@ -29,6 +29,7 @@ import {
 } from "./deps.ts";
 import { PlayerControls } from "./PlayerControls.ts";
 
+
 const clock = new Clock(true);
 let simulate = true;
 
@@ -279,23 +280,12 @@ window.onresize = () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 };
 
-//share API
-const shareBtn = document.getElementById("test4")!;
-shareBtn.innerText = "share";
-shareBtn.addEventListener("click", () => {
-  // @ts-ignore
-  console.log(navigator.canShare());
-  navigator.share(
-    { title: "test", text: "test", url: "localhost:5500/build/main.html" },
-  )
-    .then(
-      () => {
-        console.log("success");
-      },
-    )
-    .catch((e) => {
-      console.log(e);
-    });
+//file API
+const fileSaveBtn = document.getElementById("test4")!;
+fileSaveBtn.innerText = "share";
+fileSaveBtn.addEventListener("click", () => {
+  console.log("hello world");
+  const myblob = new Blob(["hello world"], {type:'text/plain'})
 });
 
 //table
