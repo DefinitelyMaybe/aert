@@ -252,6 +252,12 @@ function updateValueTrackers(delta:number) {
   valueTracker2.innerText = `#objects: ${scene.children.length}`;
 }
 
+function download(url:string, name:string) {
+  downloader.href = url
+  downloader.setAttribute("download", name)
+  downloader.click()
+}
+
 // UI & Events
 
 window.addEventListener("visibilitychange", () => {
@@ -281,11 +287,13 @@ window.onresize = () => {
 };
 
 //file API
+const downloader = document.querySelector("a")! as HTMLAnchorElement;
 const fileSaveBtn = document.getElementById("test4")!;
 fileSaveBtn.innerText = "share";
 fileSaveBtn.addEventListener("click", () => {
-  console.log("hello world");
   const myblob = new Blob(["hello world"], {type:'text/plain'})
+  const url = window.URL.createObjectURL(myblob)
+  download(url, "test.txt")
 });
 
 //table
