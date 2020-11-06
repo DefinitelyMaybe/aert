@@ -24,9 +24,9 @@ export {
   Vector2,
   Vector3,
   WebGLRenderer,
-} from "https://deno.land/x/threejs_4_deno@v120.3/src/Three.js";
-export { OrbitControls } from "https://deno.land/x/threejs_4_deno@v120.3/examples/jsm/controls/OrbitControls.js";
-export { PointerLockControls } from "https://deno.land/x/threejs_4_deno@v120.3/examples/jsm/controls/PointerLockControls.js";
+} from "https://deno.land/x/threejs_4_deno@v121/src/Three.js";
+export { OrbitControls } from "https://deno.land/x/threejs_4_deno@v121/examples/jsm/controls/OrbitControls.js";
+export { PointerLockControls } from "https://deno.land/x/threejs_4_deno@v121/examples/jsm/controls/PointerLockControls.js";
 export {
   AABB,
   Body,
