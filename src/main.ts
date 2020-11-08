@@ -29,7 +29,6 @@ import {
 } from "./deps.ts";
 import { PlayerControls } from "./PlayerControls.ts";
 
-
 const clock = new Clock(true);
 let simulate = true;
 
@@ -38,6 +37,7 @@ const world = new World();
 world.gravity.set(0, -10, 0);
 world.broadphase = new NaiveBroadphase();
 
+// Initialize Three.js
 const renderer = new WebGLRenderer();
 renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -120,7 +120,7 @@ function animate() {
   if (simulate) {
     const delta = clock.getDelta();
 
-    updateValueTrackers(delta)
+    updateValueTrackers(delta);
 
     // simulate physics
     world.step(delta);
@@ -160,7 +160,7 @@ function animate() {
 }
 
 function spawnRedCubes() {
-  // respawn a red square somewhere within the current floor
+  // spawn red cubes somewhere within the current floor
   material = new MeshStandardMaterial({ color: 0xff0000 });
   for (let i = 0; i < 100; i++) {
     const cube = new Mesh(geometry, material);
@@ -241,7 +241,7 @@ function castRay(e: MouseEvent) {
   }
 }
 
-function updateValueTrackers(delta:number) {
+function updateValueTrackers(delta: number) {
   const valueTracker = document.querySelector(
     "#valueTracker",
   ) as HTMLParagraphElement;
@@ -252,10 +252,10 @@ function updateValueTrackers(delta:number) {
   valueTracker2.innerText = `#objects: ${scene.children.length}`;
 }
 
-function download(url:string, name:string) {
-  downloader.href = url
-  downloader.setAttribute("download", name)
-  downloader.click()
+function download(url: string, name: string) {
+  downloader.href = url;
+  downloader.setAttribute("download", name);
+  downloader.click();
 }
 
 // UI & Events
@@ -291,9 +291,9 @@ const downloader = document.querySelector("a")! as HTMLAnchorElement;
 const fileSaveBtn = document.getElementById("test4")!;
 fileSaveBtn.innerText = "share";
 fileSaveBtn.addEventListener("click", () => {
-  const myblob = new Blob(["hello world"], {type:'text/plain'})
-  const url = window.URL.createObjectURL(myblob)
-  download(url, "test.txt")
+  const myblob = new Blob(["hello world"], { type: "text/plain" });
+  const url = window.URL.createObjectURL(myblob);
+  download(url, "test.txt");
 });
 
 //table
@@ -346,7 +346,7 @@ test3Button.onclick = (e) => {
   moveGreenCube();
 };
 
-const canvasElement = document.querySelector("canvas");
+const canvasElement = document.querySelector("canvas")!;
 const changeOrbitElement = document.querySelector(
   "input#changeOrbit",
 ) as HTMLInputElement;
@@ -354,7 +354,7 @@ const castRayElement = document.querySelector(
   "input#castRay",
 ) as HTMLInputElement;
 
-canvasElement!.onclick = (e: MouseEvent) => {
+canvasElement.onclick = (e: MouseEvent) => {
   castRay(e);
 };
 

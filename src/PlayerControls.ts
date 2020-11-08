@@ -202,7 +202,7 @@ class PlayerControls {
         }
         break;
       case "e":
-        this.spawnCube()
+        this.spawnCube();
         break;
       default:
         // console.log(`Didn't handle keydown for: ${event.key}`);
