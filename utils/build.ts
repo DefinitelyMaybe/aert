@@ -1,6 +1,7 @@
 import {
   emptyDirSync,
   ensureFileSync,
+  walkSync,
 } from "https://deno.land/std/fs/mod.ts";
 
 const BUILD = "build/";
@@ -27,32 +28,25 @@ const css = Deno.readTextFileSync(`${VIEWS}style.css`);
 Deno.writeTextFileSync(`${BUILD}style.css`, css);
 
 // compile src scripts with deno
-console.log("compiling from main...");
-// @ts-ignore
-const [errors, emitted] = await Deno.compile(
-  `${SRC}main.ts`,
-  undefined,
-  {
-    lib: ["esnext"],
-  },
-);
+console.log("transpiling all of src...");
 
-if (errors == null) {
-  console.log("writing js to file:");
-  for (const obj in emitted) {
-    if (obj.includes("file:///")) {
-      const splitPath = obj.split("src/");
-      const path = splitPath[splitPath.length - 1];
-      const buildPath = `${BUILDJAVASCRIPT}${path}`;
-      console.log(buildPath);
-      ensureFileSync(buildPath);
-      const data = emitted[obj].replace(/\.ts/g, ".js");
-      Deno.writeTextFileSync(buildPath, data);
-    } else {
-      // console.log(`Not written to build: ${obj}`);
-    }
+for await (const entry of walkSync(SRC)) {
+  let path = entry.path.replaceAll("\\", "/").split("src/")[1];
+  const buildPath = `${BUILDJAVASCRIPT}${path}`;
+  
+  // @ts-ignore
+  const js = await Deno.transpileOnly(
+    { "transpiled": Deno.readTextFileSync(entry.path) },
+    {
+      lib: ["esnext", "dom"],
+    },
+  );
+  if (js["transpiled"].source) {
+    ensureFileSync(buildPath);
+    // replace ts with js
+    const data = js["transpiled"].source.replace(/\.ts/g, ".js");
+    Deno.writeTextFileSync(buildPath, data);
+  } else {
+    console.log("how did i get here?");
   }
-  console.log("building finished");
-} else {
-  console.error(errors);
 }
