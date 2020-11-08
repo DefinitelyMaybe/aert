@@ -31,22 +31,22 @@ Deno.writeTextFileSync(`${BUILD}style.css`, css);
 console.log("transpiling all of src...");
 
 for await (const entry of walkSync(SRC)) {
-  let path = entry.path.replaceAll("\\", "/").split("src/")[1];
-  const buildPath = `${BUILDJAVASCRIPT}${path}`;
-  
-  // @ts-ignore
-  const js = await Deno.transpileOnly(
-    { "transpiled": Deno.readTextFileSync(entry.path) },
-    {
-      lib: ["esnext", "dom"],
-    },
-  );
-  if (js["transpiled"].source) {
-    ensureFileSync(buildPath);
-    // replace ts with js
-    const data = js["transpiled"].source.replace(/\.ts/g, ".js");
-    Deno.writeTextFileSync(buildPath, data);
-  } else {
-    console.log("how did i get here?");
+  if (entry.isFile) {
+    let path = entry.path.replaceAll("\\", "/").split("src/")[1].replace(".ts", ".js");
+    const buildPath = `${BUILDJAVASCRIPT}${path}`;
+    
+    // @ts-ignore
+    const js = await Deno.transpileOnly(
+      { "transpiled": Deno.readTextFileSync(entry.path) },
+      {
+        lib: ["esnext", "dom"],
+      },
+    );
+    if (js["transpiled"].source) {
+      ensureFileSync(buildPath);
+      // replace ts with js
+      const data = js["transpiled"].source.replace(/\.ts/g, ".js");
+      Deno.writeTextFileSync(buildPath, data);
+    }
   }
 }
