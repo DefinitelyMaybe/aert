@@ -1,4 +1,3 @@
-/// <reference lib="dom" />
 import {
   Body,
   Box,
@@ -26,15 +25,15 @@ import {
   Vector3,
   WebGLRenderer,
   World,
-} from "./deps.ts";
-import { PlayerControls } from "./PlayerControls.ts";
+} from "./deps.js";
+import { PlayerControls } from "./PlayerControls.js";
 
 const clock = new Clock(true);
 let simulate = true;
 
 // Initialize Cannon.js
 const world = new World();
-world.gravity.set(0, -10, 0);
+world.gravity.set(0, -24, 0);
 world.broadphase = new NaiveBroadphase();
 
 // Initialize Three.js
@@ -111,7 +110,7 @@ const mat = new LineBasicMaterial({ color: 0xff00ff });
 const prevRay = new Line(geo, mat);
 scene.add(prevRay);
 
-const redCubesArray: Object3D[] = [];
+const redCubesArray = [];
 
 // functions
 function animate() {
@@ -202,7 +201,7 @@ function moveGreenCube() {
   );
 }
 
-function castRay(e: MouseEvent) {
+function castRay(e) {
   if (castRayElement.checked) {
     console.log("casting ray");
     // throw out a ray and find a random object
@@ -241,18 +240,18 @@ function castRay(e: MouseEvent) {
   }
 }
 
-function updateValueTrackers(delta: number) {
+function updateValueTrackers(delta) {
   const valueTracker = document.querySelector(
     "#valueTracker",
-  ) as HTMLParagraphElement;
+  );
   valueTracker.innerText = `dt: ${Math.round(delta * 100) / 100}`;
   const valueTracker2 = document.querySelector(
     "#valueTracker2",
-  ) as HTMLParagraphElement;
+  );
   valueTracker2.innerText = `#objects: ${scene.children.length}`;
 }
 
-function download(url: string, name: string) {
+function download(url, name) {
   downloader.href = url;
   downloader.setAttribute("download", name);
   downloader.click();
@@ -287,8 +286,8 @@ window.onresize = () => {
 };
 
 //file API
-const downloader = document.querySelector("a")! as HTMLAnchorElement;
-const fileSaveBtn = document.getElementById("test4")!;
+const downloader = document.querySelector("a");
+const fileSaveBtn = document.getElementById("test4");
 fileSaveBtn.innerText = "share";
 fileSaveBtn.addEventListener("click", () => {
   const myblob = new Blob(["hello world"], { type: "text/plain" });
@@ -310,28 +309,28 @@ function updateUI() {
   const y = `${Math.round(cubeBody.velocity.y * 1) / 1}`;
   const z = `${Math.round(cubeBody.velocity.z * 1) / 1}`;
 
-  velx!.innerText = x;
-  vely!.innerText = y;
-  velz!.innerText = z;
+  velx.innerText = x;
+  vely.innerText = y;
+  velz.innerText = z;
 
   const angx = `${Math.round(cubeBody.angularVelocity.x * 1) / 1}`;
   const angy = `${Math.round(cubeBody.angularVelocity.y * 1) / 1}`;
   const angz = `${Math.round(cubeBody.angularVelocity.z * 1) / 1}`;
 
-  angvelx!.innerText = angx;
-  angvely!.innerText = angy;
-  angvelz!.innerText = angz;
+  angvelx.innerText = angx;
+  angvely.innerText = angy;
+  angvelz.innerText = angz;
 }
 
 //test button 1
-const testButton = document.getElementById("test1")!;
+const testButton = document.getElementById("test1");
 testButton.innerText = "spawn red cubes";
 testButton.onclick = (e) => {
   spawnRedCubes();
 };
 
 // // add red cubes
-const test2Button = document.getElementById("test2")!;
+const test2Button = document.getElementById("test2");
 test2Button.innerText = "log position";
 test2Button.onclick = () => {
   const x = `${Math.round(cubeBody.position.x * 1) / 1}`;
@@ -340,25 +339,25 @@ test2Button.onclick = () => {
   console.log(`${x}, ${y}, ${z}`);
 };
 
-const test3Button = document.getElementById("test3")!;
+const test3Button = document.getElementById("test3");
 test3Button.innerText = "move green cube";
 test3Button.onclick = (e) => {
   moveGreenCube();
 };
 
-const canvasElement = document.querySelector("canvas")!;
+const canvasElement = document.querySelector("canvas");
 const changeOrbitElement = document.querySelector(
   "input#changeOrbit",
-) as HTMLInputElement;
+);
 const castRayElement = document.querySelector(
   "input#castRay",
-) as HTMLInputElement;
+);
 
-canvasElement.onclick = (e: MouseEvent) => {
+canvasElement.onclick = (e) => {
   castRay(e);
 };
 
-const slider = document.getElementById("myRange")! as HTMLInputElement;
+const slider = document.getElementById("myRange");
 slider.value = controls.currentDistance.toString();
 
 slider.addEventListener("change", () => {
@@ -368,7 +367,7 @@ slider.addEventListener("change", () => {
 
 const sliderNumber = document.getElementById(
   "myRangeNumber",
-) as HTMLParagraphElement;
+);
 sliderNumber.innerText = `distance - ${controls.currentDistance}`;
 
 // finially start renderering

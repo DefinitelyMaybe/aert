@@ -9,10 +9,7 @@ import {
   Spherical,
   Vec3,
   Vector3,
-} from "./deps.ts";
-
-type PlayerVec3 = Vector3 & Vec3;
-type PlayerQuat = Quat & Quaternion;
+} from "./deps.js";
 
 class PlayerControls {
   // values
@@ -21,36 +18,36 @@ class PlayerControls {
   downAxis = new Vector3(0, -1, 0);
 
   // external references
-  domElement: HTMLElement;
-  object: Body;
-  camera: Camera;
+  domElement;
+  object;
+  camera;
 
   // variables
-  isLocked: boolean;
-  isGrounded: boolean;
-  move: {
-    left: number;
-    right: number;
-    up: number;
-    down: number;
-    forward: number;
-    backward: number;
+  isLocked;
+  isGrounded;
+  move = {
+    left: 0,
+    right: 0,
+    up: 0,
+    down: 0,
+    forward: 0,
+    backward: 0,
   };
-  acceleration: number;
+  acceleration;
 
-  offset: Vector3;
-  cameraQuat: Quaternion;
-  cameraQuatInv: Quaternion;
-  spherical: Spherical;
-  sphericalDelta: Spherical;
+  offset;
+  cameraQuat;
+  cameraQuatInv;
+  spherical;
+  sphericalDelta;
 
-  minDistance: number;
-  maxDistance: number;
-  currentDistance: number;
-  distanceTheshold: number;
-  distanceStepSize: number;
+  minDistance;
+  maxDistance;
+  currentDistance;
+  distanceTheshold;
+  distanceStepSize;
 
-  constructor(object: Body, camera: Camera, domElement: HTMLElement) {
+  constructor(object, camera, domElement) {
     this.object = object;
     this.camera = camera;
     this.domElement = domElement;
@@ -80,7 +77,7 @@ class PlayerControls {
       forward: 0,
       backward: 0,
     };
-    this.acceleration = 10;
+    this.acceleration = 12;
 
     this.domElement.addEventListener("mousedown", async () => {
       this.onMouseDown();
@@ -95,7 +92,7 @@ class PlayerControls {
       this.onPointerLockChange();
     });
 
-    this.domElement.addEventListener("mousemove", async (e: MouseEvent) => {
+    this.domElement.addEventListener("mousemove", async (e) => {
       this.onMouseMove(e);
     });
     // this.domElement.addEventListener("mousedown", this.mousedown);
@@ -121,7 +118,7 @@ class PlayerControls {
     this.isLocked = false;
   }
 
-  onMouseMove(event: MouseEvent) {
+  onMouseMove(event) {
     if (this.isLocked === false) {
       return;
     }
@@ -129,7 +126,7 @@ class PlayerControls {
     const movementX = event.movementX || 0;
     const movementY = event.movementY || 0;
 
-    const objPosition = new Vector3().copy(this.object.position as PlayerVec3);
+    const objPosition = new Vector3().copy(this.object.position);
 
     // left/right
     this.sphericalDelta.theta = this.twoPI * movementX /
@@ -182,7 +179,7 @@ class PlayerControls {
     }
   }
 
-  onKeyDown(event: KeyboardEvent) {
+  onKeyDown(event) {
     switch (event.key) {
       case "a":
         this.move.left = 1;
@@ -210,7 +207,7 @@ class PlayerControls {
     }
   }
 
-  onKeyUp(event: KeyboardEvent) {
+  onKeyUp(event) {
     switch (event.key) {
       case "a":
         this.move.left = 0;
@@ -238,7 +235,7 @@ class PlayerControls {
     }
   }
 
-  onWheel(event: WheelEvent) {
+  onWheel(event) {
     const wheelDelta = event.deltaY > 0
       ? this.distanceStepSize
       : -this.distanceStepSize;
@@ -265,7 +262,7 @@ class PlayerControls {
   update() {
     // update obj velocity
     const velVec = this.getPlayerDirection().applyQuaternion(
-      this.object.quaternion as PlayerQuat,
+      this.object.quaternion,
     ).multiplyScalar(this.acceleration);
     this.object.velocity.set(velVec.x, this.object.velocity.y, velVec.z);
     if (this.move.up && this.isGrounded) {
@@ -275,7 +272,7 @@ class PlayerControls {
     }
 
     // update camera position
-    const objPosition = new Vector3().copy(this.object.position as PlayerVec3);
+    const objPosition = new Vector3().copy(this.object.position);
     this.camera.position.copy(objPosition).add(this.offset);
 
     this.camera.lookAt(objPosition);
@@ -283,7 +280,7 @@ class PlayerControls {
     // cast a small ray to update whether the player is grounded or not
     try {
       const ray = new Raycaster(objPosition, this.downAxis, 0, 1.1)
-        .intersectObject(this.camera.parent!, true);
+        .intersectObject(this.camera.parent, true);
       if (ray.length > 0) {
         this.isGrounded = true;
       } else {
