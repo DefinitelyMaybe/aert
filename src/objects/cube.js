@@ -9,34 +9,21 @@ export class Cube extends BoxGeometry {
     heightSegments,
     depthSegments,
   ){
-    super()
-
-    this.parameters = {
-      width: width,
-      height: height,
-      depth: depth,
-      widthSegments: widthSegments,
-      heightSegments: heightSegments,
-      depthSegments: depthSegments,
-    };
-
-    this.fromBufferGeometry(
-      new BoxBufferGeometry(
-        width,
-        height,
-        depth,
-        widthSegments,
-        heightSegments,
-        depthSegments,
-      ),
-    );
-
-    this.mergeVertices();
+    // super creates the BoxGeometry
+    super(
+      width,
+      height,
+      depth,
+      widthSegments,
+      heightSegments,
+      depthSegments,
+    )
     
-    const cube = new Box(new Vec3(1, 1, 1));
+    // I simply add the physics
+    const cube = new Box(new Vec3(width, height, depth));
     const cubeBody = new Body({ mass: 1 });
     cubeBody.addShape(cube);
-    this.
+    this.userData.physics.body = cubeBody
     
   }
 }
