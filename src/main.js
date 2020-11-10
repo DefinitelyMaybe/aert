@@ -6,19 +6,16 @@ import {
   Clock,
   Color,
   DirectionalLight,
-  DirectionalLightHelper,
   HemisphereLight,
   Line,
   LineBasicMaterial,
   Mesh,
   MeshStandardMaterial,
   NaiveBroadphase,
-  Object3D,
   PerspectiveCamera,
   Plane,
   PlaneBufferGeometry,
   Quaternion,
-  Raycaster,
   Scene,
   Vec3,
   Vector2,
@@ -27,22 +24,26 @@ import {
   World,
 } from "./deps.js";
 import { PlayerControls } from "./PlayerControls.js";
+import { updateTable, updateValueTrackers } from "./ui.js"
+import { spawnRedCubes } from "./helpers.js"
 
-const clock = new Clock(true);
-let simulate = true;
+export const state = {
+  running: false
+}
+
+export const clock = new Clock(true);
 
 // Initialize Cannon.js
-const world = new World();
+export const world = new World();
 world.gravity.set(0, -24, 0);
 world.broadphase = new NaiveBroadphase();
 
 // Initialize Three.js
-const renderer = new WebGLRenderer();
+export const renderer = new WebGLRenderer({canvas:document.querySelector("canvas")});
 renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
 
-const scene = new Scene();
+export const scene = new Scene();
 scene.background = new Color(0xaaaaaa);
 
 const directionalLight = new DirectionalLight();
@@ -94,6 +95,7 @@ material = new MeshStandardMaterial({ color: 0x00ff00 });
 const box = new Mesh(geometry, material);
 box.castShadow = true;
 box.receiveShadow = true;
+box.name = "player"
 scene.add(box);
 // cannon.js cube
 const cube = new Box(new Vec3(1, 1, 1));
@@ -103,7 +105,7 @@ cubeBody.addShape(cube);
 // cubeBody.angularDamping = 1.0;
 world.addBody(cubeBody);
 
-const controls = new PlayerControls(cubeBody, camera, renderer.domElement);
+export const controls = new PlayerControls(cubeBody, camera, renderer.domElement);
 
 const geo = new BufferGeometry();
 const mat = new LineBasicMaterial({ color: 0xff00ff });
@@ -116,12 +118,12 @@ const redCubesArray = [];
 function animate() {
   requestAnimationFrame(animate);
 
-  if (simulate) {
+  if (state.running) {
     const delta = clock.getDelta();
 
     updateValueTrackers(delta);
 
-    // simulate physics
+    // make a physics step
     world.step(delta);
 
     // update rendered positions
@@ -154,222 +156,11 @@ function animate() {
 
     renderer.render(scene, camera);
 
-    updateUI();
+    updateTable();
   }
 }
-
-function spawnRedCubes() {
-  // spawn red cubes somewhere within the current floor
-  material = new MeshStandardMaterial({ color: 0xff0000 });
-  for (let i = 0; i < 100; i++) {
-    const cube = new Mesh(geometry, material);
-    const scalar = 50;
-    const Xsign = Math.random() < 0.5 ? -1 : 1;
-    const Zsign = Math.random() < 0.5 ? -1 : 1;
-    const posX = Xsign * Math.random() * scalar;
-    const posY = 1;
-    const posZ = Zsign * Math.random() * scalar;
-    cube.position.set(
-      posX,
-      posY,
-      posZ,
-    );
-    cube.name = "randomRedCube";
-    cube.castShadow = true;
-    cube.receiveShadow = true;
-    scene.add(cube);
-    // cannon.js
-    const redCube = new Box(new Vec3(1, 1, 1));
-    const redCubeBody = new Body({ mass: 10 });
-    redCubeBody.position.set(posX, posY, posZ);
-    redCubeBody.addShape(redCube);
-    world.addBody(redCubeBody);
-    cube.userData.physics = redCube;
-
-    redCubesArray.push(cube);
-  }
-}
-
-function moveGreenCube() {
-  const scalar = 50;
-  const Xsign = Math.random() < 0.5 ? -1 : 1;
-  const Zsign = Math.random() < 0.5 ? -1 : 1;
-  cubeBody.position.set(
-    Xsign * Math.random() * scalar,
-    30,
-    Zsign * Math.random() * scalar,
-  );
-}
-
-function castRay(e) {
-  if (castRayElement.checked) {
-    console.log("casting ray");
-    // throw out a ray and find a random object
-    const rayCaster = new Raycaster();
-    rayCaster.setFromCamera(
-      new Vector2(
-        (e.clientX / window.innerWidth) * 2 - 1,
-        -(e.clientY / window.innerHeight) * 2 + 1,
-      ),
-      camera,
-    );
-    const intersection = rayCaster.intersectObject(scene, true);
-
-    // draw the line that was raycasted
-    const direction = rayCaster.ray.direction.multiplyScalar(50);
-    const p0 = rayCaster.ray.origin;
-    const p1 = new Vector3(p0.x, p0.y, p0.z).add(direction);
-    const p2 = new Vector3(p1.x, p1.y, p1.z).add(direction);
-
-    const points = [];
-    points.push(p0);
-    points.push(p1);
-    points.push(p2);
-    prevRay.geometry.setFromPoints(points);
-
-    //check intersection
-    if (intersection.length > 0) {
-      const obj = intersection[0].object;
-      console.log(`intersected with ${intersection.length} objects`);
-
-      if (changeOrbitElement.checked) {
-        console.log(`controls changed to ${obj.name}`);
-        // controls.target = obj.position;
-      }
-    }
-  }
-}
-
-function updateValueTrackers(delta) {
-  const valueTracker = document.querySelector(
-    "#valueTracker",
-  );
-  valueTracker.innerText = `dt: ${Math.round(delta * 100) / 100}`;
-  const valueTracker2 = document.querySelector(
-    "#valueTracker2",
-  );
-  valueTracker2.innerText = `#objects: ${scene.children.length}`;
-}
-
-function download(url, name) {
-  downloader.href = url;
-  downloader.setAttribute("download", name);
-  downloader.click();
-}
-
-// UI & Events
-
-window.addEventListener("visibilitychange", () => {
-  // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
-  if (document.visibilityState === "hidden") {
-    simulate = false;
-    clock.stop();
-  } else {
-    // get ready to simulate again
-    clock.start();
-    simulate = true;
-  }
-});
-
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-window.onresize = () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(window.innerWidth, window.innerHeight);
-};
-
-//file API
-const downloader = document.querySelector("a");
-const fileSaveBtn = document.getElementById("test4");
-fileSaveBtn.innerText = "share";
-fileSaveBtn.addEventListener("click", () => {
-  const myblob = new Blob(["hello world"], { type: "text/plain" });
-  const url = window.URL.createObjectURL(myblob);
-  download(url, "test.txt");
-});
-
-//table
-const velx = document.getElementById("velx");
-const vely = document.getElementById("vely");
-const velz = document.getElementById("velz");
-
-const angvelx = document.getElementById("angvelx");
-const angvely = document.getElementById("angvely");
-const angvelz = document.getElementById("angvelz");
-
-function updateUI() {
-  const x = `${Math.round(cubeBody.velocity.x * 1) / 1}`;
-  const y = `${Math.round(cubeBody.velocity.y * 1) / 1}`;
-  const z = `${Math.round(cubeBody.velocity.z * 1) / 1}`;
-
-  velx.innerText = x;
-  vely.innerText = y;
-  velz.innerText = z;
-
-  const angx = `${Math.round(cubeBody.angularVelocity.x * 1) / 1}`;
-  const angy = `${Math.round(cubeBody.angularVelocity.y * 1) / 1}`;
-  const angz = `${Math.round(cubeBody.angularVelocity.z * 1) / 1}`;
-
-  angvelx.innerText = angx;
-  angvely.innerText = angy;
-  angvelz.innerText = angz;
-}
-
-//test button 1
-const testButton = document.getElementById("test1");
-testButton.innerText = "spawn red cubes";
-testButton.onclick = (e) => {
-  spawnRedCubes();
-};
-
-// // add red cubes
-const test2Button = document.getElementById("test2");
-test2Button.innerText = "log position";
-test2Button.onclick = () => {
-  const x = `${Math.round(cubeBody.position.x * 1) / 1}`;
-  const y = `${Math.round(cubeBody.position.y * 1) / 1}`;
-  const z = `${Math.round(cubeBody.position.z * 1) / 1}`;
-  console.log(`${x}, ${y}, ${z}`);
-};
-
-const test3Button = document.getElementById("test3");
-test3Button.innerText = "move green cube";
-test3Button.onclick = (e) => {
-  moveGreenCube();
-};
-
-const canvasElement = document.querySelector("canvas");
-const changeOrbitElement = document.querySelector(
-  "input#changeOrbit",
-);
-const castRayElement = document.querySelector(
-  "input#castRay",
-);
-
-canvasElement.onclick = (e) => {
-  castRay(e);
-};
-
-const slider = document.getElementById("myRange");
-slider.value = controls.currentDistance.toString();
-
-slider.addEventListener("change", () => {
-  controls.currentDistance = parseInt(slider.value);
-  sliderNumber.innerText = `distance - ${slider.value}`;
-});
-
-const sliderNumber = document.getElementById(
-  "myRangeNumber",
-);
-sliderNumber.innerText = `distance - ${controls.currentDistance}`;
 
 // finially start renderering
+// state.running = true
 animate();
 spawnRedCubes();
