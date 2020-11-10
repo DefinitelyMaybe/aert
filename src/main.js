@@ -128,19 +128,15 @@ function animate() {
 
     // update rendered positions
     box.position.copy(
-      new Vector3(
-        cubeBody.position.x,
-        cubeBody.position.y,
-        cubeBody.position.z,
-      ),
+      cubeBody.position.x,
+      cubeBody.position.y,
+      cubeBody.position.z,
     );
     box.quaternion.copy(
-      new Quaternion(
-        cubeBody.quaternion.x,
-        cubeBody.quaternion.y,
-        cubeBody.quaternion.z,
-        cubeBody.quaternion.w,
-      ),
+      cubeBody.quaternion.x,
+      cubeBody.quaternion.y,
+      cubeBody.quaternion.z,
+      cubeBody.quaternion.w,
     );
 
     redCubesArray.forEach((cube) => {
