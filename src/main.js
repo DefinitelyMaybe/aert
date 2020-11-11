@@ -25,27 +25,31 @@ import {
 } from "./deps.js";
 import { PlayerControls } from "./PlayerControls.js";
 import { updateTable, updateValueTrackers } from "./ui.js"
-import { spawnRedCubes } from "./helpers.js"
+import { spawnCubes } from "./helpers.js"
 
+// state
 export const state = {
   running: false
 }
 
+// time
 export const clock = new Clock(true);
 
-// Initialize Cannon.js
+// physics
 export const world = new World();
 world.gravity.set(0, -24, 0);
 world.broadphase = new NaiveBroadphase();
 
-// Initialize Three.js
+// renderer
 export const renderer = new WebGLRenderer({canvas:document.querySelector("canvas")});
 renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 
+// scene
 export const scene = new Scene();
 scene.background = new Color(0xaaaaaa);
 
+// lighting
 const directionalLight = new DirectionalLight();
 const d = 100;
 directionalLight.position.set(d, d, d);
@@ -63,6 +67,7 @@ scene.add(directionalLight);
 const hemisphereLight = new HemisphereLight(0xaaaaaa, 0xaaaaaa, 0.7);
 scene.add(hemisphereLight);
 
+// camera
 export const camera = new PerspectiveCamera(
   90,
   window.innerWidth / window.innerHeight,
@@ -72,24 +77,22 @@ export const camera = new PerspectiveCamera(
 camera.position.set(10, 10, 10);
 scene.add(camera);
 
-// three.js plane
+// flat world
 const plane = new PlaneBufferGeometry(100, 100, 1, 1);
 plane.rotateX(-Math.PI / 2);
-let material = new MeshStandardMaterial({ color: 0xaaaaaa });
+let material = new MeshStandardMaterial({ color: 0xff0000 });
 const floor = new Mesh(plane, material);
 floor.name = "floor";
 floor.receiveShadow = true;
 scene.add(floor);
-// cannon.js plane
+
 const groundPlane = new Plane();
 const groundBody = new Body({ mass: 0 });
 groundBody.addShape(groundPlane);
-// groundBody.position.y -= 1;
 groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
-// groundBody.material = new Material({friction:0.0, })
 world.addBody(groundBody);
 
-// three.js cube
+// player
 const geometry = new BoxGeometry(2, 2, 2);
 material = new MeshStandardMaterial({ color: 0x00ff00 });
 const box = new Mesh(geometry, material);
@@ -97,24 +100,26 @@ box.castShadow = true;
 box.receiveShadow = true;
 box.name = "player"
 scene.add(box);
-// cannon.js cube
+
 const cube = new Box(new Vec3(1, 1, 1));
 export const cubeBody = new Body({ mass: 10 });
 cubeBody.position.set(0, 10, 0);
 cubeBody.addShape(cube);
-// cubeBody.angularDamping = 1.0;
 world.addBody(cubeBody);
 
+// controls
 export const controls = new PlayerControls(cubeBody, camera, renderer.domElement);
 
+// raycasting for fun
 const geo = new BufferGeometry();
 const mat = new LineBasicMaterial({ color: 0xff00ff });
 const prevRay = new Line(geo, mat);
 scene.add(prevRay);
 
+// data structures
 export const redCubesArray = [];
 
-// functions
+// game loop
 function animate() {
   requestAnimationFrame(animate);
 
@@ -156,5 +161,17 @@ function animate() {
 // finially start renderering
 state.running = true
 animate();
-console.log(box);
-spawnRedCubes();
+spawnCubes();
+
+// also create a cube underneath the player when the game begins
+material = new MeshStandardMaterial({ color: 0x333333 });
+const underBox = new Mesh(geometry, material);
+underBox.position.y += 1
+box.castShadow = true;
+box.receiveShadow = true;
+scene.add(underBox);
+const undercube = new Box(new Vec3(1, 1, 1));
+const undercubeBody = new Body({ mass: 0 });
+undercubeBody.position.set(0, 1, 0);
+undercubeBody.addShape(undercube);
+world.addBody(undercubeBody);
