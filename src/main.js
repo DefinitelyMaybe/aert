@@ -99,7 +99,7 @@ box.name = "player"
 scene.add(box);
 // cannon.js cube
 const cube = new Box(new Vec3(1, 1, 1));
-const cubeBody = new Body({ mass: 10 });
+export const cubeBody = new Body({ mass: 10 });
 cubeBody.position.set(0, 10, 0);
 cubeBody.addShape(cube);
 // cubeBody.angularDamping = 1.0;
@@ -112,7 +112,7 @@ const mat = new LineBasicMaterial({ color: 0xff00ff });
 const prevRay = new Line(geo, mat);
 scene.add(prevRay);
 
-const redCubesArray = [];
+export const redCubesArray = [];
 
 // functions
 function animate() {
@@ -157,6 +157,6 @@ function animate() {
 }
 
 // finially start renderering
-// state.running = true
+state.running = true
 animate();
 spawnRedCubes();

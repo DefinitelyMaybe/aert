@@ -1,6 +1,5 @@
-import { state, controls, clock, scene } from './main.js';
-
-let cubeBody
+import { state, controls, clock, scene, cubeBody } from './main.js';
+import { castRay, moveGreenCube } from "./helpers.js";
 
 // UI & Events
 
@@ -94,7 +93,7 @@ const canvasElement = document.querySelector("canvas");
 const changeOrbitElement = document.querySelector(
   "input#changeOrbit",
 );
-const castRayElement = document.querySelector(
+export const castRayElement = document.querySelector(
   "input#castRay",
 );
 
