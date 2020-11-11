@@ -2,9 +2,10 @@ import { MeshStandardMaterial, Box, BoxGeometry, Body, Mesh, Vec3 } from "./deps
 import { scene, world, redCubesArray, cubeBody } from "./main.js"
 import { castRayElement } from "./ui.js";
 
-export function spawnRedCubes() {
+
+export function spawnCubes() {
   // spawn red cubes somewhere within the current floor
-  const material = new MeshStandardMaterial({ color: 0xff0000 });
+  const material = new MeshStandardMaterial({ color: 0xaaaaaa });
   const geometry = new BoxGeometry(2, 2, 2);
   for (let i = 0; i < 100; i++) {
     const cube = new Mesh(geometry, material);
@@ -25,7 +26,7 @@ export function spawnRedCubes() {
     scene.add(cube);
     // cannon.js
     const redCube = new Box(new Vec3(1, 1, 1));
-    const redCubeBody = new Body({ mass: 10 });
+    const redCubeBody = new Body({ mass: 0 });
     redCubeBody.position.set(posX, posY, posZ);
     redCubeBody.addShape(redCube);
     world.addBody(redCubeBody);
