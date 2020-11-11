@@ -63,7 +63,7 @@ scene.add(directionalLight);
 const hemisphereLight = new HemisphereLight(0xaaaaaa, 0xaaaaaa, 0.7);
 scene.add(hemisphereLight);
 
-const camera = new PerspectiveCamera(
+export const camera = new PerspectiveCamera(
   90,
   window.innerWidth / window.innerHeight,
   0.01,
