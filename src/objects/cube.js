@@ -21,9 +21,10 @@ export class Cube extends BoxGeometry {
     
     // I simply add the physics
     const cube = new Box(new Vec3(width, height, depth));
-    const cubeBody = new Body({ mass: 1 });
-    cubeBody.addShape(cube);
-    this.userData.physics.body = cubeBody
+    this.body = new Body({ mass: 1 });
+    this.body.addShape(cube);
+    
+    // this.userData.physics.body = cubeBody
     
   }
 }
