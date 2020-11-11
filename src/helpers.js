@@ -1,5 +1,5 @@
 import { MeshStandardMaterial, Box, BoxGeometry, Body, Mesh, Vec3 } from "./deps.js";
-import { scene, world } from "./main.js"
+import { scene, world, redCubesArray } from "./main.js"
 
 export function spawnRedCubes() {
   // spawn red cubes somewhere within the current floor
