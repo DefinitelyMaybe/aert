@@ -1,4 +1,4 @@
-import { state, controls, clock, scene, cubeBody } from './main.js';
+import { state, controls, clock, scene, cubeBody, camera } from './main.js';
 import { castRay, moveGreenCube } from "./helpers.js";
 
 // UI & Events
@@ -106,6 +106,14 @@ const slider = document.getElementById("myRange");
 slider.addEventListener("change", () => {
   controls.currentDistance = parseInt(slider.value);
   sliderNumber.innerText = `distance - ${slider.value}`;
+  // to adjust the slider the pointer could not be locked
+  // so to update the camera appropriately we must manually lock
+  // and unlock
+  controls.isLocked = true
+  controls.onMouseMove(
+    new MouseEvent("mousemove", { movementX: 0, movementY: 0 }),
+  );
+  controls.isLocked = false
 });
 
 const sliderNumber = document.getElementById(
@@ -129,8 +137,7 @@ function download(url, name) {
   downloader.click();
 }
 
-document.onload = () => {
+window.addEventListener("load", (e) => {
   slider.value = controls.currentDistance.toString();
   sliderNumber.innerText = `distance - ${controls.currentDistance}`;
-  console.log(scene.getObjectByName("player"));
-}
+})
