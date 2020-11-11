@@ -127,17 +127,14 @@ function animate() {
     world.step(delta);
 
     // update rendered positions
-    box.position.copy(
-      cubeBody.position.x,
-      cubeBody.position.y,
-      cubeBody.position.z,
-    );
-    box.quaternion.copy(
-      cubeBody.quaternion.x,
-      cubeBody.quaternion.y,
-      cubeBody.quaternion.z,
-      cubeBody.quaternion.w,
-    );
+    box.position.x = cubeBody.position.x
+    box.position.y = cubeBody.position.y
+    box.position.z = cubeBody.position.z
+
+    box.quaternion.x = cubeBody.quaternion.x
+    box.quaternion.y = cubeBody.quaternion.y
+    box.quaternion.z = cubeBody.quaternion.z
+    box.quaternion.w = cubeBody.quaternion.w
 
     redCubesArray.forEach((cube) => {
       const cPos = cube.userData.physics.body.position;
@@ -159,4 +156,5 @@ function animate() {
 // finially start renderering
 state.running = true
 animate();
+console.log(box);
 spawnRedCubes();
