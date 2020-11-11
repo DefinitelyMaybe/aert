@@ -1,13 +1,9 @@
 /// <reference lib="dom" />
 import {
-  Body,
-  Camera,
   Euler,
-  Quat,
   Quaternion,
   Raycaster,
   Spherical,
-  Vec3,
   Vector3,
 } from "./deps.js";
 
@@ -16,36 +12,6 @@ class PlayerControls {
   PI_2 = Math.PI / 2;
   twoPI = Math.PI * 2;
   downAxis = new Vector3(0, -1, 0);
-
-  // external references
-  domElement;
-  object;
-  camera;
-
-  // variables
-  isLocked;
-  isGrounded;
-  move = {
-    left: 0,
-    right: 0,
-    up: 0,
-    down: 0,
-    forward: 0,
-    backward: 0,
-  };
-  acceleration;
-
-  offset;
-  cameraQuat;
-  cameraQuatInv;
-  spherical;
-  sphericalDelta;
-
-  minDistance;
-  maxDistance;
-  currentDistance;
-  distanceTheshold;
-  distanceStepSize;
 
   constructor(object, camera, domElement) {
     this.object = object;
