@@ -1,5 +1,5 @@
 import { state, controls, clock, scene, cubeBody, camera } from './main.js';
-import { castRay, moveGreenCube, spawnRedCubes } from "./helpers.js";
+import { castRay, moveGreenCube, spawnCubes } from "./helpers.js";
 
 // UI & Events
 
@@ -70,7 +70,7 @@ export function updateTable() {
 const testButton = document.getElementById("test1");
 testButton.innerText = "spawn red cubes";
 testButton.onclick = (e) => {
-  spawnRedCubes();
+  spawnCubes();
 };
 
 // // add red cubes
