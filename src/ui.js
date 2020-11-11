@@ -1,5 +1,5 @@
 import { state, controls, clock, scene, cubeBody, camera } from './main.js';
-import { castRay, moveGreenCube } from "./helpers.js";
+import { castRay, moveGreenCube, spawnRedCubes } from "./helpers.js";
 
 // UI & Events
 
