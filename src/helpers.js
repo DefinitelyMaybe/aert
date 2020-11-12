@@ -1,6 +1,6 @@
 import { MeshStandardMaterial, Box, BoxGeometry, Body, Mesh, Vec3 } from "./deps.js";
 import { scene, world, redCubesArray, cubeBody } from "./main.js"
-import { castRayElement } from "./ui.js";
+// import { castRayElement } from "./debug.js";
 
 
 export function spawnCubes() {
@@ -20,7 +20,7 @@ export function spawnCubes() {
       posY,
       posZ,
     );
-    cube.name = "randomRedCube";
+    cube.name = "randomCube";
     cube.castShadow = true;
     cube.receiveShadow = true;
     scene.add(cube);
