@@ -24,7 +24,6 @@ import {
   World,
 } from "./deps.js";
 import { PlayerControls } from "./PlayerControls.js";
-import { updateTable, updateValueTrackers } from "./ui.js"
 import { spawnCubes } from "./helpers.js"
 
 // state
@@ -41,7 +40,7 @@ world.gravity.set(0, -24, 0);
 world.broadphase = new NaiveBroadphase();
 
 // renderer
-export const renderer = new WebGLRenderer({canvas:document.querySelector("canvas")});
+export const renderer = new WebGLRenderer({canvas:document.querySelector("canvas"), logarithmicDepthBuffer:true});
 renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -119,6 +118,45 @@ scene.add(prevRay);
 // data structures
 export const redCubesArray = [];
 
+// UI & Events
+window.addEventListener("visibilitychange", () => {
+  // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
+  if (document.visibilityState === "hidden") {
+    state.running = false;
+    clock.stop();
+  } else {
+    // get ready to run again
+    clock.start();
+    state.running = true;
+  }
+});
+
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+window.onresize = () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+};
+
+document.addEventListener("player", (e) => {
+  const object = e.detail.object
+  if (object.name === "floor") {
+    // restart
+    document.dispatchEvent(new Event("lose"))
+  } else if (object.name === "randomCube") {
+    // add seconds to timer?
+    object.material = new MeshStandardMaterial({color:0x333333})
+  }
+  
+})
+
 // game loop
 function animate() {
   requestAnimationFrame(animate);
@@ -126,7 +164,7 @@ function animate() {
   if (state.running) {
     const delta = clock.getDelta();
 
-    updateValueTrackers(delta);
+    // updateValueTrackers(delta);
 
     // make a physics step
     world.step(delta);
@@ -154,7 +192,7 @@ function animate() {
 
     renderer.render(scene, camera);
 
-    updateTable();
+    // updateTable();
   }
 }
 
@@ -164,11 +202,12 @@ animate();
 spawnCubes();
 
 // also create a cube underneath the player when the game begins
-material = new MeshStandardMaterial({ color: 0x333333 });
+material = new MeshStandardMaterial({ color: 0xaaaaaa });
 const underBox = new Mesh(geometry, material);
 underBox.position.y += 1
-box.castShadow = true;
-box.receiveShadow = true;
+underBox.castShadow = true;
+underBox.receiveShadow = true;
+underBox.name = "randomCube"
 scene.add(underBox);
 const undercube = new Box(new Vec3(1, 1, 1));
 const undercubeBody = new Body({ mass: 0 });
