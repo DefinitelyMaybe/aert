@@ -1,34 +1,7 @@
-import { state, controls, clock, scene, cubeBody, camera } from './main.js';
-import { castRay, moveGreenCube, spawnCubes } from "./helpers.js";
+import { controls, scene, cubeBody } from '../main.js';
+import { castRay, moveGreenCube, spawnCubes } from "../helpers.js";
 
 // UI & Events
-
-window.addEventListener("visibilitychange", () => {
-  // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
-  if (document.visibilityState === "hidden") {
-    state.running = false;
-    clock.stop();
-  } else {
-    // get ready to run again
-    clock.start();
-    state.running = true;
-  }
-});
-
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-window.onresize = () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(window.innerWidth, window.innerHeight);
-};
-
 //file API
 const downloader = document.querySelector("a");
 const fileSaveBtn = document.getElementById("test4");
