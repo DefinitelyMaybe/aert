@@ -248,7 +248,11 @@ class PlayerControls {
       const ray = new Raycaster(objPosition, this.downAxis, 0, 1.1)
         .intersectObject(this.camera.parent, true);
       if (ray.length > 0) {
+        if (!this.isGrounded) {
+          document.dispatchEvent(new CustomEvent("player", {detail:ray[0]}))  
+        }
         this.isGrounded = true;
+        
       } else {
         this.isGrounded = false;
       }
