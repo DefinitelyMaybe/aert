@@ -4,6 +4,7 @@ html {
 }
 
 canvas {
+  z-index: -1;
   position: absolute;
 }
 
@@ -24,6 +25,11 @@ label {
 button {
   min-width: 100px;
   min-height: 30px;
+}
+
+button#startbtn {
+  min-width: 200px;
+  min-height: 60px;
 }
 
 table {
