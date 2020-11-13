@@ -30,7 +30,7 @@ export function spawnCubes() {
     redCubeBody.position.set(posX, posY, posZ);
     redCubeBody.addShape(redCube);
     world.addBody(redCubeBody);
-    cube.userData.physics = redCube;
+    cube.userData.physics = redCubeBody;
 
     redCubesArray.push(cube);
   }
