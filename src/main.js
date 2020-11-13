@@ -158,6 +158,7 @@ document.addEventListener("player", (e) => {
   if (object.name === "floor") {
     // restart
     controls.canMove = false
+    dead.style.display = "block"
     // document.dispatchEvent(new Event("lose"))
   } else if (object.name === "randomCube") {
     // make the cube start falling through the ground
