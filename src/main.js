@@ -28,7 +28,8 @@ import { spawnCubes } from "./helpers.js"
 
 // state
 export const state = {
-  running: false
+  running: false,
+  displayRestart: false,
 }
 
 // time
@@ -119,6 +120,11 @@ scene.add(prevRay);
 export const redCubesArray = [];
 
 // UI & Events
+const dead = document.querySelector("h1#dead")
+dead.style.display = "none"
+const restart = document.querySelector("h1#restart")
+restart.style.display = "none"
+
 window.addEventListener("visibilitychange", () => {
   // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
   if (document.visibilityState === "hidden") {
@@ -147,12 +153,17 @@ window.onresize = () => {
 
 document.addEventListener("player", (e) => {
   const object = e.detail.object
+  const color = object.material.color
+
   if (object.name === "floor") {
     // restart
-    document.dispatchEvent(new Event("lose"))
+    controls.canMove = false
+    // document.dispatchEvent(new Event("lose"))
   } else if (object.name === "randomCube") {
-    // add seconds to timer?
-    object.material = new MeshStandardMaterial({color:0x333333})
+    // make the cube start falling through the ground
+    if (color.r > 0.5) {
+      object.material = new MeshStandardMaterial({color:0x333333}) 
+    }
   }
   
 })
@@ -164,26 +175,31 @@ function animate() {
   if (state.running) {
     const delta = clock.getDelta();
 
-    // updateValueTrackers(delta);
-
     // make a physics step
     world.step(delta);
 
     // update rendered positions
-    box.position.x = cubeBody.position.x
-    box.position.y = cubeBody.position.y
-    box.position.z = cubeBody.position.z
-
+    if (controls.canMove) {
+      box.position.x = cubeBody.position.x
+      box.position.y = cubeBody.position.y
+      box.position.z = cubeBody.position.z
+    } else {
+      box.position.y -= 0.01
+    }
+    
     box.quaternion.x = cubeBody.quaternion.x
     box.quaternion.y = cubeBody.quaternion.y
     box.quaternion.z = cubeBody.quaternion.z
     box.quaternion.w = cubeBody.quaternion.w
 
     redCubesArray.forEach((cube) => {
-      const cPos = cube.userData.physics.body.position;
+      const cPos = cube.userData.physics.position;
       cube.position.copy(new Vector3(cPos.x, cPos.y, cPos.z));
-      const cQuat = cube.userData.physics.body.quaternion;
+      const cQuat = cube.userData.physics.quaternion;
       cube.quaternion.copy(new Quaternion(cQuat.x, cQuat.y, cQuat.z, cQuat.w));
+      if (cube.material.color.r < 0.5) {
+        cPos.y -= 0.01
+      }
     });
 
     // camera position must be updated
@@ -198,9 +214,7 @@ function animate() {
 
 // finially start renderering
 state.running = true
-animate();
 spawnCubes();
-
 // also create a cube underneath the player when the game begins
 material = new MeshStandardMaterial({ color: 0xaaaaaa });
 const underBox = new Mesh(geometry, material);
@@ -214,3 +228,10 @@ const undercubeBody = new Body({ mass: 0 });
 undercubeBody.position.set(0, 1, 0);
 undercubeBody.addShape(undercube);
 world.addBody(undercubeBody);
+underBox.userData.physics = undercubeBody
+
+redCubesArray.push(underBox)
+
+animate();
+// state.running = false
+
