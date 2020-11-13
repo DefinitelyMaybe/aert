@@ -16,7 +16,6 @@ canvas {
 }
 
 main {
-  pointer-events: none;
   height: 100%;
   display: flex;
   flex-direction: column;
