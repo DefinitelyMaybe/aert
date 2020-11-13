@@ -44,6 +44,7 @@ class PlayerControls {
       backward: 0,
     };
     this.acceleration = 12;
+    this.canMove = true
 
     this.domElement.addEventListener("mousedown", async () => {
       this.onMouseDown();
@@ -146,30 +147,32 @@ class PlayerControls {
   }
 
   onKeyDown(event) {
-    switch (event.key) {
-      case "a":
-        this.move.left = 1;
-        break;
-      case "d":
-        this.move.right = 1;
-        break;
-      case "w":
-        this.move.forward = 1;
-        break;
-      case "s":
-        this.move.backward = 1;
-        break;
-      case " ":
-        if (this.isGrounded) {
-          this.move.up = 1;
-        }
-        break;
-      case "e":
-        this.spawnCube();
-        break;
-      default:
-        // console.log(`Didn't handle keydown for: ${event.key}`);
-        break;
+    if (this.canMove) {
+      switch (event.key) {
+        case "a":
+          this.move.left = 1;
+          break;
+        case "d":
+          this.move.right = 1;
+          break;
+        case "w":
+          this.move.forward = 1;
+          break;
+        case "s":
+          this.move.backward = 1;
+          break;
+        case " ":
+          if (this.isGrounded) {
+            this.move.up = 1;
+          }
+          break;
+        case "e":
+          this.spawnCube();
+          break;
+        default:
+          // console.log(`Didn't handle keydown for: ${event.key}`);
+          break;
+      } 
     }
   }
 
