@@ -31,6 +31,19 @@ h1 {
   margin: 0px;
 }
 
+h1#dead {
+  display: none;
+  color: rgb(87, 0, 0);
+}
+
+h1#restart {
+  display: none;
+}
+
+a {
+  color: rgb(35, 25, 128);
+}
+
 button {
   min-width: 100px;
   min-height: 30px;
