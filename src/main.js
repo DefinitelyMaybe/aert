@@ -121,9 +121,7 @@ export const redCubesArray = [];
 
 // UI & Events
 const dead = document.querySelector("h1#dead")
-dead.style.display = "none"
 const restart = document.querySelector("h1#restart")
-restart.style.display = "none"
 
 window.addEventListener("visibilitychange", () => {
   // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
@@ -157,13 +155,15 @@ document.addEventListener("player", (e) => {
 
   if (object.name === "floor") {
     // restart
-    controls.canMove = false
     dead.style.display = "block"
+    setTimeout(() => {
+      restart.style.display = "block"
+    }, 3000 );
     // document.dispatchEvent(new Event("lose"))
   } else if (object.name === "randomCube") {
     // make the cube start falling through the ground
     if (color.r > 0.5) {
-      object.material = new MeshStandardMaterial({color:0x333333}) 
+      object.material = new MeshStandardMaterial({color:0x333333})
     }
   }
   
@@ -185,7 +185,9 @@ function animate() {
       box.position.y = cubeBody.position.y
       box.position.z = cubeBody.position.z
     } else {
-      box.position.y -= 0.01
+      if (box.position.y > -2) {
+        box.position.y -= 0.01 
+      }
     }
     
     box.quaternion.x = cubeBody.quaternion.x
@@ -204,7 +206,11 @@ function animate() {
       cube.quaternion.z = cQuat.z;
       cube.quaternion.w = cQuat.w;
       if (cube.material.color.r < 0.5) {
-        cPos.y -= 0.01
+        if (cPos.y < -2) {
+          // destory the cube
+        } else {
+          cPos.y -= 0.01
+        }
       }
     });
 
