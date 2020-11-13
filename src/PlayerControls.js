@@ -5,7 +5,9 @@ import {
   Raycaster,
   Spherical,
   Vector3,
+  // Vec3,
 } from "./deps.js";
+// import { world } from "./main.js";
 
 class PlayerControls {
   // values
@@ -46,11 +48,11 @@ class PlayerControls {
     this.acceleration = 12;
     this.canMove = true
 
-    this.domElement.addEventListener("mousedown", async () => {
+    document.addEventListener("mousedown", async () => {
       this.onMouseDown();
     });
 
-    this.domElement.addEventListener("contextmenu", async (e) => {
+    document.addEventListener("contextmenu", async (e) => {
       e.preventDefault();
       this.onMouseDown();
     });
@@ -59,11 +61,11 @@ class PlayerControls {
       this.onPointerLockChange();
     });
 
-    this.domElement.addEventListener("mousemove", async (e) => {
+    document.addEventListener("mousemove", async (e) => {
       this.onMouseMove(e);
     });
-    // this.domElement.addEventListener("mousedown", this.mousedown);
-    // this.domElement.addEventListener("mouseup", this.mouseup);
+    // document.addEventListener("mousedown", this.mousedown);
+    // document.addEventListener("mouseup", this.mouseup);
 
     document.addEventListener("keydown", async (e) => {
       this.onKeyDown(e);
@@ -73,7 +75,7 @@ class PlayerControls {
       this.onKeyUp(e);
     });
 
-    this.domElement.addEventListener("wheel", async (e) => {
+    document.addEventListener("wheel", async (e) => {
       this.onWheel(e);
     });
 
@@ -248,11 +250,35 @@ class PlayerControls {
 
     // cast a small ray to update whether the player is grounded or not
     try {
+      // this.object.userData.physics.
+      // raycast for collision
+      // const vecLength = new Vec3(0, 1, 0)
+      // const pos1 = this.object.userData.physics.position
+      // const posA = pos1.vadd(vecLength).vadd()
+      // const pos2 = this.object.userData.physics.position
+      // const posB = pos2.vadd(vecLength)
+      // const pos3 = this.object.userData.physics.position
+      // const posC = pos3.vadd(vecLength)
+      // const pos4 = this.object.userData.physics.position
+      // const posD = pos4.vadd(vecLength)
+      
+      // world.raycastClosest(pos1, )
       const ray = new Raycaster(objPosition, this.downAxis, 0, 1.1)
-        .intersectObject(this.camera.parent, true);
+      // check entire scene for the moment
+        .intersectObjects([this.camera.parent], true);
       if (ray.length > 0) {
-        if (!this.isGrounded) {
-          document.dispatchEvent(new CustomEvent("player", {detail:ray[0]}))  
+        if (this.canMove) {
+          switch (ray[0].object.name) {
+            case "floor":
+              document.dispatchEvent(new CustomEvent("player", {detail:ray[0]}))
+              this.canMove = false
+              break;
+          case "randomCube":
+            document.dispatchEvent(new CustomEvent("player", {detail:ray[0]}))
+            break;
+            default:
+              break;
+          }
         }
         this.isGrounded = true;
         
@@ -270,10 +296,6 @@ class PlayerControls {
     const camQuat = new Quaternion().setFromEuler(camEuler);
 
     this.object.quaternion.set(camQuat.x, camQuat.y, camQuat.z, camQuat.w);
-  }
-
-  spawnCube() {
-    console.log("hello world");
   }
 }
 
