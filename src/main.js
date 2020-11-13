@@ -194,9 +194,14 @@ function animate() {
 
     redCubesArray.forEach((cube) => {
       const cPos = cube.userData.physics.position;
-      cube.position.copy(new Vector3(cPos.x, cPos.y, cPos.z));
+      cube.position.x = cPos.x;
+      cube.position.y = cPos.y;
+      cube.position.z = cPos.z;
       const cQuat = cube.userData.physics.quaternion;
-      cube.quaternion.copy(new Quaternion(cQuat.x, cQuat.y, cQuat.z, cQuat.w));
+      cube.quaternion.x = cQuat.x;
+      cube.quaternion.y = cQuat.y;
+      cube.quaternion.z = cQuat.z;
+      cube.quaternion.w = cQuat.w;
       if (cube.material.color.r < 0.5) {
         cPos.y -= 0.01
       }
