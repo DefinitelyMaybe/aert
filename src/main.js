@@ -1,36 +1,30 @@
 import {
   Body,
-  Box,
-  BoxGeometry,
-  BufferGeometry,
   Clock,
   Color,
   DirectionalLight,
   HemisphereLight,
-  Line,
-  LineBasicMaterial,
   Mesh,
   MeshStandardMaterial,
   NaiveBroadphase,
   PerspectiveCamera,
   Plane,
   PlaneBufferGeometry,
-  Quaternion,
-  Scene,
   Vec3,
   Vector2,
-  Vector3,
   WebGLRenderer,
   World,
 } from "./deps.js";
 import { PlayerControls } from "./PlayerControls.js";
-import { spawnCubes } from "./helpers.js"
+import { spawnCubes } from "./helpers.js";
+import { Scene } from "./scene.js";
+import { Cube } from "./objects/cube.js";
 
 // state
 export const state = {
   running: false,
   displayRestart: false,
-}
+};
 
 // time
 export const clock = new Clock(true);
@@ -41,7 +35,9 @@ world.gravity.set(0, -24, 0);
 world.broadphase = new NaiveBroadphase();
 
 // renderer
-export const renderer = new WebGLRenderer({canvas:document.querySelector("canvas"), logarithmicDepthBuffer:true});
+export const renderer = new WebGLRenderer(
+  { canvas: document.querySelector("canvas"), logarithmicDepthBuffer: true },
+);
 renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -93,35 +89,28 @@ groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
 world.addBody(groundBody);
 
 // player
-const geometry = new BoxGeometry(2, 2, 2);
-material = new MeshStandardMaterial({ color: 0x00ff00 });
-const box = new Mesh(geometry, material);
-box.castShadow = true;
-box.receiveShadow = true;
-box.name = "player"
-scene.add(box);
-
-const cube = new Box(new Vec3(1, 1, 1));
-export const cubeBody = new Body({ mass: 10 });
-cubeBody.position.set(0, 10, 0);
-cubeBody.addShape(cube);
-world.addBody(cubeBody);
+export const player = new Cube(
+  { material: new MeshStandardMaterial({ color: 0x00ff00 }) },
+);
+player.castShadow = true;
+player.receiveShadow = true;
+player.name = "player";
+player.body.position.y = 10
+player.body.mass = 1
+scene.add(player);
 
 // controls
-export const controls = new PlayerControls(cubeBody, camera, renderer.domElement);
+export const controls = new PlayerControls(
+  player,
+  camera,
+  renderer.domElement,
+);
 
 // raycasting for fun
-const geo = new BufferGeometry();
-const mat = new LineBasicMaterial({ color: 0xff00ff });
-const prevRay = new Line(geo, mat);
-scene.add(prevRay);
-
-// data structures
-export const redCubesArray = [];
-
-// UI & Events
-const dead = document.querySelector("h1#dead")
-const restart = document.querySelector("h1#restart")
+// const geo = new BufferGeometry();
+// const mat = new LineBasicMaterial({ color: 0xff00ff });
+// const prevRay = new Line(geo, mat);
+// scene.add(prevRay);
 
 window.addEventListener("visibilitychange", () => {
   // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
@@ -149,26 +138,6 @@ window.onresize = () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 };
 
-document.addEventListener("player", (e) => {
-  const object = e.detail.object
-  const color = object.material.color
-
-  if (object.name === "floor") {
-    // restart
-    dead.style.display = "block"
-    setTimeout(() => {
-      restart.style.display = "block"
-    }, 3000 );
-    // document.dispatchEvent(new Event("lose"))
-  } else if (object.name === "randomCube") {
-    // make the cube start falling through the ground
-    if (color.r > 0.5) {
-      object.material = new MeshStandardMaterial({color:0x333333})
-    }
-  }
-  
-})
-
 // game loop
 function animate() {
   requestAnimationFrame(animate);
@@ -180,37 +149,17 @@ function animate() {
     world.step(delta);
 
     // update rendered positions
-    if (controls.canMove) {
-      box.position.x = cubeBody.position.x
-      box.position.y = cubeBody.position.y
-      box.position.z = cubeBody.position.z
-    } else {
-      if (box.position.y > -2) {
-        box.position.y -= 0.01 
-      }
-    }
-    
-    box.quaternion.x = cubeBody.quaternion.x
-    box.quaternion.y = cubeBody.quaternion.y
-    box.quaternion.z = cubeBody.quaternion.z
-    box.quaternion.w = cubeBody.quaternion.w
+    scene.traverse((object) => {
+      if (object.isCube) {
+        object.quaternion.x = object.body.quaternion.x;
+        object.quaternion.y = object.body.quaternion.y;
+        object.quaternion.z = object.body.quaternion.z;
+        object.quaternion.w = object.body.quaternion.w;
 
-    redCubesArray.forEach((cube) => {
-      const cPos = cube.userData.physics.position;
-      cube.position.x = cPos.x;
-      cube.position.y = cPos.y;
-      cube.position.z = cPos.z;
-      const cQuat = cube.userData.physics.quaternion;
-      cube.quaternion.x = cQuat.x;
-      cube.quaternion.y = cQuat.y;
-      cube.quaternion.z = cQuat.z;
-      cube.quaternion.w = cQuat.w;
-      if (cube.material.color.r < 0.5) {
-        if (cPos.y < -2) {
-          // destory the cube
-        } else {
-          cPos.y -= 0.01
-        }
+        object.position.x = object.body.position.x;
+        object.position.y = object.body.position.y;
+        object.position.z = object.body.position.z;
+        object.position.w = object.body.position.w;
       }
     });
 
@@ -218,6 +167,7 @@ function animate() {
     // velocity may move object position
     controls.update();
 
+    // finally make the render to screen
     renderer.render(scene, camera);
 
     // updateTable();
@@ -225,25 +175,8 @@ function animate() {
 }
 
 // finially start renderering
-state.running = true
+state.running = true;
 spawnCubes();
-// also create a cube underneath the player when the game begins
-material = new MeshStandardMaterial({ color: 0xaaaaaa });
-const underBox = new Mesh(geometry, material);
-underBox.position.y += 1
-underBox.castShadow = true;
-underBox.receiveShadow = true;
-underBox.name = "randomCube"
-scene.add(underBox);
-const undercube = new Box(new Vec3(1, 1, 1));
-const undercubeBody = new Body({ mass: 0 });
-undercubeBody.position.set(0, 1, 0);
-undercubeBody.addShape(undercube);
-world.addBody(undercubeBody);
-underBox.userData.physics = undercubeBody
-
-redCubesArray.push(underBox)
 
 animate();
 // state.running = false
-
