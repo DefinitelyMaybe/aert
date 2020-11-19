@@ -43,7 +43,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 // scene
 export const scene = new Scene();
-scene.background = new Color(0xaaaaaa);
+scene.background = new Color(0xdddddd);
 
 // lighting
 const directionalLight = new DirectionalLight();
@@ -76,7 +76,7 @@ scene.add(camera);
 // flat world
 const plane = new PlaneBufferGeometry(100, 100, 1, 1);
 plane.rotateX(-Math.PI / 2);
-let material = new MeshStandardMaterial({ color: 0xff0000 });
+let material = new MeshStandardMaterial({ color: 0xaa0000 });
 const floor = new Mesh(plane, material);
 floor.name = "floor";
 floor.receiveShadow = true;
