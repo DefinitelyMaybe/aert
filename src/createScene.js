@@ -1,6 +1,5 @@
 class CreateScene {
   constructor() {
-
   }
 }
 
