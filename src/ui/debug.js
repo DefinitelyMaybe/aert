@@ -1,4 +1,4 @@
-import { controls, scene, cubeBody } from '../main.js';
+import { controls, player, scene } from "../main.js";
 import { castRay, moveGreenCube, spawnCubes } from "../helpers.js";
 
 // UI & Events
@@ -22,17 +22,17 @@ const angvely = document.getElementById("angvely");
 const angvelz = document.getElementById("angvelz");
 
 export function updateTable() {
-  const x = `${Math.round(cubeBody.velocity.x * 1) / 1}`;
-  const y = `${Math.round(cubeBody.velocity.y * 1) / 1}`;
-  const z = `${Math.round(cubeBody.velocity.z * 1) / 1}`;
+  const x = `${Math.round(player.body.velocity.x * 1) / 1}`;
+  const y = `${Math.round(player.body.velocity.y * 1) / 1}`;
+  const z = `${Math.round(player.body.velocity.z * 1) / 1}`;
 
   velx.innerText = x;
   vely.innerText = y;
   velz.innerText = z;
 
-  const angx = `${Math.round(cubeBody.angularVelocity.x * 1) / 1}`;
-  const angy = `${Math.round(cubeBody.angularVelocity.y * 1) / 1}`;
-  const angz = `${Math.round(cubeBody.angularVelocity.z * 1) / 1}`;
+  const angx = `${Math.round(player.body.angularVelocity.x * 1) / 1}`;
+  const angy = `${Math.round(player.body.angularVelocity.y * 1) / 1}`;
+  const angz = `${Math.round(player.body.angularVelocity.z * 1) / 1}`;
 
   angvelx.innerText = angx;
   angvely.innerText = angy;
@@ -50,9 +50,9 @@ testButton.onclick = (e) => {
 const test2Button = document.getElementById("test2");
 test2Button.innerText = "log position";
 test2Button.onclick = () => {
-  const x = `${Math.round(cubeBody.position.x * 1) / 1}`;
-  const y = `${Math.round(cubeBody.position.y * 1) / 1}`;
-  const z = `${Math.round(cubeBody.position.z * 1) / 1}`;
+  const x = `${Math.round(player.body.position.x * 1) / 1}`;
+  const y = `${Math.round(player.body.position.y * 1) / 1}`;
+  const z = `${Math.round(player.body.position.z * 1) / 1}`;
   console.log(`${x}, ${y}, ${z}`);
 };
 
@@ -82,11 +82,11 @@ slider.addEventListener("change", () => {
   // to adjust the slider the pointer could not be locked
   // so to update the camera appropriately we must manually lock
   // and unlock
-  controls.isLocked = true
+  controls.isLocked = true;
   controls.onMouseMove(
     new MouseEvent("mousemove", { movementX: 0, movementY: 0 }),
   );
-  controls.isLocked = false
+  controls.isLocked = false;
 });
 
 const sliderNumber = document.getElementById(
@@ -113,4 +113,4 @@ function download(url, name) {
 window.addEventListener("load", (e) => {
   slider.value = controls.currentDistance.toString();
   sliderNumber.innerText = `distance - ${controls.currentDistance}`;
-})
+});
