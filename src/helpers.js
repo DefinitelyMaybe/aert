@@ -1,21 +1,17 @@
-import { MeshStandardMaterial, Box, BoxGeometry, Body, Mesh, Vec3 } from "./deps.js";
-import { scene, world, redCubesArray, cubeBody } from "./main.js"
-// import { castRayElement } from "./debug.js";
-
+import { player, scene } from "./main.js";
+import { Cube } from "./objects/cube.js";
 
 export function spawnCubes() {
   // spawn red cubes somewhere within the current floor
-  const material = new MeshStandardMaterial({ color: 0xaaaaaa });
-  const geometry = new BoxGeometry(2, 2, 2);
   for (let i = 0; i < 100; i++) {
-    const cube = new Mesh(geometry, material);
+    const cube = new Cube();
     const scalar = 50;
     const Xsign = Math.random() < 0.5 ? -1 : 1;
     const Zsign = Math.random() < 0.5 ? -1 : 1;
     const posX = Xsign * Math.random() * scalar;
     const posY = 1;
     const posZ = Zsign * Math.random() * scalar;
-    cube.position.set(
+    cube.body.position.set(
       posX,
       posY,
       posZ,
@@ -23,16 +19,8 @@ export function spawnCubes() {
     cube.name = "randomCube";
     cube.castShadow = true;
     cube.receiveShadow = true;
-    scene.add(cube);
-    // cannon.js
-    const redCube = new Box(new Vec3(1, 1, 1));
-    const redCubeBody = new Body({ mass: 0 });
-    redCubeBody.position.set(posX, posY, posZ);
-    redCubeBody.addShape(redCube);
-    world.addBody(redCubeBody);
-    cube.userData.physics = redCubeBody;
 
-    redCubesArray.push(cube);
+    scene.add(cube);
   }
 }
 
@@ -40,7 +28,7 @@ export function moveGreenCube() {
   const scalar = 50;
   const Xsign = Math.random() < 0.5 ? -1 : 1;
   const Zsign = Math.random() < 0.5 ? -1 : 1;
-  cubeBody.position.set(
+  player.body.position.set(
     Xsign * Math.random() * scalar,
     30,
     Zsign * Math.random() * scalar,
