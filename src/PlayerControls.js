@@ -1,13 +1,5 @@
 /// <reference lib="dom" />
-import {
-  Euler,
-  Quaternion,
-  Raycaster,
-  Spherical,
-  Vector3,
-  // Vec3,
-} from "./deps.js";
-// import { world } from "./main.js";
+import { Euler, Quaternion, Raycaster, Spherical, Vector3 } from "./deps.js";
 
 class PlayerControls {
   // values
@@ -17,6 +9,7 @@ class PlayerControls {
 
   constructor(object, camera, domElement) {
     this.object = object;
+    this.body = this.object.body
     this.camera = camera;
     this.domElement = domElement;
 
@@ -46,7 +39,7 @@ class PlayerControls {
       backward: 0,
     };
     this.acceleration = 12;
-    this.canMove = true
+    this.canMove = true;
 
     document.addEventListener("mousedown", async () => {
       this.onMouseDown();
@@ -95,7 +88,7 @@ class PlayerControls {
     const movementX = event.movementX || 0;
     const movementY = event.movementY || 0;
 
-    const objPosition = new Vector3().copy(this.object.position);
+    const objPosition = new Vector3().copy(this.body.position);
 
     // left/right
     this.sphericalDelta.theta = this.twoPI * movementX /
@@ -174,7 +167,7 @@ class PlayerControls {
         default:
           // console.log(`Didn't handle keydown for: ${event.key}`);
           break;
-      } 
+      }
     }
   }
 
@@ -182,23 +175,18 @@ class PlayerControls {
     switch (event.key) {
       case "a":
         this.move.left = 0;
-        // this.object.velocity.x = 10;
         break;
       case "d":
         this.move.right = 0;
-        // this.object.velocity.x = -10;
         break;
       case "w":
         this.move.forward = 0;
-        // this.object.velocity.z = 10;
         break;
       case "s":
         this.move.backward = 0;
-        // this.object.velocity.z = -10;
         break;
       case " ":
         this.move.up = 0;
-        // this.object.velocity.y = 10;
         break;
       default:
         // console.log(`Didn't handle keydown for: ${event.key}`);
@@ -233,55 +221,57 @@ class PlayerControls {
   update() {
     // update obj velocity
     const velVec = this.getPlayerDirection().applyQuaternion(
-      this.object.quaternion,
+      this.body.quaternion,
     ).multiplyScalar(this.acceleration);
-    this.object.velocity.set(velVec.x, this.object.velocity.y, velVec.z);
+    this.body.velocity.set(velVec.x, this.body.velocity.y, velVec.z);
     if (this.move.up && this.isGrounded) {
-      this.object.velocity.y = 10;
+      this.body.velocity.y = 10;
     } else if (this.isGrounded) {
-      this.object.velocity.y = 0;
+      this.body.velocity.y = 0;
     }
 
     // update camera position
-    const objPosition = new Vector3().copy(this.object.position);
+    const objPosition = new Vector3().copy(this.body.position);
     this.camera.position.copy(objPosition).add(this.offset);
 
     this.camera.lookAt(objPosition);
 
     // cast a small ray to update whether the player is grounded or not
     try {
-      // this.object.userData.physics.
-      // raycast for collision
+      // add more raycasts for better  grounded condition
       // const vecLength = new Vec3(0, 1, 0)
-      // const pos1 = this.object.userData.physics.position
+      // const pos1 = this.body.position
       // const posA = pos1.vadd(vecLength).vadd()
-      // const pos2 = this.object.userData.physics.position
+      // const pos2 = this.body.position
       // const posB = pos2.vadd(vecLength)
-      // const pos3 = this.object.userData.physics.position
+      // const pos3 = this.body.position
       // const posC = pos3.vadd(vecLength)
-      // const pos4 = this.object.userData.physics.position
+      // const pos4 = this.body.position
       // const posD = pos4.vadd(vecLength)
-      
+
       // world.raycastClosest(pos1, )
       const ray = new Raycaster(objPosition, this.downAxis, 0, 1.1)
-      // check entire scene for the moment
+        // check entire scene for the moment
         .intersectObjects([this.camera.parent], true);
       if (ray.length > 0) {
         if (this.canMove) {
           switch (ray[0].object.name) {
             case "floor":
-              document.dispatchEvent(new CustomEvent("player", {detail:ray[0]}))
-              this.canMove = false
+              document.dispatchEvent(
+                new CustomEvent("player", { detail: ray[0] }),
+              );
+              // this.canMove = false
               break;
-          case "randomCube":
-            document.dispatchEvent(new CustomEvent("player", {detail:ray[0]}))
-            break;
+            case "randomCube":
+              document.dispatchEvent(
+                new CustomEvent("player", { detail: ray[0] }),
+              );
+              break;
             default:
               break;
           }
         }
         this.isGrounded = true;
-        
       } else {
         this.isGrounded = false;
       }
@@ -295,7 +285,7 @@ class PlayerControls {
     camEuler.x = 0;
     const camQuat = new Quaternion().setFromEuler(camEuler);
 
-    this.object.quaternion.set(camQuat.x, camQuat.y, camQuat.z, camQuat.w);
+    this.body.quaternion.set(camQuat.x, camQuat.y, camQuat.z, camQuat.w);
   }
 }
 
