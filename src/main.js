@@ -96,7 +96,6 @@ player.castShadow = true;
 player.receiveShadow = true;
 player.name = "player";
 player.body.position.y = 10
-player.body.mass = 1
 scene.add(player);
 
 // controls
