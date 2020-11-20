@@ -95,7 +95,7 @@ export const player = new Cube(
 player.castShadow = true;
 player.receiveShadow = true;
 player.name = "player";
-player.body.position.y = 10
+player.body.position.y = 10;
 scene.add(player);
 
 // controls

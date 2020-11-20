@@ -9,7 +9,7 @@ class PlayerControls {
 
   constructor(object, camera, domElement) {
     this.object = object;
-    this.body = this.object.body
+    this.body = this.object.body;
     this.camera = camera;
     this.domElement = domElement;
 

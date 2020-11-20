@@ -24,7 +24,7 @@ export class Cube extends Mesh {
     const cube = new Box(
       new Vec3(this.width / 2, this.height / 2, this.depth / 2),
     );
-    const mass = options.mass ? options.mass : 1
+    const mass = options.mass ? options.mass : 1;
     this.body = new Body({ mass: mass });
     this.body.addShape(cube);
   }
