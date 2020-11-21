@@ -4,12 +4,12 @@ import { Cube } from "./objects/cube.js";
 export function spawnCubes() {
   // spawn red cubes somewhere within the current floor
   for (let i = 0; i < 100; i++) {
-    const cube = new Cube();
+    const cube = new Cube({ width: 2, height: 2, depth: 2, mass: 0 });
     const scalar = 50;
     const Xsign = Math.random() < 0.5 ? -1 : 1;
     const Zsign = Math.random() < 0.5 ? -1 : 1;
     const posX = Xsign * Math.random() * scalar;
-    const posY = 1;
+    const posY = 2;
     const posZ = Zsign * Math.random() * scalar;
     cube.body.position.set(
       posX,
