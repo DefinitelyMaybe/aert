@@ -226,9 +226,10 @@ class PlayerControls {
     this.body.velocity.set(velVec.x, this.body.velocity.y, velVec.z);
     if (this.move.up && this.isGrounded) {
       this.body.velocity.y = 10;
-    } else if (this.isGrounded) {
-      this.body.velocity.y = 0;
     }
+    //  else if (this.isGrounded) {
+    //   this.body.velocity.y = 0;
+    // }
 
     // update camera position
     const objPosition = new Vector3().copy(this.body.position);
@@ -237,46 +238,46 @@ class PlayerControls {
     this.camera.lookAt(objPosition);
 
     // cast a small ray to update whether the player is grounded or not
-    try {
-      // add more raycasts for better  grounded condition
-      // const vecLength = new Vec3(0, 1, 0)
-      // const pos1 = this.body.position
-      // const posA = pos1.vadd(vecLength).vadd()
-      // const pos2 = this.body.position
-      // const posB = pos2.vadd(vecLength)
-      // const pos3 = this.body.position
-      // const posC = pos3.vadd(vecLength)
-      // const pos4 = this.body.position
-      // const posD = pos4.vadd(vecLength)
+    // try {
+    // add more raycasts for better  grounded condition
+    // const vecLength = new Vec3(0, 1, 0)
+    // const pos1 = this.body.position
+    // const posA = pos1.vadd(vecLength).vadd()
+    // const pos2 = this.body.position
+    // const posB = pos2.vadd(vecLength)
+    // const pos3 = this.body.position
+    // const posC = pos3.vadd(vecLength)
+    // const pos4 = this.body.position
+    // const posD = pos4.vadd(vecLength)
 
-      // world.raycastClosest(pos1, )
-      const ray = new Raycaster(objPosition, this.downAxis, 0, 1.1)
-        // check entire scene for the moment
-        .intersectObjects([this.camera.parent], true);
-      if (ray.length > 0) {
-        if (this.canMove) {
-          switch (ray[0].object.name) {
-            case "floor":
-              document.dispatchEvent(
-                new CustomEvent("player", { detail: ray[0] }),
-              );
-              // this.canMove = false
-              break;
-            case "randomCube":
-              document.dispatchEvent(
-                new CustomEvent("player", { detail: ray[0] }),
-              );
-              break;
-            default:
-              break;
-          }
-        }
-        this.isGrounded = true;
-      } else {
-        this.isGrounded = false;
-      }
-    } catch (error) {
-    }
+    // world.raycastClosest(pos1, )
+    //   const ray = new Raycaster(objPosition, this.downAxis, 0, 1.1)
+    //     // check entire scene for the moment
+    //     .intersectObjects([this.camera.parent], true);
+    //   if (ray.length > 0) {
+    //     if (this.canMove) {
+    //       switch (ray[0].object.name) {
+    //         case "floor":
+    //           document.dispatchEvent(
+    //             new CustomEvent("player", { detail: ray[0] }),
+    //           );
+    //           // this.canMove = false
+    //           break;
+    //         case "randomCube":
+    //           document.dispatchEvent(
+    //             new CustomEvent("player", { detail: ray[0] }),
+    //           );
+    //           break;
+    //         default:
+    //           break;
+    //       }
+    //     }
+    //     this.isGrounded = true;
+    //   } else {
+    //     this.isGrounded = false;
+    //   }
+    // } catch (error) {
+    // }
 
     // update obj rotation
     const camEuler = new Euler().setFromQuaternion(this.camera.quaternion);
