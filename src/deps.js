@@ -25,10 +25,13 @@ export {
   Vector2,
   Vector3,
   WebGLRenderer,
+  MOUSE,
+  TOUCH,
 } from "https://cdn.skypack.dev/three?dts";
-// REDO this scripts so that we no longer rely on the deno.land/x module
-export { OrbitControls } from "https://deno.land/x/threejs_4_deno@v121/examples/jsm/controls/OrbitControls.js";
-export { PointerLockControls } from "https://deno.land/x/threejs_4_deno@v121/examples/jsm/controls/PointerLockControls.js";
+// continue to export from here because these files really should be from the import above
+// they're not yet. must wait for es module support across examples folder of three.js
+export { OrbitControls } from "./controls/OrbitControls.js";
+export { PointerLockControls } from "./controls/PointerLockControls.js";
 export {
   AABB,
   Body,
