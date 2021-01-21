@@ -25,7 +25,8 @@ export {
   Vector2,
   Vector3,
   WebGLRenderer,
-} from "https://deno.land/x/threejs_4_deno@v121/src/Three.js";
+} from "https://cdn.skypack.dev/three?dts";
+// REDO this scripts so that we no longer rely on the deno.land/x module
 export { OrbitControls } from "https://deno.land/x/threejs_4_deno@v121/examples/jsm/controls/OrbitControls.js";
 export { PointerLockControls } from "https://deno.land/x/threejs_4_deno@v121/examples/jsm/controls/PointerLockControls.js";
 export {
@@ -39,4 +40,4 @@ export {
   Sphere,
   Vec3,
   World,
-} from "https://deno.land/x/cannon_4_deno@v0.15.1.5/src/cannon-es.js";
+} from "https://cdn.skypack.dev/cannon-es";
