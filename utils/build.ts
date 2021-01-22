@@ -6,17 +6,24 @@ import {
 
 const BUILD = "dist/";
 const BUILDJAVASCRIPT = "dist/js/";
-// const CONFIGS = "configs/";
+const CONFIGS = "configs/";
 const SRC = "src/";
+const STYLES = "styles/";
 const VIEWS = "views/";
 
-// For later use. the config to know which html and style sheets to copy
-// if (Deno.args[0]) {
+// the config to know which html and style sheets to copy
+// use a default
+let name = "main"
+if (Deno.args[0]) {
+  // use args to figure out which config to load
+  name = Deno.args[0]
+}
 
-// } else {
+let config = Deno.readTextFileSync(`${CONFIGS}${name}.json`);
+config = JSON.parse(config)
 
-// }
-// const config = Deno.readTextFileSync(`${CONFIGS}main.html`);
+console.log(config);
+
 
 console.log("building...");
 // try to empty the build folder
@@ -30,12 +37,12 @@ try {
 
 // copy html and css
 console.log("copying html files");
-const html = Deno.readTextFileSync(`${VIEWS}main.html`);
-Deno.writeTextFileSync(`${BUILD}main.html`, html);
+const html = Deno.readTextFileSync(`${VIEWS}lava.html`);
+Deno.writeTextFileSync(`${BUILD}lava.html`, html);
 
 console.log("copying css files");
-const css = Deno.readTextFileSync(`${VIEWS}style.css`);
-Deno.writeTextFileSync(`${BUILD}style.css`, css);
+const css = Deno.readTextFileSync(`${STYLES}lava.css`);
+Deno.writeTextFileSync(`${BUILD}lava.css`, css);
 
 // compile src scripts with deno
 console.log("transpiling all of src...");
