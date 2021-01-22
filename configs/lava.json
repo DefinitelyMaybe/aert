@@ -1,5 +1,6 @@
 {
   "html": "views/lava.html",
+  "style": "styles/lava.css",
   "version": "0.0.1",
   "assets": {}
 }
