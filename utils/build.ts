@@ -4,10 +4,19 @@ import {
   walkSync,
 } from "https://deno.land/std/fs/mod.ts";
 
-const BUILD = "build/";
-const BUILDJAVASCRIPT = "build/js/";
-const VIEWS = "views/";
+const BUILD = "dist/";
+const BUILDJAVASCRIPT = "dist/js/";
+// const CONFIGS = "configs/";
 const SRC = "src/";
+const VIEWS = "views/";
+
+// For later use. the config to know which html and style sheets to copy
+// if (Deno.args[0]) {
+
+// } else {
+
+// }
+// const config = Deno.readTextFileSync(`${CONFIGS}main.html`);
 
 console.log("building...");
 // try to empty the build folder
@@ -17,6 +26,7 @@ try {
 } catch (error) {
   console.error(`Didn't manage to empty the build folder.`);
 }
+
 
 // copy html and css
 console.log("copying html files");
