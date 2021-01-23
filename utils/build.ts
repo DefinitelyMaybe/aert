@@ -4,8 +4,8 @@ import {
   walkSync,
 } from "https://deno.land/std/fs/mod.ts";
 
-const BUILD = "dist/";
-const BUILDJAVASCRIPT = "dist/js/";
+const DIST = "dist/";
+const DISTJS = "dist/js/";
 const CONFIGS = "configs/";
 const SRC = "src/";
 const STYLES = "styles/";
@@ -29,7 +29,7 @@ console.log("building...");
 // try to empty the build folder
 try {
   console.log("emptying build folder");
-  emptyDirSync(BUILD);
+  emptyDirSync(DIST);
 } catch (error) {
   console.error(`Didn't manage to empty the build folder.`);
 }
@@ -37,23 +37,23 @@ try {
 
 // copy html and css
 console.log("copying html files");
-const html = Deno.readTextFileSync(`${VIEWS}lava.html`);
-Deno.writeTextFileSync(`${BUILD}lava.html`, html);
+const html = Deno.readTextFileSync(`${VIEWS}${name}.html`);
+Deno.writeTextFileSync(`${DIST}${name}.html`, html);
 
 console.log("copying css files");
-const css = Deno.readTextFileSync(`${STYLES}lava.css`);
-Deno.writeTextFileSync(`${BUILD}lava.css`, css);
+const css = Deno.readTextFileSync(`${STYLES}${name}.css`);
+Deno.writeTextFileSync(`${DIST}${name}.css`, css);
 
 // compile src scripts with deno
 console.log("transpiling all of src...");
 
-for await (const entry of walkSync(SRC)) {
+for (const entry of walkSync(SRC)) {
   if (entry.isFile) {
     let path = entry.path.replaceAll("\\", "/").split("src/")[1].replace(".ts", ".js");
-    const buildPath = `${BUILDJAVASCRIPT}${path}`;
+    const buildPath = `${DISTJS}${path}`;
     
     // @ts-ignore
-    const js = await Deno.transpileOnly(
+    const js = await Deno.emit(
       { "transpiled": Deno.readTextFileSync(entry.path) },
       {
         lib: ["esnext", "dom"],
