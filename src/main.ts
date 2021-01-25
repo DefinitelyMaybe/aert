@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 import {
   Body,
   Clock,
@@ -31,12 +32,14 @@ export const clock = new Clock(true);
 
 // physics
 export const world = new World();
+// @ts-ignore
 world.gravity.set(0, -24, 0);
+// @ts-ignore
 world.broadphase = new NaiveBroadphase();
 
 // renderer
 export const renderer = new WebGLRenderer(
-  { canvas: document.querySelector("canvas"), logarithmicDepthBuffer: true },
+  { canvas: document.querySelector("canvas") as HTMLCanvasElement, logarithmicDepthBuffer: true },
 );
 renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -84,7 +87,8 @@ scene.add(floor);
 
 const groundPlane = new Plane();
 const groundBody = new Body({ mass: 0 });
-groundBody.addShape(groundPlane);
+groundBody.addShape(groundPlane, undefined, undefined);
+// @ts-ignore
 groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
 world.addBody(groundBody);
 
@@ -95,6 +99,7 @@ export const player = new Cube(
 player.castShadow = true;
 player.receiveShadow = true;
 player.name = "player";
+// @ts-ignore
 player.body.position.y = 10;
 scene.add(player);
 
@@ -145,7 +150,7 @@ function animate() {
     const delta = clock.getDelta();
 
     // make a physics step
-    world.step(delta);
+    world.step(delta, undefined, undefined);
 
     // update rendered positions
     scene.traverse((object) => {

@@ -15,6 +15,7 @@ export {
   Mesh,
   MeshBasicMaterial,
   MeshStandardMaterial,
+  MOUSE,
   Object3D,
   PerspectiveCamera,
   PlaneBufferGeometry,
@@ -22,11 +23,10 @@ export {
   Raycaster,
   Scene,
   Spherical,
+  TOUCH,
   Vector2,
   Vector3,
   WebGLRenderer,
-  MOUSE,
-  TOUCH,
 } from "https://cdn.skypack.dev/three?dts";
 // continue to export from here because these files really should be from the import above
 // they're not yet. must wait for es module support across examples folder of three.js

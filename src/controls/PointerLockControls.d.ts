@@ -1,31 +1,25 @@
 /// <reference lib="dom" />
-import {
-	Camera,
-	EventDispatcher,
-	Vector3
-} from '../deps.js';
+import { Camera, EventDispatcher, Vector3 } from "../deps.js";
 
 export class PointerLockControls extends EventDispatcher {
+  constructor(camera: Camera, domElement?: HTMLElement);
 
-	constructor( camera: Camera, domElement?: HTMLElement );
+  domElement: HTMLElement;
 
-	domElement: HTMLElement;
+  // API
 
-	// API
+  isLocked: boolean;
 
-	isLocked: boolean;
+  minPolarAngle: number;
+  maxPolarAngle: number;
 
-	minPolarAngle: number;
-	maxPolarAngle: number;
-
-	connect(): void;
-	disconnect(): void;
-	dispose(): void;
-	getObject(): Camera;
-	getDirection( v: Vector3 ): Vector3;
-	moveForward( distance: number ): void;
-	moveRight( distance: number ): void;
-	lock(): void;
-	unlock(): void;
-
+  connect(): void;
+  disconnect(): void;
+  dispose(): void;
+  getObject(): Camera;
+  getDirection(v: Vector3): Vector3;
+  moveForward(distance: number): void;
+  moveRight(distance: number): void;
+  lock(): void;
+  unlock(): void;
 }
