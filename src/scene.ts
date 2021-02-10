@@ -1,5 +1,5 @@
-import { Scene as ThreeScene } from "./deps.js";
-import { world } from "./main.js";
+import { Scene as ThreeScene } from "./deps.ts";
+import { world } from "./main.ts";
 
 export class Scene extends ThreeScene {
   constructor() {

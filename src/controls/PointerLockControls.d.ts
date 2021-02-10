@@ -1,5 +1,5 @@
 /// <reference lib="dom" />
-import { Camera, EventDispatcher, Vector3 } from "../deps.js";
+import { Camera, EventDispatcher, Vector3 } from "../deps.ts";
 
 export class PointerLockControls extends EventDispatcher {
   constructor(camera: Camera, domElement?: HTMLElement);

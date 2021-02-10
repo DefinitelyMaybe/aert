@@ -10,7 +10,5 @@ Fail fast and always aim for fun.
 
 # Developing
 
-The following deno script outputs a `dist` folder. The watch-and-rebuild script also watches for file changes and only updates the files which have changed. The html pages must be served up by a server as es modules are in use. [Live Server](https://ritwickdey.github.io/vscode-live-server/) works nicely.
-
-`deno run -A --unstable .\utils\watch-and-rebuild.ts`
+`npm start` (snowpack dev) is used to compile and hot reload the typescript
 

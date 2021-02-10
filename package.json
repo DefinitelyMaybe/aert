@@ -1,0 +1,24 @@
+{
+  "name": "aert",
+  "version": "0.0.1",
+  "description": "Fail fast and always aim for fun.",
+  "main": "none",
+  "scripts": {
+    "start": "snowpack dev",
+    "build": "snowpack build",
+    "test": "deno test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prototype-ts/aert.git"
+  },
+  "author": "DefinitelyMaybe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/prototype-ts/aert/issues"
+  },
+  "homepage": "https://github.com/prototype-ts/aert#readme",
+  "dependencies": {
+    "snowpack": "^3.0.11"
+  }
+}

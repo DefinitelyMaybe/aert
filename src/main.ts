@@ -15,11 +15,11 @@ import {
   Vector2,
   WebGLRenderer,
   World,
-} from "./deps.js";
-import { PlayerControls } from "./PlayerControls.js";
-import { spawnCubes } from "./helpers.js";
-import { Scene } from "./scene.js";
-import { Cube } from "./objects/cube.js";
+} from "./deps.ts";
+import { PlayerControls } from "./PlayerControls.ts";
+import { spawnCubes } from "./helpers.ts";
+import { Scene } from "./scene.ts";
+import { Cube } from "./objects/cube.ts";
 
 // state
 export const state = {
@@ -32,9 +32,7 @@ export const clock = new Clock(true);
 
 // physics
 export const world = new World();
-// @ts-ignore
 world.gravity.set(0, -24, 0);
-// @ts-ignore
 world.broadphase = new NaiveBroadphase();
 
 // renderer
@@ -88,7 +86,6 @@ scene.add(floor);
 const groundPlane = new Plane();
 const groundBody = new Body({ mass: 0 });
 groundBody.addShape(groundPlane, undefined, undefined);
-// @ts-ignore
 groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
 world.addBody(groundBody);
 
@@ -99,7 +96,6 @@ export const player = new Cube(
 player.castShadow = true;
 player.receiveShadow = true;
 player.name = "player";
-// @ts-ignore
 player.body.position.y = 10;
 scene.add(player);
 

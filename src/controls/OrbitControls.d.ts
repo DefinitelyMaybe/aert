@@ -1,5 +1,5 @@
 /// <reference lib="dom" />
-import { Camera, MOUSE, TOUCH, Vector3 } from "../deps.js";
+import { Camera, MOUSE, TOUCH, Vector3 } from "../deps.ts";
 
 export class OrbitControls {
   constructor(object: Camera, domElement?: HTMLElement);

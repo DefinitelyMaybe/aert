@@ -1,5 +1,5 @@
 /// @deno-types="./PointerLockControls.d.ts"
-import { Euler, EventDispatcher, Vector3 } from "../deps.js";
+import { Euler, EventDispatcher, Vector3 } from "../deps.ts";
 
 var PointerLockControls = function (camera, domElement) {
   if (domElement === undefined) {
