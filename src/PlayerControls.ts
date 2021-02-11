@@ -1,5 +1,5 @@
 /// <reference lib="dom" />
-import { Euler, Quaternion, Raycaster, Spherical, Vector3 } from "./deps.js";
+import { Euler, Quaternion, Spherical, Vector3 } from "./deps.ts";
 
 class PlayerControls {
   // values
@@ -18,7 +18,7 @@ class PlayerControls {
       camera.up,
       new Vector3(0, 1, 0),
     );
-    this.cameraQuatInv = this.cameraQuat.inverse();
+    this.cameraQuatInv = this.cameraQuat.invert();
     this.spherical = new Spherical();
     this.sphericalDelta = new Spherical();
 
@@ -80,7 +80,7 @@ class PlayerControls {
     this.isLocked = false;
   }
 
-  onMouseMove(event) {
+  onMouseMove(event:MouseEvent) {
     if (this.isLocked === false) {
       return;
     }
@@ -141,7 +141,7 @@ class PlayerControls {
     }
   }
 
-  onKeyDown(event) {
+  onKeyDown(event:KeyboardEvent) {
     if (this.canMove) {
       switch (event.key) {
         case "a":
