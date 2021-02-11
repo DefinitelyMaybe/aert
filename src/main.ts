@@ -11,7 +11,7 @@ import {
   PerspectiveCamera,
   Plane,
   PlaneBufferGeometry,
-  tweakpane,
+  Tweakpane,
   Vec3,
   Vector2,
   WebGLRenderer,
@@ -22,6 +22,7 @@ import { spawnCubes } from "./helpers.ts";
 import { Scene } from "./scene.ts";
 import { Cube } from "./objects/cube.ts";
 
+// ---------------- Variables --------------------
 // state
 export const state = {
   running: false,
@@ -72,7 +73,7 @@ export const camera = new PerspectiveCamera(
   0.01,
   1000,
 );
-camera.position.set(10, 10, 10);
+camera.position.set(10, 30, 10);
 scene.add(camera);
 
 // flat world
@@ -97,7 +98,7 @@ export const player = new Cube(
 player.castShadow = true;
 player.receiveShadow = true;
 player.name = "player";
-player.body.position.y = 10;
+player.body.position.y = 20;
 scene.add(player);
 
 // controls
@@ -112,33 +113,14 @@ export const controls = new PlayerControls(
 // const mat = new LineBasicMaterial({ color: 0xff00ff });
 // const prevRay = new Line(geo, mat);
 // scene.add(prevRay);
+// tweakpane
+// console.log(Tweakpane);
+export const pane = new Tweakpane.default()
+pane.addInput(state, 'running');
+pane.addInput(state, 'displayRestart');
 
-window.addEventListener("visibilitychange", () => {
-  // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
-  if (document.visibilityState === "hidden") {
-    state.running = false;
-    clock.stop();
-  } else {
-    // get ready to run again
-    clock.start();
-    state.running = true;
-  }
-});
 
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-window.onresize = () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(window.innerWidth, window.innerHeight);
-};
-
+// ---------------- Functions --------------------
 // game loop
 function animate() {
   requestAnimationFrame(animate);
@@ -175,8 +157,36 @@ function animate() {
   }
 }
 
+// ---------------- Events --------------------
+window.addEventListener("visibilitychange", () => {
+  // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
+  if (document.visibilityState === "hidden") {
+    state.running = false;
+    clock.stop();
+  } else {
+    // get ready to run again
+    clock.start();
+    state.running = true;
+  }
+});
+
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+window.onresize = () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+};
+
 // finially start renderering
 state.running = true;
+pane.refresh()
 spawnCubes();
 
 animate();
