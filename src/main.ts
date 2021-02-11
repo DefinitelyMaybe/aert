@@ -37,7 +37,7 @@ world.broadphase = new NaiveBroadphase();
 
 // renderer
 export const renderer = new WebGLRenderer(
-  { canvas: document.querySelector("canvas") as HTMLCanvasElement, logarithmicDepthBuffer: true },
+  { canvas: document.querySelector("canvas") as HTMLCanvasElement },
 );
 renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
