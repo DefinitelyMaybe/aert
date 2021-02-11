@@ -46,4 +46,4 @@ export {
   Vec3,
   World,
 } from "https://cdn.skypack.dev/cannon-es";
-export * as tweakpane from "https://cdn.skypack.dev/tweakpane";
+export * as Tweakpane from "https://cdn.skypack.dev/tweakpane";
