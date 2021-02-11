@@ -10,5 +10,5 @@ Fail fast and always aim for fun.
 
 # Developing
 
-`npm start` (snowpack dev) is used to compile and hot reload the typescript
+`npm start` (snowpack dev) is used to serve the project.
 
