@@ -11,6 +11,7 @@ import {
   PerspectiveCamera,
   Plane,
   PlaneBufferGeometry,
+  tweakpane,
   Vec3,
   Vector2,
   WebGLRenderer,

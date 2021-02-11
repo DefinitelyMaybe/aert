@@ -80,7 +80,7 @@ class PlayerControls {
     this.isLocked = false;
   }
 
-  onMouseMove(event:MouseEvent) {
+  onMouseMove(event: MouseEvent) {
     if (this.isLocked === false) {
       return;
     }
@@ -141,7 +141,7 @@ class PlayerControls {
     }
   }
 
-  onKeyDown(event:KeyboardEvent) {
+  onKeyDown(event: KeyboardEvent) {
     if (this.canMove) {
       switch (event.key) {
         case "a":

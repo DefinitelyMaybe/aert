@@ -5,12 +5,16 @@ import {
   Mesh,
   MeshStandardMaterial,
   Vec3,
-} from "../deps.js";
+} from "../deps.ts";
 
 export class Cube extends Mesh {
   defaultMaterial = new MeshStandardMaterial({ color: 0xaaaaaa });
+  body: Body;
+  width: number;
+  height: number;
+  depth: number;
 
-  constructor(options = {}) {
+  constructor(options = { mass: 1, width: 1, height: 1, depth: 1 }) {
     super();
     Object.defineProperty(this, "isCube", { value: true });
     this.width = options.width ? options.width : 1;
@@ -26,6 +30,6 @@ export class Cube extends Mesh {
     );
     const mass = options.mass ? options.mass : 1;
     this.body = new Body({ mass: mass });
-    this.body.addShape(cube);
+    this.body.addShape(cube, undefined, undefined);
   }
 }
