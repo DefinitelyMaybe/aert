@@ -1,11 +1,32 @@
 /// <reference lib="dom" />
-import { Euler, Quaternion, Spherical, Vector3 } from "./deps.ts";
+import { Euler, Quaternion, Spherical, Vector3 } from "../deps.ts";
 
 class PlayerControls {
   // values
   PI_2 = Math.PI / 2;
   twoPI = Math.PI * 2;
   downAxis = new Vector3(0, -1, 0);
+  object
+  body
+  camera
+  domElement
+  offset
+  cameraQuat
+  cameraQuatInv
+  spherical
+  sphericalDelta
+  minDistance
+  maxDistance
+  distanceStepSize
+  currentDistance
+  distanceTheshold
+
+  isLocked
+  isGrounded
+  move: {left:number, right:number, up:number, down:number, forward:number, backward:number}
+  canMove
+  acceleration
+
 
   constructor(object, camera, domElement) {
     this.object = object;
@@ -142,6 +163,7 @@ class PlayerControls {
   }
 
   onKeyDown(event: KeyboardEvent) {
+    // future idea: let the player save/load there on keybindings config file
     if (this.canMove) {
       switch (event.key) {
         case "a":
@@ -162,7 +184,7 @@ class PlayerControls {
           }
           break;
         case "e":
-          this.spawnCube();
+          console.log(`Pressed e`);
           break;
         default:
           // console.log(`Didn't handle keydown for: ${event.key}`);
@@ -171,7 +193,7 @@ class PlayerControls {
     }
   }
 
-  onKeyUp(event) {
+  onKeyUp(event:KeyboardEvent) {
     switch (event.key) {
       case "a":
         this.move.left = 0;
@@ -194,7 +216,7 @@ class PlayerControls {
     }
   }
 
-  onWheel(event) {
+  onWheel(event:WheelEvent) {
     const wheelDelta = event.deltaY > 0
       ? this.distanceStepSize
       : -this.distanceStepSize;
@@ -210,7 +232,7 @@ class PlayerControls {
     );
   }
 
-  getPlayerDirection() {
+  getMovementDirection() {
     return new Vector3(
       -this.move.left + this.move.right,
       0,
@@ -220,7 +242,7 @@ class PlayerControls {
 
   update() {
     // update obj velocity
-    const velVec = this.getPlayerDirection().applyQuaternion(
+    const velVec = this.getMovementDirection().applyQuaternion(
       this.body.quaternion,
     ).multiplyScalar(this.acceleration);
     this.body.velocity.set(velVec.x, this.body.velocity.y, velVec.z);

@@ -17,10 +17,9 @@ import {
   WebGLRenderer,
   World,
 } from "./deps.ts";
-import { PlayerControls } from "./PlayerControls.ts";
+import { Player } from "./objects/player.ts";
 import { spawnCubes } from "./helpers.ts";
 import { Scene } from "./scene.ts";
-import { Cube } from "./objects/cube.ts";
 
 // ---------------- Variables --------------------
 // state
@@ -92,21 +91,10 @@ groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
 world.addBody(groundBody);
 
 // player
-export const player = new Cube(
-  { material: new MeshStandardMaterial({ color: 0x00ff00 }) },
-);
-player.castShadow = true;
-player.receiveShadow = true;
-player.name = "player";
-player.body.position.y = 20;
-scene.add(player);
-
-// controls
-export const controls = new PlayerControls(
-  player,
-  camera,
-  renderer.domElement,
-);
+export const player = new Player(camera, renderer.domElement)
+player.object.body.position.y = 20;
+scene.add(player.object);
+scene.add(player.circle)
 
 // raycasting for fun
 // const geo = new BufferGeometry();
@@ -118,7 +106,6 @@ export const controls = new PlayerControls(
 export const pane = new Tweakpane.default()
 pane.addInput(state, 'running');
 pane.addInput(state, 'displayRestart');
-
 
 // ---------------- Functions --------------------
 // game loop
@@ -148,12 +135,13 @@ function animate() {
 
     // camera position must be updated
     // velocity may move object position
-    controls.update();
+    player.controls.update();
 
     // finally make the render to screen
     renderer.render(scene, camera);
 
-    // updateTable();
+    // refresh the pane to update any values
+    pane.refresh()
   }
 }
 
@@ -186,8 +174,6 @@ window.onresize = () => {
 
 // finially start renderering
 state.running = true;
-pane.refresh()
 spawnCubes();
 
 animate();
-// state.running = false
