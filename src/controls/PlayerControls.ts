@@ -1,7 +1,6 @@
 /// <reference lib="dom" />
-import Tweakpane from "https://cdn.skypack.dev/-/tweakpane@v1.5.8-yOgAVh2ofTMUQxh0irQW/dist=es2020,mode=types/dist/types/index.d.ts";
+import type Tweakpane from "https://cdn.skypack.dev/-/tweakpane@v1.5.8-yOgAVh2ofTMUQxh0irQW/dist=es2020,mode=types/dist/types/index.d.ts";
 import { Euler, Quaternion, Spherical, Vector3 } from "../deps.ts";
-import type { pane } from "../main.ts";
 
 class PlayerControls {
   // constants
@@ -10,7 +9,6 @@ class PlayerControls {
   
   downAxis = new Vector3(0, -1, 0);
   
-  object
   body
   camera
   domElement
@@ -36,8 +34,7 @@ class PlayerControls {
   acceleration
 
 
-  constructor(object, camera, domElement) {
-    this.object = object;
+  constructor(camera, domElement) {
     this.body = object.body;
     this.camera = camera;
     this.domElement = domElement;
@@ -70,13 +67,19 @@ class PlayerControls {
     this.acceleration = 12;
     this.canMove = true;
 
-    this.domElement.addEventListener("mousedown", async () => {
-      this.onMouseDown();
+    this.domElement.addEventListener("mousedown", async (e:MouseEvent) => {
+      switch (e.button) {
+        case 0:
+          // left mouse button
+          this.onMouseDown();    
+          break;
+        default:
+          break;
+      }
     });
 
-    document.addEventListener("contextmenu", async (e) => {
+    this.domElement.addEventListener("contextmenu", async (e:MouseEvent) => {
       e.preventDefault();
-      this.onMouseDown();
     });
 
     document.addEventListener("pointerlockchange", async () => {
@@ -86,8 +89,6 @@ class PlayerControls {
     document.addEventListener("mousemove", async (e) => {
       this.onMouseMove(e);
     });
-    // document.addEventListener("mousedown", this.mousedown);
-    // document.addEventListener("mouseup", this.mouseup);
 
     document.addEventListener("keydown", async (e) => {
       this.onKeyDown(e);
@@ -113,8 +114,12 @@ class PlayerControls {
   initPane(pane:Tweakpane) {
     // Add variables to pane
     const f1 = pane.addFolder({title:"PlayerControls", expanded:true})
-    f1.addInput(this, 'isLocked')
     f1.addInput(this.spherical, "phi")
+    f1.addInput(this.sphericalDelta, 'phi', {label:'delta phi'})
+    f1.addSeparator()
+    f1.addInput(this, 'isLocked')
+    f1.addInput(this, 'canMove')
+    f1.addInput(this, 'isGrounded')
   }
 
   onMouseMove(event: MouseEvent) {
@@ -262,6 +267,7 @@ class PlayerControls {
       this.body.quaternion,
     ).multiplyScalar(this.acceleration);
     this.body.velocity.set(velVec.x, this.body.velocity.y, velVec.z);
+    
     if (this.move.up && this.isGrounded) {
       this.body.velocity.y = 10;
     }
