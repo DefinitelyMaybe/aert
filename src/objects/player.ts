@@ -1,5 +1,5 @@
 // handles the player object appropriately
-import { PlayerControls } from "../controls/PlayerControls.ts";
+import { PlayerWASDControls } from "../controls/PlayerWASDControls.ts";
 import { Cube } from "./cube.ts";
 import { MeshStandardMaterial, CircleGeometry, Object3D } from "../deps.ts";
 
@@ -23,7 +23,7 @@ export class Player extends Object3D {
     this.camera = camera
     this.domEl = domEl
 
-    this.controls = new PlayerControls(camera, domEl)
+    this.controls = new PlayerWASDControls(camera, domEl)
     // this.circle = new CircleGeometry(2, 5, Math.PI/4, Math.PI/2)
   }
 }
