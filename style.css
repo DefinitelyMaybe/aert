@@ -54,13 +54,3 @@ button#startbtn {
   min-width: 200px;
   min-height: 60px;
 }
-
-table {
-  border-collapse: collapse;
-}
-table, th, td {
-  border-style: solid;
-  border-color: black;
-  border-width: 1px;
-  text-align: center;
-}
