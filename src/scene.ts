@@ -1,5 +1,6 @@
 import { Scene as ThreeScene } from "./deps.ts";
 import { world } from "./main.ts";
+import type { Cube } from "./objects/cube.ts";
 
 export class Scene extends ThreeScene {
   constructor() {
@@ -8,12 +9,25 @@ export class Scene extends ThreeScene {
 
   add(obj) {
     if (obj.body) {
-      // add the physics
+      // add to  physics
       super.add(obj);
       world.addBody(obj.body);
     } else {
       // normal add
       super.add(obj);
     }
+    return this
+  }
+
+  remove(obj:Cube) {
+    if (obj.body) {
+      // remove from scene and physics world
+      super.remove(obj);
+      world.addBody(obj.body);
+    } else {
+      // normal add
+      super.remove(obj);
+    }
+    return this
   }
 }
