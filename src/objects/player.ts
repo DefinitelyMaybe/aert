@@ -13,7 +13,7 @@ export class Player extends Object3D {
   camera
   controls
   mesh
-  circle
+  // circle
   constructor(camera, domEl) {
     super()
     this.mesh = new Cube({ material: new MeshStandardMaterial({ color: 0x00ff00 }) })
@@ -25,7 +25,7 @@ export class Player extends Object3D {
     this.domEl = domEl
 
     this.controls = new PlayerControls(this.mesh, camera, domEl)
-    this.circle = new CircleGeometry(2, 5, Math.PI/4, Math.PI/2)
+    // this.circle = new CircleGeometry(2, 5, Math.PI/4, Math.PI/2)
   }
 
   addtoScene(scene:Scene) {
