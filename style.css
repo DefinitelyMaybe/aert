@@ -54,3 +54,8 @@ button#startbtn {
   min-width: 200px;
   min-height: 60px;
 }
+
+/* Tweakpane */
+/* .tp-dfwv {
+  pointer-events: none;
+} */
