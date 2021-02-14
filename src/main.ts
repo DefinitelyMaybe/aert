@@ -16,6 +16,7 @@ import {
   Vector2,
   WebGLRenderer,
   World,
+  FogExp2,
 } from "./deps.ts";
 import { Player } from "./objects/player.ts";
 import { spawnCubes } from "./helpers.ts";
@@ -27,6 +28,11 @@ export const state = {
   running: false,
   displayRestart: false,
 };
+
+let fogValues = {
+  density: 0.05,
+  color: 0xdddddd,
+}
 
 // time
 export const clock = new Clock(true);
@@ -45,7 +51,8 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 // scene
 export const scene = new Scene();
-scene.background = new Color(0xdddddd);
+scene.background = new Color(fogValues.color);
+scene.fog = new FogExp2( fogValues.color, fogValues.density )
 
 // lighting
 const directionalLight = new DirectionalLight();
@@ -94,14 +101,25 @@ world.addBody(groundBody);
 export const player = new Player(camera, renderer.domElement)
 player.mesh.body.position.y = 20;
 scene.add(player.mesh);
-scene.add(player.circle)
+// scene.add(player.circle)
 
 // tweakpane
 // console.log(Tweakpane);
 export const pane = new Tweakpane.default()
-pane.addInput(state, 'running');
-pane.addInput(state, 'displayRestart');
+const f1 = pane.addFolder({title:"state"})
+f1.addInput(state, 'running');
+f1.addInput(state, 'displayRestart');
+f1.addSeparator()
+f1.addInput(fogValues, 'density', {
+  max: 0.1,
+  min: 0.0025,
+  step: 0.01,
+})
+f1.on("change", () => {
+  scene.fog.density = fogValues.density
+})
 pane.element.addEventListener("click", (e) => {
+  e.stopPropagation()
   e.preventDefault()
 })
 
@@ -171,6 +189,13 @@ window.onresize = () => {
 
   renderer.setSize(window.innerWidth, window.innerHeight);
 };
+
+document.addEventListener('mousedown',  (e) => {
+  console.log({event:e.target});
+  if (e.target == renderer.domElement) {
+    console.log("done");
+  }
+})
 
 // finially start renderering
 state.running = true;
