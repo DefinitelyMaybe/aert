@@ -92,20 +92,20 @@ world.addBody(groundBody);
 
 // player
 export const player = new Player(camera, renderer.domElement)
-player.object.body.position.y = 20;
-scene.add(player.object);
+player.mesh.body.position.y = 20;
+scene.add(player.mesh);
 scene.add(player.circle)
 
-// raycasting for fun
-// const geo = new BufferGeometry();
-// const mat = new LineBasicMaterial({ color: 0xff00ff });
-// const prevRay = new Line(geo, mat);
-// scene.add(prevRay);
 // tweakpane
 // console.log(Tweakpane);
 export const pane = new Tweakpane.default()
 pane.addInput(state, 'running');
 pane.addInput(state, 'displayRestart');
+pane.element.addEventListener("click", (e) => {
+  e.preventDefault()
+})
+
+player.controls.initPane(pane)
 
 // ---------------- Functions --------------------
 // game loop
