@@ -190,12 +190,9 @@ window.onresize = () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 };
 
-document.addEventListener('mousedown',  (e) => {
-  console.log({event:e.target});
-  if (e.target == renderer.domElement) {
-    console.log("done");
-  }
-})
+// document.addEventListener('mousedown',  (e) => {
+//   console.log({event:e.target});
+// })
 
 // finially start renderering
 state.running = true;
