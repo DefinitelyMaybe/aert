@@ -30,7 +30,7 @@ export const state = {
 };
 
 let fogValues = {
-  density: 0.05,
+  density: 0.03,
   color: 0xdddddd,
 }
 
