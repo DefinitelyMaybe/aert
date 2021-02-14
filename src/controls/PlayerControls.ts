@@ -70,7 +70,7 @@ class PlayerControls {
     this.acceleration = 12;
     this.canMove = true;
 
-    document.addEventListener("mousedown", async () => {
+    this.domElement.addEventListener("mousedown", async () => {
       this.onMouseDown();
     });
 
