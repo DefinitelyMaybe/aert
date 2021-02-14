@@ -1,20 +1,28 @@
 /// <reference lib="dom" />
+import Tweakpane from "https://cdn.skypack.dev/-/tweakpane@v1.5.8-yOgAVh2ofTMUQxh0irQW/dist=es2020,mode=types/dist/types/index.d.ts";
 import { Euler, Quaternion, Spherical, Vector3 } from "../deps.ts";
+import type { pane } from "../main.ts";
 
 class PlayerControls {
-  // values
+  // constants
   PI_2 = Math.PI / 2;
   twoPI = Math.PI * 2;
+  
   downAxis = new Vector3(0, -1, 0);
+  
   object
   body
   camera
   domElement
+ 
   offset
+  
   cameraQuat
   cameraQuatInv
+  
   spherical
   sphericalDelta
+  
   minDistance
   maxDistance
   distanceStepSize
@@ -30,7 +38,7 @@ class PlayerControls {
 
   constructor(object, camera, domElement) {
     this.object = object;
-    this.body = this.object.body;
+    this.body = object.body;
     this.camera = camera;
     this.domElement = domElement;
 
@@ -99,6 +107,14 @@ class PlayerControls {
       new MouseEvent("mousemove", { movementX: 0, movementY: 0 }),
     );
     this.isLocked = false;
+
+  }
+
+  initPane(pane:Tweakpane) {
+    // Add variables to pane
+    const f1 = pane.addFolder({title:"PlayerControls", expanded:true})
+    f1.addInput(this, 'isLocked')
+    f1.addInput(this.spherical, "phi")
   }
 
   onMouseMove(event: MouseEvent) {
