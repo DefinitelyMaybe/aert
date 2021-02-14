@@ -2,7 +2,7 @@
 import type Tweakpane from "https://cdn.skypack.dev/-/tweakpane@v1.5.8-yOgAVh2ofTMUQxh0irQW/dist=es2020,mode=types/dist/types/index.d.ts";
 import { Euler, Quaternion, Spherical, Vector3 } from "../deps.ts";
 
-class PlayerControls {
+export class PlayerWASDControls {
   // constants
   PI_2 = Math.PI / 2;
   twoPI = Math.PI * 2;
@@ -333,5 +333,3 @@ class PlayerControls {
     this.body.quaternion.set(camQuat.x, camQuat.y, camQuat.z, camQuat.w);
   }
 }
-
-export { PlayerControls };
