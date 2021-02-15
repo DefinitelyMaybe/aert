@@ -17,7 +17,7 @@ export class Player extends Object3D {
   // circle
   constructor(camera:PerspectiveCamera, domEl:HTMLElement) {
     super();
-    
+
     this.mesh.castShadow = true;
     this.mesh.receiveShadow = true;
     this.mesh.name = "player";
@@ -25,7 +25,7 @@ export class Player extends Object3D {
     this.camera = camera;
     this.domEl = domEl;
 
-    this.controls = new ThirdPersonControls(camera, domEl);
+    this.controls = new ThirdPersonControls(this.mesh, camera, domEl);
     // this.circle = new CircleGeometry(2, 5, Math.PI/4, Math.PI/2)
   }
 }
