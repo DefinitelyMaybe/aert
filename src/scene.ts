@@ -16,10 +16,10 @@ export class Scene extends ThreeScene {
       // normal add
       super.add(obj);
     }
-    return this
+    return this;
   }
 
-  remove(obj:Cube) {
+  remove(obj: Cube) {
     if (obj.body) {
       // remove from scene and physics world
       super.remove(obj);
@@ -28,6 +28,6 @@ export class Scene extends ThreeScene {
       // normal add
       super.remove(obj);
     }
-    return this
+    return this;
   }
 }

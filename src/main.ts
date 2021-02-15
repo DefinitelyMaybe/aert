@@ -4,6 +4,7 @@ import {
   Clock,
   Color,
   DirectionalLight,
+  FogExp2,
   HemisphereLight,
   Mesh,
   MeshStandardMaterial,
@@ -16,7 +17,6 @@ import {
   Vector2,
   WebGLRenderer,
   World,
-  FogExp2,
 } from "./deps.ts";
 import { Player } from "./objects/player.ts";
 import { spawnCubes } from "./helpers.ts";
@@ -32,7 +32,7 @@ export const state = {
 let fogValues = {
   density: 0.03,
   color: 0xdddddd,
-}
+};
 
 // time
 export const clock = new Clock(true);
@@ -52,7 +52,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // scene
 export const scene = new Scene();
 scene.background = new Color(fogValues.color);
-scene.fog = new FogExp2( fogValues.color, fogValues.density )
+scene.fog = new FogExp2(fogValues.color, fogValues.density);
 
 // lighting
 const directionalLight = new DirectionalLight();
@@ -98,32 +98,32 @@ groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
 world.addBody(groundBody);
 
 // player
-export const player = new Player(camera, renderer.domElement)
+export const player = new Player(camera, renderer.domElement);
 player.mesh.body.position.y = 20;
 scene.add(player.mesh);
 // scene.add(player.circle)
 
 // tweakpane
 // console.log(Tweakpane);
-export const pane = new Tweakpane.default()
-const f1 = pane.addFolder({title:"state"})
-f1.addInput(state, 'running');
-f1.addInput(state, 'displayRestart');
-f1.addSeparator()
-f1.addInput(fogValues, 'density', {
+export const pane = new Tweakpane.default();
+const f1 = pane.addFolder({ title: "state" });
+f1.addInput(state, "running");
+f1.addInput(state, "displayRestart");
+f1.addSeparator();
+f1.addInput(fogValues, "density", {
   max: 0.1,
   min: 0.0025,
   step: 0.01,
-})
+});
 f1.on("change", () => {
-  scene.fog.density = fogValues.density
-})
+  scene.fog.density = fogValues.density;
+});
 pane.element.addEventListener("click", (e) => {
-  e.stopPropagation()
-  e.preventDefault()
-})
+  e.stopPropagation();
+  e.preventDefault();
+});
 
-player.controls.initPane(pane)
+player.controls.initPane(pane);
 
 // ---------------- Functions --------------------
 // game loop
@@ -159,7 +159,7 @@ function animate() {
     renderer.render(scene, camera);
 
     // refresh the pane to update any values
-    pane.refresh()
+    pane.refresh();
   }
 }
 
