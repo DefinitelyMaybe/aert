@@ -3,12 +3,14 @@ export {
   BufferGeometry,
   Camera,
   CameraHelper,
+  CircleGeometry,
   Clock,
   Color,
   DirectionalLight,
   DirectionalLightHelper,
   Euler,
   EventDispatcher,
+  FogExp2,
   HemisphereLight,
   Line,
   LineBasicMaterial,
@@ -27,15 +29,11 @@ export {
   Vector2,
   Vector3,
   WebGLRenderer,
-  CircleGeometry,
-  FogExp2,
 } from "https://cdn.skypack.dev/three?dts";
 // continue to export from here because these files really should be from the import above
 // they're not yet. must wait for es module support across examples folder of three.js
-// @deno-types="./controls/OrbitControls.d.ts"
-export { OrbitControls } from "./controls/OrbitControls.js";
-// @deno-types="./controls/PointerLockControls.d.ts"
-export { PointerLockControls } from "./controls/PointerLockControls.js";
+export { OrbitControls } from "./controls/OrbitControls.ts";
+export { PointerLockControls } from "./controls/PointerLockControls.ts";
 export {
   AABB,
   Body,
