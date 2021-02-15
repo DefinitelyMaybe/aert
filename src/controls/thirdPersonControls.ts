@@ -1,8 +1,9 @@
 /// <reference lib="dom" />
 import type Tweakpane from "https://cdn.skypack.dev/-/tweakpane@v1.5.8-yOgAVh2ofTMUQxh0irQW/dist=es2020,mode=types/dist/types/index.d.ts";
+import type { PerspectiveCamera } from "../deps.ts";
 import { Euler, Quaternion, Spherical, Vector3 } from "../deps.ts";
 
-export class PlayerWASDControls {
+export class ThirdPersonControls {
   // constants
   PI_2 = Math.PI / 2;
   twoPI = Math.PI * 2;
@@ -40,7 +41,7 @@ export class PlayerWASDControls {
   canMove;
   acceleration;
 
-  constructor(camera, domElement) {
+  constructor(camera:PerspectiveCamera, domElement:HTMLElement) {
     this.body = object.body;
     this.camera = camera;
     this.domElement = domElement;
