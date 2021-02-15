@@ -1,5 +1,5 @@
 import type { PerspectiveCamera } from "../deps.ts";
-import { ThirdPersonControls } from "../controls/thirdPersonControls.ts";
+import { OrbitalControls } from "../controls/orbitalControls.ts";
 import { Cube } from "./cube.ts";
 import { MeshStandardMaterial, Object3D } from "../deps.ts";
 
@@ -25,7 +25,7 @@ export class Player extends Object3D {
     this.camera = camera;
     this.domEl = domEl;
 
-    this.controls = new ThirdPersonControls(this.mesh, camera, domEl);
+    this.controls = new OrbitalControls(camera, domEl);
     // this.circle = new CircleGeometry(2, 5, Math.PI/4, Math.PI/2)
   }
 }
