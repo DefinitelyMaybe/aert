@@ -6,33 +6,39 @@ export class PlayerWASDControls {
   // constants
   PI_2 = Math.PI / 2;
   twoPI = Math.PI * 2;
-  
+
   downAxis = new Vector3(0, -1, 0);
-  
-  body
-  camera
-  domElement
- 
-  offset
-  
-  cameraQuat
-  cameraQuatInv
-  
-  spherical
-  sphericalDelta
-  
-  minDistance
-  maxDistance
-  distanceStepSize
-  currentDistance
-  distanceTheshold
 
-  isLocked
-  isGrounded
-  move: {left:number, right:number, up:number, down:number, forward:number, backward:number}
-  canMove
-  acceleration
+  body;
+  camera;
+  domElement;
 
+  offset;
+
+  cameraQuat;
+  cameraQuatInv;
+
+  spherical;
+  sphericalDelta;
+
+  minDistance;
+  maxDistance;
+  distanceStepSize;
+  currentDistance;
+  distanceTheshold;
+
+  isLocked;
+  isGrounded;
+  move: {
+    left: number;
+    right: number;
+    up: number;
+    down: number;
+    forward: number;
+    backward: number;
+  };
+  canMove;
+  acceleration;
 
   constructor(camera, domElement) {
     this.body = object.body;
@@ -67,18 +73,18 @@ export class PlayerWASDControls {
     this.acceleration = 12;
     this.canMove = true;
 
-    this.domElement.addEventListener("mousedown", async (e:MouseEvent) => {
+    this.domElement.addEventListener("mousedown", async (e: MouseEvent) => {
       switch (e.button) {
         case 0:
           // left mouse button
-          this.onMouseDown();    
+          this.onMouseDown();
           break;
         default:
           break;
       }
     });
 
-    this.domElement.addEventListener("contextmenu", async (e:MouseEvent) => {
+    this.domElement.addEventListener("contextmenu", async (e: MouseEvent) => {
       e.preventDefault();
     });
 
@@ -108,18 +114,17 @@ export class PlayerWASDControls {
       new MouseEvent("mousemove", { movementX: 0, movementY: 0 }),
     );
     this.isLocked = false;
-
   }
 
-  initPane(pane:Tweakpane) {
+  initPane(pane: Tweakpane) {
     // Add variables to pane
-    const f1 = pane.addFolder({title:"PlayerControls", expanded:true})
-    f1.addInput(this.spherical, "phi")
-    f1.addInput(this.sphericalDelta, 'phi', {label:'delta phi'})
-    f1.addSeparator()
-    f1.addInput(this, 'isLocked')
-    f1.addInput(this, 'canMove')
-    f1.addInput(this, 'isGrounded')
+    const f1 = pane.addFolder({ title: "PlayerControls", expanded: true });
+    f1.addInput(this.spherical, "phi");
+    f1.addInput(this.sphericalDelta, "phi", { label: "delta phi" });
+    f1.addSeparator();
+    f1.addInput(this, "isLocked");
+    f1.addInput(this, "canMove");
+    f1.addInput(this, "isGrounded");
   }
 
   onMouseMove(event: MouseEvent) {
@@ -214,7 +219,7 @@ export class PlayerWASDControls {
     }
   }
 
-  onKeyUp(event:KeyboardEvent) {
+  onKeyUp(event: KeyboardEvent) {
     switch (event.key) {
       case "a":
         this.move.left = 0;
@@ -237,7 +242,7 @@ export class PlayerWASDControls {
     }
   }
 
-  onWheel(event:WheelEvent) {
+  onWheel(event: WheelEvent) {
     const wheelDelta = event.deltaY > 0
       ? this.distanceStepSize
       : -this.distanceStepSize;
@@ -267,7 +272,7 @@ export class PlayerWASDControls {
       this.body.quaternion,
     ).multiplyScalar(this.acceleration);
     this.body.velocity.set(velVec.x, this.body.velocity.y, velVec.z);
-    
+
     if (this.move.up && this.isGrounded) {
       this.body.velocity.y = 10;
     }
