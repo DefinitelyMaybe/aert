@@ -1,6 +1,5 @@
 import type { Matrix4 } from "../deps.ts";
 import {
-  EventDispatcher,
   MOUSE,
   PerspectiveCamera,
   Quaternion,
@@ -17,7 +16,7 @@ import {
 //    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
 //    Pan - right mouse, or left mouse + ctrl/meta/shiftKey, or arrow keys / touch: two-finger move
 
-export class OrbitControls extends EventDispatcher {
+export class OrbitalControls extends EventTarget {
   //constants
   STATE = {
     NONE: -1,
@@ -40,8 +39,11 @@ export class OrbitControls extends EventDispatcher {
   position0;
   zoom0;
 
+  state = this.STATE.NONE;
+
   // Set to false to disable this control
   enabled = true;
+
   // "target" sets the location of focus, where the object orbits around
   target = new Vector3();
 
@@ -109,8 +111,6 @@ export class OrbitControls extends EventDispatcher {
   startEvent = new Event("start");
   endEvent = new Event("end");
 
-  state = this.STATE.NONE;
-
   EPS = 0.000001;
 
   // current position in spherical coordinates
@@ -144,16 +144,37 @@ export class OrbitControls extends EventDispatcher {
     this.position0 = this.object.position.clone();
     this.zoom0 = this.object.zoom;
 
-    this.domElement.addEventListener("contextmenu", this.onContextMenu, false);
+    this.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
+      console.log("context");
+      this.onContextMenu(e);
+    });
 
-    this.domElement.addEventListener("pointerdown", this.onPointerDown, false);
-    this.domElement.addEventListener("wheel", this.onMouseWheel, false);
+    this.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
+      console.log("pointerdown");
+      this.onPointerDown(e);
+    });
+    this.domElement.addEventListener("wheel", (e: WheelEvent) => {
+      console.log("wheel");
+      this.onMouseWheel(e);
+    });
 
-    this.domElement.addEventListener("touchstart", this.onTouchStart, false);
-    this.domElement.addEventListener("touchend", this.onTouchEnd, false);
-    this.domElement.addEventListener("touchmove", this.onTouchMove, false);
+    this.domElement.addEventListener("touchstart", (e: TouchEvent) => {
+      console.log("touch start");
+      this.onTouchStart(e);
+    });
+    this.domElement.addEventListener("touchend", (e: TouchEvent) => {
+      console.log("touch end");
+      this.onTouchEnd(e);
+    });
+    this.domElement.addEventListener("touchmove", (e: TouchEvent) => {
+      console.log("touch move");
+      this.onTouchMove(e);
+    });
 
-    this.domElement.addEventListener("keydown", this.onKeyDown, false);
+    this.domElement.addEventListener("keydown", (e: KeyboardEvent) => {
+      console.log("keydown");
+      this.onKeyDown(e);
+    });
 
     // force an update at start
     this.update();
@@ -313,39 +334,35 @@ export class OrbitControls extends EventDispatcher {
     return false;
   }
 
-  dispose() {
-    this.domElement.removeEventListener(
-      "contextmenu",
-      this.onContextMenu,
-      false,
-    );
+  // dispose() {
+  //   this.domElement.removeEventListener(
+  //     "contextmenu",
+  //     this.onContextMenu
+  //   );
 
-    this.domElement.removeEventListener(
-      "pointerdown",
-      this.onPointerDown,
-      false,
-    );
-    this.domElement.removeEventListener("wheel", this.onMouseWheel, false);
+  //   this.domElement.removeEventListener(
+  //     "pointerdown",
+  //     this.onPointerDown
+  //   );
+  //   this.domElement.removeEventListener("wheel", this.onMouseWheel);
 
-    this.domElement.removeEventListener("touchstart", this.onTouchStart, false);
-    this.domElement.removeEventListener("touchend", this.onTouchEnd, false);
-    this.domElement.removeEventListener("touchmove", this.onTouchMove, false);
+  //   this.domElement.removeEventListener("touchstart", this.onTouchStart);
+  //   this.domElement.removeEventListener("touchend", this.onTouchEnd);
+  //   this.domElement.removeEventListener("touchmove", this.onTouchMove);
 
-    this.domElement.ownerDocument.removeEventListener(
-      "pointermove",
-      this.onPointerMove,
-      false,
-    );
-    this.domElement.ownerDocument.removeEventListener(
-      "pointerup",
-      this.onPointerUp,
-      false,
-    );
+  //   this.domElement.ownerDocument.removeEventListener(
+  //     "pointermove",
+  //     this.onPointerMove,
+  //   );
+  //   this.domElement.ownerDocument.removeEventListener(
+  //     "pointerup",
+  //     this.onPointerUp,
+  //   );
 
-    this.domElement.removeEventListener("keydown", this.onKeyDown, false);
+  //   this.domElement.removeEventListener("keydown", this.onKeyDown);
 
-    //this.dispatchEvent( { type: 'dispose' } ); // should this be added here?
-  }
+  //   //this.dispatchEvent( { type: 'dispose' } ); // should this be added here?
+  // }
 
   getAutoRotationAngle() {
     return this.TWO_PI / 60 / 60 * this.autoRotateSpeed;
@@ -709,6 +726,7 @@ export class OrbitControls extends EventDispatcher {
     switch (event.pointerType) {
       case "mouse":
       case "pen":
+        console.log("calling onMouseDown");
         this.onMouseDown(event);
         break;
 
@@ -770,6 +788,7 @@ export class OrbitControls extends EventDispatcher {
         mouseAction = -1;
     }
 
+    console.log(mouseAction);
     switch (mouseAction) {
       case MOUSE.DOLLY:
         if (this.enableZoom === false) return;
@@ -819,16 +838,14 @@ export class OrbitControls extends EventDispatcher {
     }
 
     if (this.state !== this.STATE.NONE) {
-      this.domElement.ownerDocument.addEventListener(
-        "pointermove",
-        this.onPointerMove,
-        false,
-      );
-      this.domElement.ownerDocument.addEventListener(
-        "pointerup",
-        this.onPointerUp,
-        false,
-      );
+      // this.domElement.ownerDocument.addEventListener(
+      //   "pointermove",
+      //   this.onPointerMove,
+      // );
+      // this.domElement.ownerDocument.addEventListener(
+      //   "pointerup",
+      //   this.onPointerUp,
+      // );
 
       this.dispatchEvent(this.startEvent);
     }
@@ -868,16 +885,14 @@ export class OrbitControls extends EventDispatcher {
 
     this.handleMouseUp();
 
-    this.domElement.ownerDocument.removeEventListener(
-      "pointermove",
-      this.onPointerMove,
-      false,
-    );
-    this.domElement.ownerDocument.removeEventListener(
-      "pointerup",
-      this.onPointerUp,
-      false,
-    );
+    // this.domElement.ownerDocument.removeEventListener(
+    //   "pointermove",
+    //   this.onPointerMove
+    // );
+    // this.domElement.ownerDocument.removeEventListener(
+    //   "pointerup",
+    //   this.onPointerUp
+    // );
 
     this.dispatchEvent(this.endEvent);
 
