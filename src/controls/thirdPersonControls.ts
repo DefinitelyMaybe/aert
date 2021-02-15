@@ -15,32 +15,32 @@ export class ThirdPersonControls {
   camera;
   domElement;
 
-  offset;
-
   cameraQuat;
   cameraQuatInv;
 
-  spherical;
-  sphericalDelta;
+  offset = new Vector3();
 
-  minDistance;
-  maxDistance;
-  distanceStepSize;
-  currentDistance;
-  distanceTheshold;
+  spherical = new Spherical();
+  sphericalDelta = new Spherical();
 
-  isLocked;
-  isGrounded;
-  move: {
-    left: number;
-    right: number;
-    up: number;
-    down: number;
-    forward: number;
-    backward: number;
+  minDistance = 0;
+  maxDistance = 20;
+  distanceStepSize = 1;
+  currentDistance = 6;
+  distanceTheshold = 5;
+
+  isLocked = false;
+  isGrounded = false;
+  move = {
+    left: 0,
+    right: 0,
+    up: 0,
+    down: 0,
+    forward: 0,
+    backward: 0,
   };
-  canMove;
-  acceleration;
+  acceleration = 12;
+  canMove = true;
 
   constructor(
     object: Cube,
@@ -51,35 +51,15 @@ export class ThirdPersonControls {
     this.camera = camera;
     this.domElement = domElement;
 
-    this.offset = new Vector3();
     this.cameraQuat = new Quaternion().setFromUnitVectors(
       camera.up,
       new Vector3(0, 1, 0),
     );
     this.cameraQuatInv = this.cameraQuat.invert();
-    this.spherical = new Spherical();
-    this.sphericalDelta = new Spherical();
 
-    this.minDistance = 0;
-    this.maxDistance = 20;
-    this.distanceStepSize = 1;
-    this.currentDistance = 6;
-    this.distanceTheshold = 5;
-
-    this.isLocked = false;
-    this.isGrounded = false;
-    this.move = {
-      left: 0,
-      right: 0,
-      up: 0,
-      down: 0,
-      forward: 0,
-      backward: 0,
-    };
-    this.acceleration = 12;
-    this.canMove = true;
-
-    this.domElement.addEventListener("mousedown", async (e: MouseEvent) => {
+    this.domElement.addEventListener("pointerdown", async (e: PointerEvent) => {
+      // console.log("pointer event");
+      // console.log({event:e.button});
       switch (e.button) {
         case 0:
           // left mouse button
@@ -98,7 +78,7 @@ export class ThirdPersonControls {
       this.onPointerLockChange();
     });
 
-    document.addEventListener("mousemove", async (e) => {
+    document.addEventListener("pointermove", async (e: PointerEvent) => {
       this.onMouseMove(e);
     });
 
@@ -149,6 +129,16 @@ export class ThirdPersonControls {
     // up/down
     this.sphericalDelta.phi = this.twoPI * movementY /
       this.domElement.clientHeight;
+
+    // as a patch to stop large jumps. not sure what actually caused the issue tho
+    if (
+      Math.abs(this.sphericalDelta.phi) > 0.2 ||
+      Math.abs(this.sphericalDelta.theta) > 0.2
+    ) {
+      // console.log("Huge movement?");
+      // console.log({event:event, delta:this.sphericalDelta});
+      return;
+    }
 
     this.offset.copy(this.camera.position).sub(objPosition);
 
