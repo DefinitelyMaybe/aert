@@ -1,4 +1,4 @@
-import type { Matrix4 } from "https://cdn.skypack.dev/-/three@v0.124.0-SiHM7gHpytK81EPs3fGV/dist=es2020,mode=types/src/math/Matrix4.d.ts";
+import type { Matrix4 } from "../deps.ts";
 import {
   EventDispatcher,
   MOUSE,
@@ -409,18 +409,18 @@ export class OrbitControls extends EventDispatcher {
         2 * deltaY * targetDistance / element.clientHeight,
         this.object.matrix,
       );
-    } else if (this.object.isOrthographicCamera) {
-      // orthographic
-      this.panLeft(
-        deltaX * (this.object.right - this.object.left) /
-          this.object.zoom / element.clientWidth,
-        this.object.matrix,
-      );
-      this.panUp(
-        deltaY * (this.object.top - this.object.bottom) /
-          this.object.zoom / element.clientHeight,
-        this.object.matrix,
-      );
+    // } else if (this.object.isOrthographicCamera) {
+    //   // orthographic
+    //   this.panLeft(
+    //     deltaX * (this.object.right - this.object.left) /
+    //       this.object.zoom / element.clientWidth,
+    //     this.object.matrix,
+    //   );
+    //   this.panUp(
+    //     deltaY * (this.object.top - this.object.bottom) /
+    //       this.object.zoom / element.clientHeight,
+    //     this.object.matrix,
+    //   );
     } else {
       // camera neither orthographic nor perspective
       console.warn(
@@ -433,13 +433,13 @@ export class OrbitControls extends EventDispatcher {
   dollyOut(dollyScale: number) {
     if (this.object.isPerspectiveCamera) {
       this.scale /= dollyScale;
-    } else if (this.object.isOrthographicCamera) {
-      this.object.zoom = Math.max(
-        this.minZoom,
-        Math.min(this.maxZoom, this.object.zoom * dollyScale),
-      );
-      this.object.updateProjectionMatrix();
-      this.zoomChanged = true;
+    // } else if (this.object.isOrthographicCamera) {
+    //   this.object.zoom = Math.max(
+    //     this.minZoom,
+    //     Math.min(this.maxZoom, this.object.zoom * dollyScale),
+    //   );
+    //   this.object.updateProjectionMatrix();
+    //   this.zoomChanged = true;
     } else {
       console.warn(
         "WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.",
@@ -451,13 +451,13 @@ export class OrbitControls extends EventDispatcher {
   dollyIn(dollyScale: number) {
     if (this.object.isPerspectiveCamera) {
       this.scale *= dollyScale;
-    } else if (this.object.isOrthographicCamera) {
-      this.object.zoom = Math.max(
-        this.minZoom,
-        Math.min(this.maxZoom, this.object.zoom / dollyScale),
-      );
-      this.object.updateProjectionMatrix();
-      this.zoomChanged = true;
+    // } else if (this.object.isOrthographicCamera) {
+    //   this.object.zoom = Math.max(
+    //     this.minZoom,
+    //     Math.min(this.maxZoom, this.object.zoom / dollyScale),
+    //   );
+    //   this.object.updateProjectionMatrix();
+    //   this.zoomChanged = true;
     } else {
       console.warn(
         "WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.",
