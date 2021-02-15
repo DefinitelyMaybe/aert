@@ -1,5 +1,5 @@
-// handles the player object appropriately
-import { PlayerWASDControls } from "../controls/PlayerWASDControls.ts";
+import type { PerspectiveCamera } from "../deps.ts";
+import { PlayerWASDControls } from "../controls/3PControls.ts";
 import { Cube } from "./cube.ts";
 import { CircleGeometry, MeshStandardMaterial, Object3D } from "../deps.ts";
 
@@ -13,7 +13,7 @@ export class Player extends Object3D {
   controls;
   mesh;
   // circle
-  constructor(camera, domEl) {
+  constructor(camera:PerspectiveCamera, domEl:HTMLElement) {
     super();
     this.mesh = new Cube({
       material: new MeshStandardMaterial({ color: 0x00ff00 }),
