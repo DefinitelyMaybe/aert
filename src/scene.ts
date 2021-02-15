@@ -1,6 +1,6 @@
+import type { Cube } from "./objects/cube.ts";
 import { Scene as ThreeScene } from "./deps.ts";
 import { world } from "./main.ts";
-import type { Cube } from "./objects/cube.ts";
 
 export class Scene extends ThreeScene {
   constructor() {
