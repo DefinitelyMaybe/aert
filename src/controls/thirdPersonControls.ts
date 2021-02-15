@@ -1,6 +1,7 @@
 /// <reference lib="dom" />
 import type Tweakpane from "https://cdn.skypack.dev/-/tweakpane@v1.5.8-yOgAVh2ofTMUQxh0irQW/dist=es2020,mode=types/dist/types/index.d.ts";
 import type { PerspectiveCamera } from "../deps.ts";
+import type { Cube } from "../objects/cube.ts";
 import { Euler, Quaternion, Spherical, Vector3 } from "../deps.ts";
 
 export class ThirdPersonControls {
@@ -41,7 +42,7 @@ export class ThirdPersonControls {
   canMove;
   acceleration;
 
-  constructor(camera:PerspectiveCamera, domElement:HTMLElement) {
+  constructor(object: Cube, camera:PerspectiveCamera, domElement:HTMLElement) {
     this.body = object.body;
     this.camera = camera;
     this.domElement = domElement;
