@@ -115,6 +115,11 @@ f1.addInput(fogValues, "density", {
   min: 0.0025,
   step: 0.01,
 });
+f1.addSeparator();
+const tweakbtn1 = f1.addButton({ title: "log it" });
+tweakbtn1.on("click", () => {
+  console.log({ player: player });
+});
 f1.on("change", () => {
   scene.fog.density = fogValues.density;
 });
@@ -147,7 +152,6 @@ function animate() {
         object.position.x = object.body.position.x;
         object.position.y = object.body.position.y;
         object.position.z = object.body.position.z;
-        object.position.w = object.body.position.w;
       }
     });
 
