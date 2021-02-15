@@ -15,7 +15,7 @@ export class Player extends Object3D {
     material: new MeshStandardMaterial({ color: 0x00ff00 }),
   });
   // circle
-  constructor(camera:PerspectiveCamera, domEl:HTMLElement) {
+  constructor(camera: PerspectiveCamera, domEl: HTMLElement) {
     super();
 
     this.mesh.castShadow = true;

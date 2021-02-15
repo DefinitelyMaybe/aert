@@ -2,13 +2,12 @@ import type { PerspectiveCamera } from "../deps.ts";
 import { Euler, EventDispatcher, Vector3 } from "../deps.ts";
 
 export class PointerLockControls extends EventDispatcher {
-
   //constants
   PI_2 = Math.PI / 2;
 
   //constructed
-  camera
-  domElement
+  camera;
+  domElement;
 
   // variables
   isLocked = false;
@@ -26,24 +25,22 @@ export class PointerLockControls extends EventDispatcher {
 
   vec = new Vector3();
 
-  constructor(camera:PerspectiveCamera, domElement:HTMLElement) {
-    super()
+  constructor(camera: PerspectiveCamera, domElement: HTMLElement) {
+    super();
     if (domElement === undefined) {
       console.warn(
         'THREE.PointerLockControls: The second parameter "domElement" is now mandatory.',
       );
       domElement = document.body;
     }
-  
+
     this.domElement = domElement;
-    this.camera = camera
+    this.camera = camera;
 
     this.connect();
   }
-  
-  
 
-  onMouseMove(event:MouseEvent) {
+  onMouseMove(event: MouseEvent) {
     if (this.isLocked === false) return;
 
     var movementX = event.movementX || 0;
@@ -98,9 +95,9 @@ export class PointerLockControls extends EventDispatcher {
       this.onPointerlockError,
       false,
     );
-  };
+  }
 
-  disconnect () {
+  disconnect() {
     this.domElement.ownerDocument.removeEventListener(
       "mousemove",
       this.onMouseMove,
@@ -116,18 +113,18 @@ export class PointerLockControls extends EventDispatcher {
       this.onPointerlockError,
       false,
     );
-  };
+  }
 
-  dispose () {
+  dispose() {
     this.disconnect();
-  };
+  }
 
-  getDirection (v:Vector3) {
+  getDirection(v: Vector3) {
     let direction = new Vector3(0, 0, -1);
     return v.copy(direction).applyQuaternion(this.camera.quaternion);
-  };
+  }
 
-  moveForward (distance:number) {
+  moveForward(distance: number) {
     // move forward parallel to the xz-plane
     // assumes camera.up is y-up
 
@@ -136,20 +133,19 @@ export class PointerLockControls extends EventDispatcher {
     this.vec.crossVectors(this.camera.up, this.vec);
 
     this.camera.position.addScaledVector(this.vec, distance);
-  };
+  }
 
-  moveRight (distance:number) {
+  moveRight(distance: number) {
     this.vec.setFromMatrixColumn(this.camera.matrix, 0);
 
     this.camera.position.addScaledVector(this.vec, distance);
-  };
+  }
 
-  lock () {
+  lock() {
     this.domElement.requestPointerLock();
-  };
+  }
 
-  unlock () {
+  unlock() {
     this.domElement.ownerDocument.exitPointerLock();
-  };
-
-};
+  }
+}

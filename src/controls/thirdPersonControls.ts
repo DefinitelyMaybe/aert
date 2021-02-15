@@ -42,7 +42,11 @@ export class ThirdPersonControls {
   canMove;
   acceleration;
 
-  constructor(object: Cube, camera:PerspectiveCamera, domElement:HTMLElement) {
+  constructor(
+    object: Cube,
+    camera: PerspectiveCamera,
+    domElement: HTMLElement,
+  ) {
     this.body = object.body;
     this.camera = camera;
     this.domElement = domElement;
