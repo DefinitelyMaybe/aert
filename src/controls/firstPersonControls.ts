@@ -1,4 +1,4 @@
-import type { PerspectiveCamera } from "https://cdn.skypack.dev/-/three@v0.124.0-SiHM7gHpytK81EPs3fGV/dist=es2020,mode=types/src/cameras/PerspectiveCamera.d.ts";
+import type { PerspectiveCamera } from "../deps.ts";
 import { Euler, EventDispatcher, Vector3 } from "../deps.ts";
 
 export class PointerLockControls extends EventDispatcher {
