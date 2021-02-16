@@ -1,7 +1,7 @@
 import type { PerspectiveCamera } from "../deps.ts";
-import { Euler, EventDispatcher, Vector3 } from "../deps.ts";
+import { Euler, Vector3 } from "../deps.ts";
 
-export class PointerLockControls extends EventDispatcher {
+export class PointerLockControls extends EventTarget {
   //constants
   PI_2 = Math.PI / 2;
 
