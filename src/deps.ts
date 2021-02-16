@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 export {
   BoxGeometry,
   BufferGeometry,
@@ -46,3 +47,5 @@ export {
   World,
 } from "https://cdn.skypack.dev/cannon-es";
 export * as Tweakpane from "https://cdn.skypack.dev/tweakpane?dts";
+export { Pathfinding, PathfindingHelper } from 'https://cdn.skypack.dev/three-pathfinding';
+
