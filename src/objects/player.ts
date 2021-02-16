@@ -1,5 +1,6 @@
 import type { PerspectiveCamera } from "../deps.ts";
-import { TopDownControls } from "../controls/TopDownControls.ts";
+import { TopDownControls } from "../controls/topDownControls.ts";
+import { ThirdPersonControls } from "../controls/thirdPersonControls.ts";
 import { Cube } from "./cube.ts";
 import { MeshStandardMaterial, Object3D } from "../deps.ts";
 
@@ -26,6 +27,7 @@ export class Player extends Object3D {
     this.domEl = domEl;
 
     this.controls = new TopDownControls(this.mesh, camera, domEl);
+    // this.controls = new ThirdPersonControls(this.mesh, camera, domEl);
     // this.circle = new CircleGeometry(2, 5, Math.PI/4, Math.PI/2)
   }
 }
