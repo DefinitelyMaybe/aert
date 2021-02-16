@@ -128,7 +128,7 @@ pane.element.addEventListener("click", (e) => {
   e.preventDefault();
 });
 
-// player.controls.initPane(pane);
+player.controls.initPane(pane);
 
 // ---------------- Functions --------------------
 // game loop
