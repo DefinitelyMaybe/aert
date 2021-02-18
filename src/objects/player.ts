@@ -1,13 +1,9 @@
 import type { PerspectiveCamera } from "../deps.ts";
 import { TopDownControls } from "../controls/topDownControls.ts";
-import { ThirdPersonControls } from "../controls/thirdPersonControls.ts";
 import { Cube } from "./cube.ts";
 import { MeshStandardMaterial, Object3D } from "../deps.ts";
 
-// controls trigger events here
-// access the model
-// A Player has a Mesh and a controller for that mesh.
-// The controller will
+// TODO-DefinitelyMaybe: change the model to a capsule (CylinderGeometry + ExtrudeGeometry) - https://threejsfundamentals.org/threejs/lessons/threejs-primitives.html
 export class Player extends Object3D {
   domEl;
   camera;
