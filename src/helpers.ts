@@ -1,7 +1,7 @@
-import { player, scene } from "./main.ts";
+import type { Scene } from "./scene.ts";
 import { Cube } from "./objects/cube.ts";
 
-export function spawnCubes() {
+export function spawnCubes(scene: Scene) {
   // spawn red cubes somewhere within the current floor
   for (let i = 0; i < 100; i++) {
     const cube = new Cube({ width: 2, height: 2, depth: 2, mass: 0 });
@@ -24,7 +24,7 @@ export function spawnCubes() {
   }
 }
 
-export function moveGreenCube() {
+export function moveGreenCube(player: any) {
   const scalar = 50;
   const Xsign = Math.random() < 0.5 ? -1 : 1;
   const Zsign = Math.random() < 0.5 ? -1 : 1;
