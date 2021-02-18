@@ -20,7 +20,7 @@ export class TopDownControls {
   minDistance = 5;
   maxDistance = 40;
   distanceStepSize = 1;
-  currentDistance = 6;
+  currentDistance = 16;
   distanceTheshold = 5;
 
   constructor(
@@ -33,7 +33,7 @@ export class TopDownControls {
     this.domElement = domElement;
 
     // initialize
-    this.offset.setLength(this.currentDistance)
+    this.offset.setLength(this.currentDistance);
 
     this.domElement.addEventListener("pointerdown", async (e: PointerEvent) => {
       // console.log("pointer event");
@@ -41,7 +41,7 @@ export class TopDownControls {
       switch (e.button) {
         case 0:
           // left mouse button
-          this.onMouseDown();
+          this.onPointerDown();
           break;
         default:
           break;
@@ -55,22 +55,23 @@ export class TopDownControls {
     this.domElement.addEventListener("wheel", async (e) => {
       this.onWheel(e);
     });
-
   }
 
   initPane(pane: Tweakpane) {
     // Add variables to pane
     const f1 = pane.addFolder({ title: "PlayerControls", expanded: true });
-    f1.addInput(this.offset, "x");
-    f1.addInput(this.offset, "y");
-    f1.addInput(this.offset, "z");
+    // f1.addInput(this.offset, "x");
+    // f1.addInput(this.offset, "y");
+    // f1.addInput(this.offset, "z");
 
-    f1.on("change", (value) => {
-      // ?
-    })
+    f1.addInput(this, "currentDistance");
+
+    // f1.on("change", (value) => {
+    //   // ?
+    // })
   }
 
-  onMouseDown() {
+  onPointerDown() {
     // move character around
   }
 
@@ -86,7 +87,7 @@ export class TopDownControls {
       this.currentDistance += wheelDelta;
     }
 
-    this.offset.setLength(this.currentDistance)
+    this.offset.setLength(this.currentDistance);
   }
 
   update() {
@@ -95,11 +96,14 @@ export class TopDownControls {
     // update camera position
 
     const objPosition = new Vector3().copy(this.body.position);
-    
-    objPosition.add(this.offset)
 
-    this.camera.position.set(objPosition.x, objPosition.y, objPosition.z)
-    this.camera.lookAt(this.body.position.x, this.body.position.y, this.body.position.z);
+    objPosition.add(this.offset);
+
+    this.camera.position.set(objPosition.x, objPosition.y, objPosition.z);
+    this.camera.lookAt(
+      this.body.position.x,
+      this.body.position.y,
+      this.body.position.z,
+    );
   }
-  
 }
