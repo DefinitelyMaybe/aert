@@ -5,8 +5,6 @@ import { MeshStandardMaterial, Object3D } from "../deps.ts";
 
 // TODO-DefinitelyMaybe: change the model to a capsule (CylinderGeometry + ExtrudeGeometry) - https://threejsfundamentals.org/threejs/lessons/threejs-primitives.html
 export class Player extends Object3D {
-  domEl;
-  camera;
   controls;
   mesh = new Cube({
     material: new MeshStandardMaterial({ color: 0x00ff00 }),
@@ -18,9 +16,6 @@ export class Player extends Object3D {
     this.mesh.castShadow = true;
     this.mesh.receiveShadow = true;
     this.mesh.name = "player";
-
-    this.camera = camera;
-    this.domEl = domEl;
 
     this.controls = new TopDownControls(this.mesh, camera, domEl);
     // this.controls = new ThirdPersonControls(this.mesh, camera, domEl);
