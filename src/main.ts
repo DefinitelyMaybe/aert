@@ -5,14 +5,13 @@ import { DevWorld } from "./worlds/devworld.ts";
 // ---------------- Variables --------------------
 // tweakpane
 export const pane = new Tweakpane.default();
-const tsave = pane.addButton({title:"save"})
-tsave.on("click", ()=> {
-  world.save()
-})
+const tsave = pane.addButton({ title: "save" });
+tsave.on("click", () => {
+  world.save();
+});
 
-const world = new DevWorld()
+const world = new DevWorld();
 
 // ---------------- Functions --------------------
-
 
 // ---------------- Events --------------------

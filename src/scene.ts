@@ -3,7 +3,7 @@ import { Scene as ThreeScene } from "./deps.ts";
 import { World } from "./deps.ts";
 
 export class Scene extends ThreeScene {
-  physics = new World()
+  physics = new World();
   constructor() {
     super();
   }

@@ -1,4 +1,3 @@
-import type { WorldInitOptions } from "./world.ts";
 import {
   Body,
   Clock,
@@ -28,34 +27,21 @@ export class DevWorld extends World {
     running: false,
     displayRestart: false,
   };
-
   fogValues = {
     density: 0.03,
     color: 0xdddddd,
   };
-
-  // time
   clock = new Clock();
-
-  // renderer
-  renderer
-
-  // scene
+  renderer;
   scene = new Scene();
-
-  // physics
   physicsWorld;
+  camera;
+  player;
 
-  // camera
-  camera
+  constructor() {
+    super();
 
-  // player
-  player
-
-  constructor () {
-    super()
-
-    this.physicsWorld = this.scene.physics
+    this.physicsWorld = this.scene.physics;
     this.physicsWorld.gravity.set(0, -24, 0);
     this.physicsWorld.broadphase = new NaiveBroadphase();
 
@@ -179,7 +165,7 @@ export class DevWorld extends World {
 
   animate() {
     requestAnimationFrame(() => {
-      this.animate()
+      this.animate();
     });
 
     if (this.state.running) {
