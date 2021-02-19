@@ -13,10 +13,10 @@ export class Cube extends Mesh {
   width: number;
   height: number;
   depth: number;
+  isCube = true;
 
   constructor(options = {}) {
     super();
-    Object.defineProperty(this, "isCube", { value: true });
     this.width = options.width ? options.width : 1;
     this.height = options.height ? options.height : 1;
     this.depth = options.depth ? options.depth : 1;
