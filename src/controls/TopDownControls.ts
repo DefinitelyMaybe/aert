@@ -6,10 +6,10 @@ import { Vector3 } from "../deps.ts";
 
 export class TopDownControls {
   // constants
-  PI_2 = Math.PI / 2;
-  twoPI = Math.PI * 2;
+  // PI_2 = Math.PI / 2;
+  // twoPI = Math.PI * 2;
 
-  downAxis = new Vector3(0, -1, 0);
+  // downAxis = new Vector3(0, -1, 0);
 
   body;
   camera;
@@ -21,7 +21,7 @@ export class TopDownControls {
   maxDistance = 40;
   distanceStepSize = 1;
   currentDistance = 16;
-  distanceTheshold = 5;
+  // distanceTheshold = 5;
 
   constructor(
     object: Cube,
@@ -41,7 +41,11 @@ export class TopDownControls {
       switch (e.button) {
         case 0:
           // left mouse button
-          this.onPointerDown();
+          this.action();
+          break;
+        case 2:
+          // left mouse button
+          this.movePlayerToLocation();
           break;
         default:
           break;
@@ -55,6 +59,15 @@ export class TopDownControls {
     this.domElement.addEventListener("wheel", async (e) => {
       this.onWheel(e);
     });
+
+    document.addEventListener("keydown", async (e) => {
+      this.onKeyDown(e);
+    });
+
+    document.addEventListener("keyup", async (e) => {
+      this.onKeyUp(e);
+    });
+
   }
 
   initPane(pane: Tweakpane) {
@@ -71,8 +84,54 @@ export class TopDownControls {
     // })
   }
 
-  onPointerDown() {
+  action () {
+    console.log("Left click - Action");
+    // Might be some kind of action needing to be taken
+  }
+
+  movePlayerToLocation() {
     // move character around
+    console.log("Right click - Move Player around");
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    // future idea: let the player save/load there on keybindings config file
+    switch (event.key) {
+      case "a":
+        break;
+      case "d":
+        break;
+      case "w":
+        break;
+      case "s":
+        break;
+      case " ":
+        break;
+      case "q":
+        console.log(`Pressed ${event.key}`);
+        break;
+      default:
+        // console.log(`Didn't handle keydown for: ${event.key}`);
+        break;
+    }
+  }
+
+  onKeyUp(event: KeyboardEvent) {
+    switch (event.key) {
+      case "a":
+        break;
+      case "d":
+        break;
+      case "w":
+        break;
+      case "s":
+        break;
+      case " ":
+        break;
+      default:
+        // console.log(`Didn't handle keydown for: ${event.key}`);
+        break;
+    }
   }
 
   onWheel(event: WheelEvent) {
