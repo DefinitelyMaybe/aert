@@ -1,8 +1,8 @@
 /// <reference lib="dom" />
 import type Tweakpane from "https://cdn.skypack.dev/-/tweakpane@v1.5.8-yOgAVh2ofTMUQxh0irQW/dist=es2020,mode=types/dist/types/index.d.ts";
-import type { PerspectiveCamera } from "../deps.ts";
+import type { PerspectiveCamera, Mesh } from "../deps.ts";
 import type { Cube } from "../objects/cube.ts";
-import { Vector3 } from "../deps.ts";
+import { Raycaster, Vector3, Vector2 } from "../deps.ts";
 
 export class TopDownControls {
   // constants
@@ -12,6 +12,7 @@ export class TopDownControls {
   // downAxis = new Vector3(0, -1, 0);
 
   body;
+  movementMesh;
   camera;
   domElement;
 
@@ -23,21 +24,25 @@ export class TopDownControls {
   currentDistance = 16;
   // distanceTheshold = 5;
 
+  rayCaster = new Raycaster()
+  mouse = new Vector2()
+  moveLocation = new Vector3()
+
   constructor(
     object: Cube,
+    movementMesh: Mesh,
     camera: PerspectiveCamera,
     domElement: HTMLElement,
   ) {
     this.body = object.body;
     this.camera = camera;
     this.domElement = domElement;
+    this.movementMesh = movementMesh;
 
     // initialize
     this.offset.setLength(this.currentDistance);
 
     this.domElement.addEventListener("pointerdown", async (e: PointerEvent) => {
-      // console.log("pointer event");
-      // console.log({event:e.button});
       switch (e.button) {
         case 0:
           // left mouse button
@@ -50,6 +55,11 @@ export class TopDownControls {
         default:
           break;
       }
+    });
+
+    this.domElement.addEventListener("pointermove", async (e: PointerEvent) => {
+      this.mouse.x = ( e.clientX / this.domElement.clientWidth ) * 2 - 1;
+      this.mouse.y = - ( e.clientY / this.domElement.clientHeight ) * 2 + 1;
     });
 
     this.domElement.addEventListener("contextmenu", async (e: MouseEvent) => {
@@ -92,6 +102,26 @@ export class TopDownControls {
   movePlayerToLocation() {
     // move character around
     console.log("Right click - Move Player around");
+
+    // cast the ray to find the location the user clicked
+    this.rayCaster.setFromCamera( this.mouse, this.camera );
+
+    // See if the ray from the camera into the world hits one of our meshes
+    const intersects = this.rayCaster.intersectObject( this.movementMesh );
+
+    // Toggle rotation bool for meshes that we clicked
+    if ( intersects.length > 0 ) {
+
+      // helper is just a mesh.
+      console.log("intersection with mesh");
+      this.moveLocation.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z)
+
+      // could add an animation of mouse click at location
+      // otherwise its onto pathing the player there
+      
+      
+
+    }
   }
 
   onKeyDown(event: KeyboardEvent) {
