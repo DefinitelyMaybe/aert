@@ -1,3 +1,4 @@
+import type { Cube } from "../objects/cube.ts";
 import {
   Body,
   Clock,
@@ -31,6 +32,9 @@ export class DevWorld extends World {
     density: 0.03,
     color: 0xdddddd,
   };
+  materials = {
+    floor: 0x000a11
+  }
   clock = new Clock();
   renderer;
   scene = new Scene();
@@ -85,7 +89,7 @@ export class DevWorld extends World {
     // flat world
     const plane = new PlaneBufferGeometry(100, 100, 1, 1);
     plane.rotateX(-Math.PI / 2);
-    let material = new MeshStandardMaterial({ color: 0xaa0000 });
+    let material = new MeshStandardMaterial({ color: this.materials.floor });
     const floor = new Mesh(plane, material);
     floor.name = "floor";
     floor.receiveShadow = true;
@@ -98,7 +102,7 @@ export class DevWorld extends World {
     this.physicsWorld.addBody(groundBody);
 
     // player
-    this.player = new Player(this.camera, this.renderer.domElement);
+    this.player = new Player(floor, this.camera, this.renderer.domElement);
     this.player.mesh.body.position.y = 20;
     this.scene.add(this.player.mesh);
 
@@ -149,8 +153,10 @@ export class DevWorld extends World {
       tweakbtn1.on("click", () => {
         console.log({ player: this.player });
       });
+      f1.addInput(this.materials, 'floor', {input:'color'})
       f1.on("change", () => {
         this.scene.fog.density = this.fogValues.density;
+        material.color.set(this.materials.floor)
       });
 
       this.player.controls.initPane(pane);
@@ -175,7 +181,7 @@ export class DevWorld extends World {
       this.physicsWorld.step(delta, undefined, undefined);
 
       // update rendered positions
-      this.scene.traverse((object) => {
+      this.scene.traverse((object:Cube) => {
         if (object.isCube) {
           object.quaternion.x = object.body.quaternion.x;
           object.quaternion.y = object.body.quaternion.y;
