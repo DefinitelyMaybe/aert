@@ -184,7 +184,7 @@ export class TopDownControls {
     // 1/3 - 2/3 camera move to
     // update camera position
 
-    const objPosition = new Vector3().copy(this.body.position);
+    const objPosition = new Vector3(this.body.position.x, this.body.position.y, this.body.position.z);
 
     objPosition.add(this.offset);
 

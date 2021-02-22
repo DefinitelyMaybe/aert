@@ -2,24 +2,23 @@ import {
   Body,
   Box,
   BoxGeometry,
-  Object3D,
+  Mesh,
   MeshStandardMaterial,
   Vec3,
-} from "../deps.ts";
+} from "../../deps.ts";
 
-export class Cube extends Object3D {
+export class Cube extends Mesh {
   
   body: Body;
-
-  geometry;
-  material;
 
   width: number;
   height: number;
   depth: number;
 
+  isCube = true;
+
   constructor(options = {
-    material: new MeshStandardMaterial({ color: 0xaaaaaa }),
+    material: undefined,
     width: 1,
     height: 1,
     depth: 1,
@@ -31,7 +30,7 @@ export class Cube extends Object3D {
     this.depth = options.depth;
 
     this.geometry = new BoxGeometry(this.width, this.height, this.depth);
-    this.material = options.material;
+    this.material = options.material? options.material : new MeshStandardMaterial({ color: 0xaaaaaa });
 
     // add physics
     const cube = new Box(
@@ -42,5 +41,3 @@ export class Cube extends Object3D {
     this.body.addShape(cube, undefined, undefined);
   }
 }
-
-Cube.prototype.isCube = true;

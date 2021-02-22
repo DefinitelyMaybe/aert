@@ -1,23 +1,25 @@
 import type { PerspectiveCamera, Mesh } from "../deps.ts";
 import { TopDownControls } from "../controls/topDownControls.ts";
-import { Cube } from "./cube.ts";
-import { MeshStandardMaterial, Object3D } from "../deps.ts";
+import { MeshStandardMaterial, BoxGeometry } from "../deps.ts";
+import { Cube } from "./physics/cube.ts";
 
 // TODO-DefinitelyMaybe: change the model to a capsule (CylinderGeometry + ExtrudeGeometry) - https://threejsfundamentals.org/threejs/lessons/threejs-primitives.html
-export class Player extends Object3D {
+export class Player extends Cube {
+
   controls;
-  mesh = new Cube({
-    material: new MeshStandardMaterial({ color: 0x00ff00 }),
-  });
-  // circle
+
   constructor(movementMesh:Mesh, camera: PerspectiveCamera, domEl: HTMLElement) {
     super();
 
-    this.mesh.castShadow = true;
-    this.mesh.receiveShadow = true;
-    this.mesh.name = "player";
+    this.material = new MeshStandardMaterial({ color: 0x00ff00 });
+    // this.geometery = new BoxGeometry(1, 2, 1);
+    // this.mesh = new Mesh(this.geometery, this.material);
 
-    this.controls = new TopDownControls(this.mesh, movementMesh, camera, domEl);
+    // this.mesh.castShadow = true;
+    // this.mesh.receiveShadow = true;
+    // this.mesh.name = "player";
+
+    this.controls = new TopDownControls(this, movementMesh, camera, domEl);
     // this.controls = new ThirdPersonControls(this.mesh, camera, domEl);
     // this.circle = new CircleGeometry(2, 5, Math.PI/4, Math.PI/2)
   }

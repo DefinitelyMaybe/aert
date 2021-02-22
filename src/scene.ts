@@ -1,4 +1,3 @@
-import type { Cube } from "./objects/cube.ts";
 import { Scene as ThreeScene } from "./deps.ts";
 import { World } from "./deps.ts";
 

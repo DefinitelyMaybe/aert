@@ -1,4 +1,4 @@
-import type { Cube } from "../objects/cube.ts";
+import type { Cube } from "../objects/physics/cube.ts";
 import {
   Body,
   Clock,
@@ -9,12 +9,14 @@ import {
   Mesh,
   MeshStandardMaterial,
   NaiveBroadphase,
+Object3D,
   PerspectiveCamera,
   Plane,
   PlaneBufferGeometry,
   Vec3,
   Vector2,
   WebGLRenderer,
+  Group,
 } from "../deps.ts";
 import { Player } from "../objects/player.ts";
 import { Scene } from "../scene.ts";
@@ -41,6 +43,7 @@ export class DevWorld extends World {
   physicsWorld;
   camera;
   player;
+  boxes = new Group();
 
   constructor() {
     super();
@@ -103,8 +106,8 @@ export class DevWorld extends World {
 
     // player
     this.player = new Player(floor, this.camera, this.renderer.domElement);
-    this.player.mesh.body.position.y = 20;
-    this.scene.add(this.player.mesh);
+    this.player.body.position.y = 20;
+    this.scene.add(this.player);
 
     // ---------------- Events --------------------
     window.addEventListener("visibilitychange", () => {
@@ -181,7 +184,7 @@ export class DevWorld extends World {
       this.physicsWorld.step(delta, undefined, undefined);
 
       // update rendered positions
-      this.scene.traverse((object:Cube) => {
+      this.scene.traverse((object: Object3D | Cube) => {
         if (object.isCube) {
           object.quaternion.x = object.body.quaternion.x;
           object.quaternion.y = object.body.quaternion.y;

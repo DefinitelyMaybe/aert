@@ -1,7 +1,7 @@
-import type { Scene } from "./scene.ts";
-import { Cube } from "./objects/cube.ts";
+import type { Object3D } from "./deps.ts";
+import { Cube } from "./objects/physics/cube.ts";
 
-export function spawnCubes(scene: Scene) {
+export function spawnCubes(obj: Object3D) {
   // spawn red cubes somewhere within the current floor
   for (let i = 0; i < 100; i++) {
     const cube = new Cube({ width: 2, height: 2, depth: 2, mass: 0 });
@@ -20,7 +20,7 @@ export function spawnCubes(scene: Scene) {
     cube.castShadow = true;
     cube.receiveShadow = true;
 
-    scene.add(cube);
+    obj.add(cube);
   }
 }
 
