@@ -1,8 +1,8 @@
 /// <reference lib="dom" />
 import type Tweakpane from "https://cdn.skypack.dev/-/tweakpane@v1.5.8-yOgAVh2ofTMUQxh0irQW/dist=es2020,mode=types/dist/types/index.d.ts";
-import type { PerspectiveCamera, Mesh } from "../deps.ts";
+import type { Mesh, PerspectiveCamera } from "../deps.ts";
 import type { Cube } from "../objects/cube.ts";
-import { Raycaster, Vector3, Vector2 } from "../deps.ts";
+import { Raycaster, Vector2, Vector3 } from "../deps.ts";
 
 export class TopDownControls {
   // constants
@@ -24,9 +24,11 @@ export class TopDownControls {
   currentDistance = 16;
   // distanceTheshold = 5;
 
-  rayCaster = new Raycaster()
-  mouse = new Vector2()
-  moveLocation = new Vector3()
+  rayCaster = new Raycaster();
+  mouse = new Vector2();
+  moveLocation = new Vector3();
+
+  // pathFinding = new Pathfinding()
 
   constructor(
     object: Cube,
@@ -37,7 +39,9 @@ export class TopDownControls {
     this.body = object.body;
     this.camera = camera;
     this.domElement = domElement;
+
     this.movementMesh = movementMesh;
+    // this.pathFinding.setZoneData("test", Pathfinding.createZone(this.movementMesh))
 
     // initialize
     this.offset.setLength(this.currentDistance);
@@ -58,8 +62,8 @@ export class TopDownControls {
     });
 
     this.domElement.addEventListener("pointermove", async (e: PointerEvent) => {
-      this.mouse.x = ( e.clientX / this.domElement.clientWidth ) * 2 - 1;
-      this.mouse.y = - ( e.clientY / this.domElement.clientHeight ) * 2 + 1;
+      this.mouse.x = (e.clientX / this.domElement.clientWidth) * 2 - 1;
+      this.mouse.y = -(e.clientY / this.domElement.clientHeight) * 2 + 1;
     });
 
     this.domElement.addEventListener("contextmenu", async (e: MouseEvent) => {
@@ -77,7 +81,6 @@ export class TopDownControls {
     document.addEventListener("keyup", async (e) => {
       this.onKeyUp(e);
     });
-
   }
 
   initPane(pane: Tweakpane) {
@@ -94,7 +97,7 @@ export class TopDownControls {
     // })
   }
 
-  action () {
+  action() {
     console.log("Left click - Action");
     // Might be some kind of action needing to be taken
   }
@@ -104,23 +107,23 @@ export class TopDownControls {
     console.log("Right click - Move Player around");
 
     // cast the ray to find the location the user clicked
-    this.rayCaster.setFromCamera( this.mouse, this.camera );
+    this.rayCaster.setFromCamera(this.mouse, this.camera);
 
     // See if the ray from the camera into the world hits one of our meshes
-    const intersects = this.rayCaster.intersectObject( this.movementMesh );
+    const intersects = this.rayCaster.intersectObject(this.movementMesh);
 
     // Toggle rotation bool for meshes that we clicked
-    if ( intersects.length > 0 ) {
-
+    if (intersects.length > 0) {
       // helper is just a mesh.
       console.log("intersection with mesh");
-      this.moveLocation.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z)
+      this.moveLocation.set(
+        intersects[0].point.x,
+        intersects[0].point.y,
+        intersects[0].point.z,
+      );
 
       // could add an animation of mouse click at location
       // otherwise its onto pathing the player there
-      
-      
-
     }
   }
 
@@ -184,7 +187,11 @@ export class TopDownControls {
     // 1/3 - 2/3 camera move to
     // update camera position
 
-    const objPosition = new Vector3(this.body.position.x, this.body.position.y, this.body.position.z);
+    const objPosition = new Vector3(
+      this.body.position.x,
+      this.body.position.y,
+      this.body.position.z,
+    );
 
     objPosition.add(this.offset);
 

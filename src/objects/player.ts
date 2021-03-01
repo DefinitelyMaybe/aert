@@ -1,14 +1,17 @@
-import type { PerspectiveCamera, Mesh } from "../deps.ts";
+import type { Mesh, PerspectiveCamera } from "../deps.ts";
 import { TopDownControls } from "../controls/topDownControls.ts";
-import { MeshStandardMaterial, BoxGeometry } from "../deps.ts";
+import { BoxGeometry, MeshStandardMaterial } from "../deps.ts";
 import { Cube } from "./physics/cube.ts";
 
 // TODO-DefinitelyMaybe: change the model to a capsule (CylinderGeometry + ExtrudeGeometry) - https://threejsfundamentals.org/threejs/lessons/threejs-primitives.html
 export class Player extends Cube {
-
   controls;
 
-  constructor(movementMesh:Mesh, camera: PerspectiveCamera, domEl: HTMLElement) {
+  constructor(
+    movementMesh: Mesh,
+    camera: PerspectiveCamera,
+    domEl: HTMLElement,
+  ) {
     super();
 
     this.material = new MeshStandardMaterial({ color: 0x00ff00 });

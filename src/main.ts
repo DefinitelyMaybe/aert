@@ -1,16 +1,17 @@
 /// <reference lib="dom" />
 import { Tweakpane } from "./deps.ts";
-import { DevWorld } from "./worlds/devworld.ts";
+import { spinningCubeWorld } from "./worlds/spinningCubeWorld.ts";
 
 // ---------------- Variables --------------------
 // tweakpane
 export const pane = new Tweakpane.default();
+// pane.addInput({})
 const tsave = pane.addButton({ title: "save" });
 tsave.on("click", () => {
-  world.save();
+  console.log("Hello world");
 });
 
-const world = new DevWorld();
+const world = new spinningCubeWorld();
 
 // ---------------- Functions --------------------
 

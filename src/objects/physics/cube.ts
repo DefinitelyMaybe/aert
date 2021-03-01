@@ -8,7 +8,6 @@ import {
 } from "../../deps.ts";
 
 export class Cube extends Mesh {
-  
   body: Body;
 
   width: number;
@@ -22,7 +21,7 @@ export class Cube extends Mesh {
     width: 1,
     height: 1,
     depth: 1,
-    mass: 1
+    mass: 1,
   }) {
     super();
     this.width = options.width;
@@ -30,7 +29,9 @@ export class Cube extends Mesh {
     this.depth = options.depth;
 
     this.geometry = new BoxGeometry(this.width, this.height, this.depth);
-    this.material = options.material? options.material : new MeshStandardMaterial({ color: 0xaaaaaa });
+    this.material = options.material
+      ? options.material
+      : new MeshStandardMaterial({ color: 0xaaaaaa });
 
     // add physics
     const cube = new Box(

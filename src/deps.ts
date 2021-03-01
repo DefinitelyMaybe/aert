@@ -12,6 +12,7 @@ export {
   Euler,
   EventDispatcher,
   FogExp2,
+  Group,
   HemisphereLight,
   Line,
   LineBasicMaterial,
@@ -31,7 +32,6 @@ export {
   Vector2,
   Vector3,
   WebGLRenderer,
-  Group,
 } from "https://cdn.skypack.dev/three?dts";
 // continue to export from here because these files really should be from the import above
 // they're not yet. must wait for es module support across examples folder of three.js
@@ -48,7 +48,16 @@ export {
   World,
 } from "https://cdn.skypack.dev/cannon-es";
 export * as Tweakpane from "https://cdn.skypack.dev/tweakpane?dts";
-export {
-  Pathfinding,
-  PathfindingHelper,
-} from "https://cdn.skypack.dev/three-pathfinding";
+// export {
+//   Pathfinding,
+//   PathfindingHelper,
+// } from "https://cdn.skypack.dev/three-pathfinding?dts";
+
+// https://www.skypack.dev/view/@tensorflow/tfjs-core
+// import tensorflowTfjsCore from 'https://cdn.skypack.dev/@tensorflow/tfjs-core';
+
+// https://www.skypack.dev/view/@tensorflow/tfjs-backend-webgl
+// import tensorflowTfjsBackendWebgl from 'https://cdn.skypack.dev/@tensorflow/tfjs-backend-webgl';
+
+// https://www.skypack.dev/view/@tensorflow/tfjs-backend-webgpu
+// import tensorflowTfjsBackendWebgpu from 'https://cdn.skypack.dev/@tensorflow/tfjs-backend-webgpu';
