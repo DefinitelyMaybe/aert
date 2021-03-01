@@ -5,26 +5,25 @@ import {
   Color,
   DirectionalLight,
   FogExp2,
+  Group,
   HemisphereLight,
   Mesh,
   MeshStandardMaterial,
   NaiveBroadphase,
-Object3D,
+  Object3D,
   PerspectiveCamera,
   Plane,
   PlaneBufferGeometry,
   Vec3,
   Vector2,
   WebGLRenderer,
-  Group,
 } from "../deps.ts";
 import { Player } from "../objects/player.ts";
 import { Scene } from "../scene.ts";
 import { pane } from "../main.ts";
 import { spawnCubes } from "../helpers.ts";
-import { World } from "./world.ts";
 
-export class DevWorld extends World {
+export class BoxesWorld {
   // state
   state = {
     running: false,
@@ -35,8 +34,8 @@ export class DevWorld extends World {
     color: 0xdddddd,
   };
   materials = {
-    floor: 0x000a11
-  }
+    floor: 0x000a11,
+  };
   clock = new Clock();
   renderer;
   scene = new Scene();
@@ -46,8 +45,6 @@ export class DevWorld extends World {
   boxes = new Group();
 
   constructor() {
-    super();
-
     this.physicsWorld = this.scene.physics;
     this.physicsWorld.gravity.set(0, -24, 0);
     this.physicsWorld.broadphase = new NaiveBroadphase();
@@ -156,10 +153,10 @@ export class DevWorld extends World {
       tweakbtn1.on("click", () => {
         console.log({ player: this.player });
       });
-      f1.addInput(this.materials, 'floor', {input:'color'})
+      f1.addInput(this.materials, "floor", { input: "color" });
       f1.on("change", () => {
         this.scene.fog.density = this.fogValues.density;
-        material.color.set(this.materials.floor)
+        material.color.set(this.materials.floor);
       });
 
       this.player.controls.initPane(pane);
