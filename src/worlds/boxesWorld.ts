@@ -22,8 +22,9 @@ import { Player } from "../objects/player.ts";
 import { Scene } from "../scene.ts";
 import { pane } from "../main.ts";
 import { spawnCubes } from "../helpers.ts";
+import { World } from "./world.ts";
 
-export class BoxesWorld {
+export class BoxesWorld extends World {
   // state
   state = {
     running: false,
@@ -45,6 +46,8 @@ export class BoxesWorld {
   boxes = new Group();
 
   constructor() {
+    super()
+
     this.physicsWorld = this.scene.physics;
     this.physicsWorld.gravity.set(0, -24, 0);
     this.physicsWorld.broadphase = new NaiveBroadphase();
@@ -204,5 +207,15 @@ export class BoxesWorld {
       // refresh the pane to update any values
       pane.refresh();
     }
+  }
+
+  dispose() {
+    super.dispose()
+    // this.physicsWorld.removeBody()
+    console.log({bodies:this.physicsWorld.bodies});
+    this.physicsWorld.bodies.forEach((body)=>{
+      this.physicsWorld.removeBody(body)
+    })
+    console.log({bodies:this.physicsWorld.bodies});
   }
 }

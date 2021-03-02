@@ -6,14 +6,19 @@ import {
   Scene,
   WebGLRenderer,
 } from "../deps.ts";
+import { World } from "./world.ts";
 
-export class spinningCubeWorld {
+export class spinningCubeWorld extends World {
   scene = new Scene();
   camera;
   renderer;
+  geometry;
+  material;
   cube: Mesh;
 
   constructor() {
+    super()
+
     this.camera = new PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
@@ -26,10 +31,10 @@ export class spinningCubeWorld {
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    const geometry = new BoxGeometry();
-    const material = new MeshBasicMaterial({ color: 0x00ff00 });
+    this.geometry = new BoxGeometry();
+    this.material = new MeshBasicMaterial({ color: 0x00ff00 });
 
-    this.cube = new Mesh(geometry, material);
+    this.cube = new Mesh(this.geometry, this.material);
     this.scene.add(this.cube);
 
     this.camera.position.z = 5;
@@ -45,5 +50,12 @@ export class spinningCubeWorld {
     this.cube.rotation.y += 0.01;
 
     this.renderer.render(this.scene, this.camera);
+  }
+
+  dispose() {
+    // this.geometry.dispose()
+    // this.material.dispose()
+    // this.renderer.dispose()
+    this.renderer.dispose()
   }
 }
