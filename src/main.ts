@@ -1,17 +1,26 @@
 /// <reference lib="dom" />
 import { Tweakpane } from "./deps.ts";
 import { spinningCubeWorld } from "./worlds/spinningCubeWorld.ts";
+import { BoxesWorld } from "./worlds/boxesWorld.ts";
 
 // ---------------- Variables --------------------
+let world: spinningCubeWorld | BoxesWorld;
+
 // tweakpane
 export const pane = new Tweakpane.default();
 // pane.addInput({})
-const tsave = pane.addButton({ title: "save" });
+const spinningCube = pane.addButton({ title: "Spinning Cube" });
+spinningCube.on("click", () => {
+  world.dispose()
+  world = new spinningCubeWorld();
+});
+const tsave = pane.addButton({ title: "Boxes" });
 tsave.on("click", () => {
-  console.log("Hello world");
+  world.dispose()
+  world = new BoxesWorld();
 });
 
-const world = new spinningCubeWorld();
+world = new spinningCubeWorld();
 
 // ---------------- Functions --------------------
 
