@@ -48,16 +48,10 @@ export {
   World,
 } from "https://cdn.skypack.dev/cannon-es";
 export * as Tweakpane from "https://cdn.skypack.dev/tweakpane?dts";
-// export {
-//   Pathfinding,
-//   PathfindingHelper,
-// } from "https://cdn.skypack.dev/three-pathfinding?dts";
-
-// https://www.skypack.dev/view/@tensorflow/tfjs-core
-// import tensorflowTfjsCore from 'https://cdn.skypack.dev/@tensorflow/tfjs-core';
-
-// https://www.skypack.dev/view/@tensorflow/tfjs-backend-webgl
-// import tensorflowTfjsBackendWebgl from 'https://cdn.skypack.dev/@tensorflow/tfjs-backend-webgl';
-
-// https://www.skypack.dev/view/@tensorflow/tfjs-backend-webgpu
-// import tensorflowTfjsBackendWebgpu from 'https://cdn.skypack.dev/@tensorflow/tfjs-backend-webgpu';
+export {
+  Pathfinding,
+  PathfindingHelper,
+} from "https://cdn.skypack.dev/three-pathfinding?dts";
+import tensorflowTfjsCore from 'https://cdn.skypack.dev/@tensorflow/tfjs-core';
+import tensorflowTfjsBackendWebgl from 'https://cdn.skypack.dev/@tensorflow/tfjs-backend-webgl';
+import tensorflowTfjsBackendWebgpu from 'https://cdn.skypack.dev/@tensorflow/tfjs-backend-webgpu';
