@@ -6,18 +6,18 @@ import {
   Scene,
   WebGLRenderer,
 } from "../deps.ts";
-import { World } from "./world.ts";
+import type { WorldOptions } from "./world.ts";
+import { World } from "./world.ts"; 
 
 export class spinningCubeWorld extends World {
-  scene = new Scene();
   camera;
   renderer;
   geometry;
   material;
   cube: Mesh;
 
-  constructor() {
-    super()
+  constructor(options?:WorldOptions) {
+    super(options)
 
     this.camera = new PerspectiveCamera(
       75,
@@ -53,9 +53,10 @@ export class spinningCubeWorld extends World {
   }
 
   dispose() {
-    // this.geometry.dispose()
-    // this.material.dispose()
-    // this.renderer.dispose()
+    super.dispose()
+
+    this.geometry.dispose()
+    this.material.dispose()
     this.renderer.dispose()
   }
 }

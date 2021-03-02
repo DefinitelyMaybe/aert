@@ -1,4 +1,5 @@
 import type { Cube } from "../objects/physics/cube.ts";
+import type { WorldOptions } from "./world.ts";
 import {
   Body,
   Clock,
@@ -19,7 +20,6 @@ import {
   WebGLRenderer,
 } from "../deps.ts";
 import { Player } from "../objects/player.ts";
-import { Scene } from "../scene.ts";
 import { pane } from "../main.ts";
 import { spawnCubes } from "../helpers.ts";
 import { World } from "./world.ts";
@@ -39,14 +39,13 @@ export class BoxesWorld extends World {
   };
   clock = new Clock();
   renderer;
-  scene = new Scene();
   physicsWorld;
   camera;
   player;
   boxes = new Group();
 
-  constructor() {
-    super()
+  constructor(options?:WorldOptions) {
+    super(options)
 
     this.physicsWorld = this.scene.physics;
     this.physicsWorld.gravity.set(0, -24, 0);
@@ -213,7 +212,7 @@ export class BoxesWorld extends World {
     super.dispose()
     // this.physicsWorld.removeBody()
     console.log({bodies:this.physicsWorld.bodies});
-    this.physicsWorld.bodies.forEach((body)=>{
+    this.physicsWorld.bodies.forEach((body:Body)=>{
       this.physicsWorld.removeBody(body)
     })
     console.log({bodies:this.physicsWorld.bodies});
